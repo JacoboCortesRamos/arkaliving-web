@@ -19,6 +19,7 @@ function easeOutCubic(t: number) {
 export function Hero() {
   const heroRef = useRef<HTMLElement | null>(null);
   const rafRef = useRef<number | null>(null);
+  const scrollClickRef = useRef<string>("");
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -70,7 +71,9 @@ export function Hero() {
   const stepCount = stage >= 7 ? 3 : stage >= 6 ? 2 : stage >= 5 ? 1 : 0;
   const brandCompact = stage >= 1;
 
-  const baseBrandOpacity = stage === 2 ? 1 : brandCompact ? 0.92 : 0.28;
+  const baseBrandOpacity =
+    stage === 0 ? 0 : stage === 2 ? 1 : brandCompact ? 0.92 : 0.28;
+
   const brandFade = stage === 3 ? 1 - stageProgress : stage >= 4 ? 0 : 1;
   const brandOpacity = baseBrandOpacity * brandFade;
 
@@ -85,8 +88,14 @@ export function Hero() {
 
   const h1Opacity = stageProgress < h1OutStart ? h1Enter : 1 - h1Exit;
 
-  const yHold = -70;
-  const yOutEnd = -170;
+  const isMobile = typeof window !== "undefined" && window.innerWidth <= 1024;
+
+  // Desktop mantiene el valor actual
+  const yHold = isMobile ? -180 : -70;
+
+  // Mantén salida proporcional
+  const yOutEnd = isMobile ? -260 : -170;
+
   const yStartH1 = 180;
 
   let h1Y: number;
@@ -168,13 +177,69 @@ export function Hero() {
         </div>
       )}
 
-      {/* Scroll Indicator (solo stages 0 a 7) */}
+      {/* Scroll Indicator (stages 0..3) */}
       {stage < 8 && (
-        <div className={styles.scrollIndicator}>
-          <div className={styles.scrollCircle}>
-            <div className={styles.scrollArrow}></div>
-          </div>
-        </div>
+        <button
+          type="button"
+          className={styles.scrollIndicator}
+          aria-label="Hacer scroll"
+          onClick={() => {
+            if (!heroRef.current) return;
+
+            const heroTop =
+              heroRef.current.getBoundingClientRect().top + window.scrollY;
+            const heroHeight = heroRef.current.offsetHeight;
+            const stageSize = heroHeight / STAGES;
+
+            const HOLD_T = 0.45; // punto estable del hold (dentro del 0.18–0.70)
+            const EDGE_T = 0.02; // evita caer justo en el borde
+
+            const go = (s: number, t: number) => {
+              const key = `${s}:${t.toFixed(2)}`;
+              const top = heroTop + (s + t) * stageSize;
+              return { key, top };
+            };
+
+            // ✅ Último click: cuando ya está el paso 3 visible (stage 7), salimos del hero para mostrar footer
+            if (stage >= 7) {
+              const dest = { key: "OUT", top: heroTop + heroHeight + 16 };
+              scrollClickRef.current = dest.key;
+              window.scrollTo({ top: dest.top, behavior: "smooth" });
+              return;
+            }
+
+            let dest = go(Math.min(stage + 1, STAGES - 1), EDGE_T);
+
+            if (stage === 0) {
+              dest = go(1, EDGE_T);
+            } else if (stage === 1) {
+              // Siempre llevar al hold del H1
+              dest = go(2, HOLD_T);
+            } else if (stage === 2) {
+              const hold = go(2, HOLD_T);
+
+              // ✅ Anti-bloqueo:
+              // Si este click volvería a mandar EXACTO al mismo hold que ya mandamos antes,
+              // entonces avanzamos al siguiente stage.
+              if (scrollClickRef.current === hold.key) {
+                dest = go(3, EDGE_T); // o 4 si quieres saltar directo a H3
+              } else {
+                // Primer click en stage 2 -> asegurar hold
+                dest = hold;
+              }
+            } else {
+              // stages 3..6 -> siguiente stage normal
+              dest = go(stage + 1, EDGE_T);
+            }
+
+            scrollClickRef.current = dest.key;
+            window.scrollTo({ top: dest.top, behavior: "smooth" });
+          }}
+        >
+          <span className={styles.scrollCircle}>
+            <span className={styles.scrollArrow} />
+          </span>
+        </button>
       )}
 
       {/* H3 + Steps */}

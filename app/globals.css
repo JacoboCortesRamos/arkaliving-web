@@ -104,7 +104,7 @@ html[data-hero-stage="8"] .ctaFloat__btn {
 }
 
 html[data-footer-in-view="true"] .ctaFloat {
-  bottom: clamp(200px, 26vh, 320px);
+  bottom: clamp(180px, 20vh, 320px);
 }
 
 /* =====================================================
@@ -193,4 +193,48 @@ html[data-footer-in-view="true"] .ctaFloat {
 #footer-sentinel {
   height: 1px;
   width: 100%;
+}
+
+@media (max-width: 640px) {
+  /* Contenedor del CTA: centrado real */
+  .ctaFloat {
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    bottom: 18px !important;
+
+    width: auto !important;
+    max-width: calc(100vw - 24px) !important;
+
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+
+  /* Si el CTA tiene wrapper interno */
+  .ctaFloat > * {
+    width: auto !important;
+    max-width: 100% !important;
+  }
+
+  /* Botón/link: ajustado al texto */
+  .ctaFloat a,
+  .ctaFloat button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: fit-content !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+
+    white-space: nowrap !important;
+    text-align: center !important;
+
+    padding: 14px 22px !important; /* ajusta si lo quieres más compacto */
+  }
+
+  html[data-footer-in-view="true"] .ctaFloat {
+    bottom: 200px !important; /* ajusta 110–160 */
+  }
 }

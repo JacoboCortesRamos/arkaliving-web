@@ -141,7 +141,7 @@
   width: 100%;
   text-align: center;
   color: #fff;
-  font-size: clamp(18px, 2.4vw, 26px);
+  font-size: clamp(20px, 2.8vw, 36px);
   text-shadow: 0 2px 22px rgba(0, 0, 0, 0.35);
 }
 
@@ -158,7 +158,7 @@
 .step {
   color: #fff;
   opacity: 0.95;
-  font-size: clamp(16px, 2vw, 18px);
+  font-size: clamp(18px, 2.2vw, 20px);
   text-shadow: 0 2px 22px rgba(0, 0, 0, 0.35);
 }
 
@@ -172,8 +172,16 @@
   left: 50%;
   transform: translateX(-50%);
   z-index: 4;
-  pointer-events: none;
+  pointer-events: auto;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  padding: 0;
   opacity: 0.95;
+}
+
+.scrollIndicator:active .scrollCircle {
+  transform: scale(0.98);
 }
 
 /* Círculo gris translúcido */
@@ -182,7 +190,7 @@
   width: 45px;
   height: 45px;
   border-radius: 50%;
-  background: rgba(160, 160, 160, 0.30);
+  background: rgba(160, 160, 160, 0.3);
   backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
@@ -224,5 +232,22 @@
   }
   100% {
     opacity: 0.3;
+  }
+}
+
+@media (max-width: 640px) {
+  .scrollIndicator {
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: clamp(84px, 14vh, 120px);
+    z-index: 6;
+  }
+
+  html[data-hero-stage="8"] .ctaFloat {
+    bottom: clamp(110px, 16vh, 180px) !important; /* 👈 sube en stage final */
+  }
+
+  html[data-footer-in-view="true"] .ctaFloat {
+    bottom: 140px !important; /* ajusta 120–180px según tu footer */
   }
 }
