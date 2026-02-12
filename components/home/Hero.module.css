@@ -1,0 +1,159 @@
+:root {
+  --header-h: 72px;
+}
+
+.hero {
+  position: relative;
+
+  /* 👇 CLAVE: varias pantallas para que los 9 stages sean claros */
+  min-height: 900vh;
+  overflow: hidden;
+}
+
+/* Poster fijo */
+.media {
+  position: fixed;
+  inset: 0;
+  height: 100vh;
+  width: 100vw;
+  background-image: var(--hero-poster, url("/hero-poster.JPEG"));
+  background-size: cover;
+  background-position: center;
+  transform: scale(1.02);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Overlay progresivo */
+.overlay {
+  position: fixed;
+  inset: 0;
+  height: 100vh;
+  width: 100vw;
+  background: rgba(15, 15, 15, 1);
+  opacity: 0;
+  transition: opacity 120ms linear;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Brand watermark inicial */
+.brand {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 2;
+  pointer-events: none;
+  transition: transform 320ms ease;
+}
+
+.brandInner {
+  display: grid;
+  place-items: center;
+  gap: 12px;
+  text-align: center;
+  padding: 0 16px;
+
+  /* Watermark */
+  opacity: 0.28;
+  filter: saturate(0);
+  transition: opacity 320ms ease, filter 320ms ease, transform 320ms ease;
+}
+
+.logo {
+  width: clamp(220px, 26vw, 380px);
+  height: auto;
+  filter: drop-shadow(0 16px 44px rgba(0,0,0,0.20));
+}
+
+.slogan {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  color: #fff;
+  text-shadow: 0 2px 18px rgba(0,0,0,0.30);
+  font-size: clamp(16px, 2vw, 20px);
+}
+
+/* Stage >=1: sube un poco y se reduce (separado del header) */
+.brandCompact {
+  transform: translateY(calc(-18vh + var(--header-h) * 0.55));
+}
+
+.brandCompact .brandInner {
+  opacity: 0.92;
+  filter: saturate(1);
+  transform: scale(0.82);
+}
+
+/* Animación entrada */
+.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* H1 desde abajo */
+.h1Wrap {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 10vh;
+  z-index: 3;
+  pointer-events: none;
+  padding: 0 20px;
+  display: grid;
+  place-items: center;
+}
+
+.h1 {
+  margin: 0;
+  max-width: 1100px;
+  width: 100%;
+  text-align: center;
+  color: #fff;
+  font-size: clamp(30px, 5vw, 58px);
+  line-height: 1.05;
+  text-shadow: 0 2px 26px rgba(0,0,0,0.40);
+}
+
+/* H3 + pasos */
+.stepsWrap {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: calc(var(--header-h) + 175px);
+  z-index: 3;
+  pointer-events: none;
+  padding: 0 20px;
+  display: grid;
+  place-items: center;
+  gap: 14px;
+}
+
+.h3 {
+  margin: 0;
+  max-width: 820px;
+  width: 100%;
+  text-align: center;
+  color: #fff;
+  font-size: clamp(18px, 2.4vw, 26px);
+  text-shadow: 0 2px 22px rgba(0,0,0,0.35);
+}
+
+.steps {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+  max-width: 820px;
+  width: 100%;
+  display: grid;
+  gap: 10px;
+}
+
+.step {
+  color: #fff;
+  opacity: 0.95;
+  font-size: clamp(16px, 2vw, 18px);
+  text-shadow: 0 2px 22px rgba(0,0,0,0.35);
+}

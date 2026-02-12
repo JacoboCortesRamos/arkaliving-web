@@ -1,18 +1,11 @@
 import { Hero } from "@/components/home/Hero";
-import { SectionValue } from "@/components/home/SectionValue";
-import { SectionSteps } from "@/components/home/SectionSteps";
-import { SectionPropertiesPreview } from "@/components/home/SectionPropertiesPreview";
+import { Footer } from "@/components/Footer";
 
-export default function HomePage() {
+export default function Page() {
   return (
     <>
       <Hero />
-      <SectionValue />
-      <SectionSteps />
-      <SectionPropertiesPreview />
-
-      {/* Sección 4: Footer ya existe como bloque final en layout */}
-      <div id="s4" />
+      <Footer />
     </>
   );
 }
