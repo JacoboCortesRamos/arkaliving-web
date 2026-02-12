@@ -103,6 +103,10 @@ html[data-hero-stage="8"] .ctaFloat__btn {
   letter-spacing: 0.5px;
 }
 
+html[data-footer-in-view="true"] .ctaFloat {
+  bottom: clamp(200px, 26vh, 320px);
+}
+
 /* =====================================================
    OVERLAY MENU
 ===================================================== */
@@ -169,7 +173,7 @@ html[data-hero-stage="8"] .ctaFloat__btn {
 ===================================================== */
 
 .footer {
-  padding: 60px 24px;
+  padding: 28px 24px 32px; /* antes: 60px 24px */
   border-top: 1px solid #eee;
   background: white;
   position: relative;
@@ -177,11 +181,16 @@ html[data-hero-stage="8"] .ctaFloat__btn {
 }
 
 .footer__inner {
-  display: grid;
-  gap: 10px;
+  max-width: 980px;
+  margin: 0 auto;
 }
 
 .footer__line {
   margin: 0;
   opacity: 0.8;
+}
+
+#footer-sentinel {
+  height: 1px;
+  width: 100%;
 }

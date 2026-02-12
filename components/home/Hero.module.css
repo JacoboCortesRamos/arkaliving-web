@@ -4,8 +4,6 @@
 
 .hero {
   position: relative;
-
-  /* 👇 CLAVE: varias pantallas para que los 9 stages sean claros */
   min-height: 900vh;
   overflow: hidden;
 }
@@ -43,7 +41,7 @@
   inset: 0;
   display: grid;
   place-items: center;
-  z-index: 2;
+  z-index: 3;
   pointer-events: none;
   transition: transform 320ms ease;
 }
@@ -58,27 +56,33 @@
   /* Watermark */
   opacity: 0.28;
   filter: saturate(0);
-  transition: opacity 320ms ease, filter 320ms ease, transform 320ms ease;
+  transition:
+    opacity 320ms ease,
+    filter 320ms ease,
+    transform 320ms ease;
 }
 
 .logo {
   width: clamp(220px, 26vw, 380px);
   height: auto;
-  filter: drop-shadow(0 16px 44px rgba(0,0,0,0.20));
+  filter: drop-shadow(0 16px 44px rgba(0, 0, 0, 0.2));
 }
 
 .slogan {
   margin: 0;
-  font-weight: 600;
+  padding: 0;
+  font-weight: 300;
   letter-spacing: 0.2px;
   color: #fff;
-  text-shadow: 0 2px 18px rgba(0,0,0,0.30);
-  font-size: clamp(16px, 2vw, 20px);
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.3);
+  font-size: clamp(16px, 3vw, 25px);
+
+  transform: translateY(-15px);
 }
 
-/* Stage >=1: sube un poco y se reduce (separado del header) */
+/* Stage >=1 */
 .brandCompact {
-  transform: translateY(calc(-18vh + var(--header-h) * 0.55));
+  transform: translateY(calc(-22vh + var(--header-h) * 0.55));
 }
 
 .brandCompact .brandInner {
@@ -93,13 +97,13 @@
   transform: translateY(0);
 }
 
-/* H1 desde abajo */
+/* H1 */
 .h1Wrap {
   position: fixed;
   left: 0;
   right: 0;
   bottom: 10vh;
-  z-index: 3;
+  z-index: 2;
   pointer-events: none;
   padding: 0 20px;
   display: grid;
@@ -114,7 +118,7 @@
   color: #fff;
   font-size: clamp(30px, 5vw, 58px);
   line-height: 1.05;
-  text-shadow: 0 2px 26px rgba(0,0,0,0.40);
+  text-shadow: 0 2px 26px rgba(0, 0, 0, 0.4);
 }
 
 /* H3 + pasos */
@@ -122,7 +126,7 @@
   position: fixed;
   left: 0;
   right: 0;
-  top: calc(var(--header-h) + 175px);
+  top: calc(var(--header-h) + 110px);
   z-index: 3;
   pointer-events: none;
   padding: 0 20px;
@@ -138,7 +142,7 @@
   text-align: center;
   color: #fff;
   font-size: clamp(18px, 2.4vw, 26px);
-  text-shadow: 0 2px 22px rgba(0,0,0,0.35);
+  text-shadow: 0 2px 22px rgba(0, 0, 0, 0.35);
 }
 
 .steps {
@@ -155,5 +159,70 @@
   color: #fff;
   opacity: 0.95;
   font-size: clamp(16px, 2vw, 18px);
-  text-shadow: 0 2px 22px rgba(0,0,0,0.35);
+  text-shadow: 0 2px 22px rgba(0, 0, 0, 0.35);
+}
+
+/* ============================= */
+/* Scroll Indicator (Actualizado) */
+/* ============================= */
+
+.scrollIndicator {
+  position: fixed;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0.95;
+}
+
+/* Círculo gris translúcido */
+.scrollCircle {
+  padding-bottom: 5px;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: rgba(160, 160, 160, 0.30);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: float 2.4s ease-in-out infinite;
+  transform: translateY(50px);
+}
+
+/* Flecha */
+.scrollArrow {
+  width: 20px;
+  height: 20px;
+  border-left: 3px solid white;
+  border-bottom: 3px solid white;
+  transform: rotate(-45deg);
+  animation: scrollBlink 1.6s ease-in-out infinite;
+}
+
+/* Movimiento flotante suave */
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(8px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* Parpadeo + micro desplazamiento */
+@keyframes scrollBlink {
+  0% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.3;
+  }
 }
