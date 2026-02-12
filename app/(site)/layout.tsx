@@ -9,16 +9,17 @@ export const metadata: Metadata = {
   description: "Gestión inteligente de rentas cortas en Colombia.",
 };
 
-export default function SiteLayout({ children }: { children: React.ReactNode }) {
+export default function SiteLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="es">
       <body>
         <div id="app-root">
           <Header />
           <main>{children}</main>
-
-          {/* Sentinel para ocultar CTA cuando aparece el footer */}
-          <div id="footer-sentinel" aria-hidden="true" />
 
           <Footer />
           <FloatingCTA />

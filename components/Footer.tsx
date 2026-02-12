@@ -13,6 +13,7 @@ export function Footer() {
         <p className="footer__line">Operamos en Santa Marta y Bogotá</p>
         <p className="footer__line">© 2026 Sitio web creado por Jacobo Cortés Ramos</p>
       </div>
+      <div id="footer-sentinel" />
     </footer>
   );
 }

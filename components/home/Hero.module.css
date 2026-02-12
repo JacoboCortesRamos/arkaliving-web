@@ -4,7 +4,7 @@
 
 .hero {
   position: relative;
-  min-height: 900vh;
+  min-height: 1000vh;
   overflow: hidden;
 }
 
@@ -33,6 +33,19 @@
   transition: opacity 120ms linear;
   z-index: 1;
   pointer-events: none;
+}
+
+/* Stage label (S1..S10) */
+.stageLabel {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 9999;
+  pointer-events: none;
+  font-size: 28px;
+  font-weight: 700;
+  color: rgba(255, 59, 48, 0.95);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
 }
 
 /* Brand watermark inicial */
@@ -80,7 +93,7 @@
   transform: translateY(-15px);
 }
 
-/* Stage >=1 */
+/* Stage >=1: sube un poco y se reduce (separado del header) */
 .brandCompact {
   transform: translateY(calc(-22vh + var(--header-h) * 0.55));
 }
@@ -91,13 +104,7 @@
   transform: scale(0.82);
 }
 
-/* Animación entrada */
-.in {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* H1 */
+/* H1 desde abajo */
 .h1Wrap {
   position: fixed;
   left: 0;
@@ -141,7 +148,7 @@
   width: 100%;
   text-align: center;
   color: #fff;
-  font-size: clamp(20px, 2.8vw, 36px);
+  font-size: clamp(18px, 2.4vw, 26px);
   text-shadow: 0 2px 22px rgba(0, 0, 0, 0.35);
 }
 
@@ -158,12 +165,12 @@
 .step {
   color: #fff;
   opacity: 0.95;
-  font-size: clamp(18px, 2.2vw, 20px);
+  font-size: clamp(16px, 2vw, 18px);
   text-shadow: 0 2px 22px rgba(0, 0, 0, 0.35);
 }
 
 /* ============================= */
-/* Scroll Indicator (Actualizado) */
+/* Scroll Indicator              */
 /* ============================= */
 
 .scrollIndicator {
@@ -171,83 +178,62 @@
   bottom: 36px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 4;
-  pointer-events: auto;
-  cursor: pointer;
+  z-index: 5;
   background: transparent;
   border: 0;
   padding: 0;
-  opacity: 0.95;
+  cursor: pointer;
 }
 
-.scrollIndicator:active .scrollCircle {
-  transform: scale(0.98);
-}
-
-/* Círculo gris translúcido */
 .scrollCircle {
-  padding-bottom: 5px;
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  background: rgba(160, 160, 160, 0.3);
-  backdrop-filter: blur(6px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: float 2.4s ease-in-out infinite;
-  transform: translateY(50px);
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  background: rgba(140, 140, 140, 0.22);
+  backdrop-filter: blur(2px);
 }
 
-/* Flecha */
 .scrollArrow {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border-left: 3px solid white;
   border-bottom: 3px solid white;
   transform: rotate(-45deg);
-  animation: scrollBlink 1.6s ease-in-out infinite;
+  animation: scrollBlink 1.4s ease-in-out infinite;
 }
 
-/* Movimiento flotante suave */
-@keyframes float {
-  0% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(8px);
-  }
-  100% {
-    transform: translateY(0);
-  }
-}
-
-/* Parpadeo + micro desplazamiento */
 @keyframes scrollBlink {
   0% {
-    opacity: 0.3;
+    transform: translateY(-8px) rotate(-45deg);
+    opacity: 0.2;
   }
   50% {
+    transform: translateY(3px) rotate(-45deg);
     opacity: 1;
   }
   100% {
-    opacity: 0.3;
+    transform: translateY(-8px) rotate(-45deg);
+    opacity: 0.2;
   }
 }
 
-@media (max-width: 640px) {
+/* Mobile/tablet: scroll indicator above CTA */
+@media (max-width: 1024px) {
   .scrollIndicator {
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: clamp(84px, 14vh, 120px);
-    z-index: 6;
+    bottom: 92px;
   }
 
-  html[data-hero-stage="8"] .ctaFloat {
-    bottom: clamp(110px, 16vh, 180px) !important; /* 👈 sube en stage final */
+  .h1Wrap {
+    top: 60%;
+    bottom: auto;
+    transform: translateY(-50%);
   }
+}
 
-  html[data-footer-in-view="true"] .ctaFloat {
-    bottom: 140px !important; /* ajusta 120–180px según tu footer */
-  }
+/* Último stage: ocultar scroll indicator (y permitir que el CTA se gestione por footer/stage) */
+html[data-hero-stage="9"] .scrollIndicator,
+html[data-hero-stage="9"] .scrollCircle {
+  display: none;
 }
