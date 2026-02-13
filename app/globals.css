@@ -18,50 +18,6 @@ body {
 }
 
 /* =====================================================
-   HEADER — SIEMPRE VISIBLE SOBRE EL HERO
-===================================================== */
-
-.header {
-  position: sticky;
-  top: 0;
-  z-index: 10000; /* por encima de todo lo fixed del hero */
-
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-
-  transition: background 200ms ease;
-}
-
-.header--clear {
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(10px);
-}
-
-.header--solid {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-}
-
-.header__inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 18px 24px;
-}
-
-.header__logo {
-  font-weight: 700;
-  text-decoration: none;
-  color: inherit;
-}
-
-.header__menuBtn {
-  padding: 10px 14px;
-  cursor: pointer;
-}
-
-/* =====================================================
    FLOATING CTA
 ===================================================== */
 
@@ -105,67 +61,6 @@ html[data-hero-stage="9"] .ctaFloat__btn {
 
 html[data-footer-in-view="true"] .ctaFloat {
   bottom: clamp(180px, 20vh, 320px);
-}
-
-/* =====================================================
-   OVERLAY MENU
-===================================================== */
-
-.overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 10001;
-}
-
-.overlay__backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-}
-
-.overlay__panel {
-  position: absolute;
-  right: 0;
-  top: 0;
-  height: 100%;
-  width: min(420px, 92vw);
-  background: white;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.overlay__top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.overlay__title {
-  font-weight: 700;
-}
-
-.overlay__close {
-  cursor: pointer;
-  padding: 8px 10px;
-}
-
-.overlay__nav {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.overlay__link,
-.overlay__linkBtn {
-  text-decoration: none;
-  color: inherit;
-  padding: 12px 14px;
-  border: 1px solid #e8e8e8;
-  background: transparent;
-  text-align: left;
-  cursor: pointer;
 }
 
 /* =====================================================

@@ -1,0 +1,109 @@
+/* components/MenuOverlay.module.css */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10003;
+  pointer-events: none;
+}
+
+.backdrop,
+.panel {
+  pointer-events: auto;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.panel {
+  position: absolute;
+  right: 0;
+  top: 0;
+
+  height: 100%;
+  width: min(420px, 92vw);
+  background: white;
+
+  /* respeta el header */
+  padding: calc(var(--header-h) + 12px) 24px 24px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ✅ NAV: su ancho será el del item más largo */
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+
+  width: max-content; /* 🔥 clave */
+  max-width: 100%;
+}
+
+/* ✅ LINKS: todos llenan el ancho del nav */
+.link,
+.linkBtn {
+  text-decoration: none;
+  color: inherit;
+
+  padding: 8px 10px;
+  line-height: 1.1;
+  font-size: 14px;
+  letter-spacing: 0.2px;
+
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+
+  width: 100%; /* 🔥 todos mismo ancho */
+  max-width: 100%;
+
+  white-space: nowrap; /* 🔥 evita saltos */
+}
+
+/* Social icons */
+.socials {
+  margin-top: 18px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.socialLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.socialLink img {
+  display: block;
+  width: 22px;
+  height: 22px;
+  max-width: 22px;
+  max-height: 22px;
+  object-fit: contain;
+  opacity: 0.8;
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease;
+}
+
+.socialLink:hover img {
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+/* ✅ MOBILE: panel más angosto y ajustado a contenido */
+@media (max-width: 640px) {
+  .panel {
+    width: max-content; /* se ajusta a los textos */
+    max-width: calc(100vw - 28px); /* deja respiración lateral */
+  }
+}

@@ -22,7 +22,6 @@ export default function SiteLayout({
           <main>{children}</main>
 
           <Footer />
-          <FloatingCTA />
         </div>
       </body>
     </html>

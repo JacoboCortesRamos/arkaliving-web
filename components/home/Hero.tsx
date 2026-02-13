@@ -64,8 +64,11 @@ export function Hero() {
 
   useEffect(() => {
     document.documentElement.dataset.heroStage = String(stage);
-    // sync si el usuario hace scroll manual
     navStageRef.current = stage;
+
+    return () => {
+      delete document.documentElement.dataset.heroStage;
+    };
   }, [stage]);
 
   // Overlay progresivo
@@ -90,9 +93,8 @@ export function Hero() {
   const baseBrandOpacity =
     stage === 0 ? 0 : stage === 2 ? 1 : brandCompact ? 0.92 : 0.28;
 
-  // ✅ Cambio clave: el fade-out ocurre en stage 3 (S4), NO en stage 4 (S5)
+  // Fade-out ocurre en stage 3 (S4)
   const brandFade = stage === 3 ? 1 - stageProgress : stage >= 4 ? 0 : 1;
-
   const brandOpacity = baseBrandOpacity * brandFade;
 
   // Stage 2 timings (H1)
@@ -123,7 +125,7 @@ export function Hero() {
   }
 
   /**
-   * H3 + Steps: entrada desde abajo con delay interno (igual)
+   * H3 + Steps: entrada desde abajo con delay interno
    */
   const enterStyle = (itemStage: number) => {
     if (stage < itemStage) return null;
@@ -148,18 +150,15 @@ export function Hero() {
   };
 
   /**
-   * ✅ Click -> siguiente stage exacto
-   * Ajuste clave para S6..S9:
-   * - aterrizamos MUY cerca del final del stage (0.95) para que el enterStyle quede completo
+   * Ajuste para snap/hold al navegar por click
    */
   const stageInner = (targetStage: number) => {
     // S3: caer en el HOLD del H1
     if (targetStage === 2) return 0.45;
 
-    // S6..S9 (stages 5..8): forzar "snap" a estado final de cada texto
+    // S6..S9 (stages 5..8): forzar estado final de cada texto
     if (targetStage >= 5 && targetStage <= 8) return 0.95;
 
-    // resto: centro seguro
     return 0.55;
   };
 
@@ -182,6 +181,12 @@ export function Hero() {
       return;
     }
 
+    // Stage 0 = inicio real del hero
+    if (next === 0) {
+      window.scrollTo({ top: heroTop, behavior: "smooth" });
+      return;
+    }
+
     const inner = stageInner(next);
     const targetProgress = (next + inner) / STAGES;
 
@@ -191,12 +196,19 @@ export function Hero() {
     });
   };
 
+  // ✅ Listener: el Header puede disparar este evento para volver al stage 0
+  useEffect(() => {
+    const onGoStage0 = () => scrollToStage(0);
+    window.addEventListener("arka:hero:stage0", onGoStage0);
+    return () => window.removeEventListener("arka:hero:stage0", onGoStage0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const showScrollIndicator = stage < 9;
 
   const onScrollIndicatorClick = () => {
     const currentNav = navStageRef.current;
     const next = clamp(currentNav + 1, 0, 9);
-
     navStageRef.current = next;
     scrollToStage(next);
   };
@@ -209,11 +221,6 @@ export function Hero() {
         style={{ opacity: overlayOpacity }}
         aria-hidden="true"
       />
-
-      {/* Label S1..S10 */}
-      <div className={styles.stageLabel} aria-hidden="true">
-        S{stage + 1}
-      </div>
 
       {/* Brand */}
       <div

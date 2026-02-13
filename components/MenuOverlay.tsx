@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import styles from "./MenuOverlay.module.css";
 
 export function MenuOverlay({
   open,
@@ -14,45 +15,54 @@ export function MenuOverlay({
   if (!open) return null;
 
   return (
-    <div className="overlay" role="dialog" aria-modal="true" aria-label="Menú">
-      <div className="overlay__backdrop" onClick={onClose} />
-      <div className="overlay__panel">
-        <div className="overlay__top">
-          <span className="overlay__title">Menú</span>
-          <button className="overlay__close" onClick={onClose} aria-label="Cerrar menú">
-            ✕
-          </button>
-        </div>
-
-        <nav className="overlay__nav">
-          <Link className="overlay__link" href="/" onClick={onClose}>
+    <div className={styles.overlay} role="dialog" aria-modal="true">
+      <div className={styles.backdrop} onClick={onClose} />
+      <div className={styles.panel}>
+        <nav className={styles.nav}>
+          <Link className={styles.link} href="/" onClick={onClose}>
             HOME
           </Link>
-          <Link className="overlay__link" href="/nosotros" onClick={onClose}>
+          <Link className={styles.link} href="/nosotros" onClick={onClose}>
             NOSOTROS
           </Link>
-          <Link className="overlay__link" href="/propiedades" onClick={onClose}>
+          <Link className={styles.link} href="/propiedades" onClick={onClose}>
             PROPIEDADES ARKA
           </Link>
 
-          <button className="overlay__linkBtn" onClick={onOpenOwner}>
+          <button className={styles.linkBtn} onClick={onOpenOwner}>
             SOY PROPIETARIO
           </button>
 
-          <Link className="overlay__link" href="/postula-tu-propiedad" onClick={onClose}>
+          <Link
+            className={styles.link}
+            href="/postula-tu-propiedad"
+            onClick={onClose}
+          >
             POSTULA TU PROPIEDAD
           </Link>
-          <Link className="overlay__link" href="/contacto" onClick={onClose}>
+          <Link className={styles.link} href="/contacto" onClick={onClose}>
             CONTACTO
           </Link>
         </nav>
 
-        <div className="overlay__social">
-          <a className="overlay__socialLink" href="#" target="_blank" rel="noreferrer">
-            Instagram (pendiente)
+        <div className={styles.socials}>
+          <a
+            className={styles.socialLink}
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Instagram"
+          >
+            <img src="/instagram-bn.png" alt="Instagram" />
           </a>
-          <a className="overlay__socialLink" href="#" target="_blank" rel="noreferrer">
-            Facebook (pendiente)
+          <a
+            className={styles.socialLink}
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Facebook"
+          >
+            <img src="/facebook-bn.png" alt="Facebook" />
           </a>
         </div>
       </div>
