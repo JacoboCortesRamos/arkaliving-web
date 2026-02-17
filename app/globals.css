@@ -8,14 +8,20 @@
   --background: #ffffff;
   --foreground: #171717;
   --header-h: 72px;
+  --container-px: 16px;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
   margin: 0;
 }
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+}
+
 
 /* =====================================================
    FLOATING CTA
@@ -24,9 +30,14 @@ body {
 .ctaFloat {
   position: fixed;
   right: 24px;
-  bottom: 24px;
+  bottom: 20px;
   z-index: 9999;
-  transition: all 320ms ease;
+
+  /* NO animar bottom para evitar "rebote" */
+  transition:
+    transform 220ms ease,
+    opacity 220ms ease;
+  will-change: transform;
 }
 
 .ctaFloat__btn {
@@ -40,16 +51,25 @@ body {
   color: #111;
   border: 1px solid #e8e8e8;
 
-  transition: all 300ms ease;
+  transition:
+    transform 180ms ease,
+    background 180ms ease,
+    border-color 180ms ease;
 }
 
-/* STAGE 9 — CTA GRANDE Y CENTRADO */
+.ctaFloat__btn:hover {
+  transform: translateY(-1px);
+}
+
+/* =====================================================
+   STAGE 9 — CTA GRANDE Y CENTRADO
+===================================================== */
 
 html[data-hero-stage="9"] .ctaFloat {
   left: 50%;
   right: auto;
   transform: translateX(-50%);
-  bottom: 14vh;
+  bottom: 200px;
 }
 
 html[data-hero-stage="9"] .ctaFloat__btn {
@@ -59,77 +79,65 @@ html[data-hero-stage="9"] .ctaFloat__btn {
   letter-spacing: 0.5px;
 }
 
-html[data-footer-in-view="true"] .ctaFloat {
-  bottom: clamp(180px, 20vh, 320px);
+/* =====================================================
+   FOOTER IN VIEW — SUBE CTA (PERO NUNCA EN STAGE 9)
+===================================================== */
+
+html[data-footer-in-view="true"]:not([data-hero-stage="9"]) .ctaFloat {
+  bottom: 80px; /* ajusta si lo quieres más arriba/abajo */
 }
 
 /* =====================================================
-   FOOTER
+   MOBILE
 ===================================================== */
 
-.footer {
-  padding: 28px 24px 32px; /* antes: 60px 24px */
-  border-top: 1px solid #eee;
-  background: white;
-  position: relative;
-  z-index: 10;
-}
-
-.footer__inner {
-  max-width: 980px;
-  margin: 0 auto;
-}
-
-.footer__line {
-  margin: 0;
-  opacity: 0.8;
-}
-
-#footer-sentinel {
-  height: 1px;
-  width: 100%;
-}
-
 @media (max-width: 640px) {
-  /* Contenedor del CTA: centrado real */
+  /* Base mobile: CTA centrado */
+  :root {
+    --container-px: 20px;
+  }
   .ctaFloat {
-    left: 50% !important;
-    right: auto !important;
-    transform: translateX(-50%) !important;
-    bottom: 18px !important;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    bottom: 18px;
 
-    width: auto !important;
-    max-width: calc(100vw - 24px) !important;
+    width: auto;
+    max-width: calc(100vw - 24px);
 
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
-  /* Si el CTA tiene wrapper interno */
   .ctaFloat > * {
-    width: auto !important;
-    max-width: 100% !important;
+    width: auto;
+    max-width: 100%;
   }
 
-  /* Botón/link: ajustado al texto */
   .ctaFloat a,
   .ctaFloat button {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
-    width: fit-content !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
+    width: fit-content;
+    max-width: 100%;
+    min-width: 0;
 
-    white-space: nowrap !important;
-    text-align: center !important;
+    white-space: nowrap;
+    text-align: center;
 
-    padding: 14px 22px !important; /* ajusta si lo quieres más compacto */
+    padding: 14px 22px;
   }
 
-  html[data-footer-in-view="true"] .ctaFloat {
-    bottom: 200px !important; /* ajusta 110–160 */
+  /* En mobile: cuando footer entra, solo subimos bottom (sin tocar transform) */
+  html[data-footer-in-view="true"]:not([data-hero-stage="9"]) .ctaFloat {
+    bottom: 72px; /* súbelo si el footer lo tapa */
+  }
+
+  /* En mobile: stage 9 manda sobre todo */
+  html[data-hero-stage="9"] .ctaFloat {
+    bottom: 200px;
   }
 }

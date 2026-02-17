@@ -50,14 +50,14 @@
 .link,
 .linkBtn {
   text-decoration: none;
-  color: inherit;
+  color: #a77e4d;
 
   padding: 8px 10px;
   line-height: 1.1;
   font-size: 14px;
   letter-spacing: 0.2px;
 
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid #c8a67a;
   background: transparent;
   text-align: left;
   cursor: pointer;

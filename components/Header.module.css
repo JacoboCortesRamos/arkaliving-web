@@ -1,58 +1,83 @@
-/* components/Header.module.css */
+/* =====================================================
+   HEADER WRAPPER
+   (no ocupa 100% - deja 10px a cada lado)
+===================================================== */
 
 .header {
   position: sticky;
-  top: 0;
+  top: 15px;
   z-index: 10002;
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+
+  /* 👇 deja 10px reales a cada lado */
+  width: calc(100% - 20px);
+  margin: 0 auto;
+
   transition: background 200ms ease;
 }
 
-.clear {
-  background: rgba(255, 255, 255, 0.88);
-}
-
-.solid {
-  background: rgba(255, 255, 255, 0.95);
-}
+/* =====================================================
+   BLOQUE BLANCO INTERNO (tarjeta)
+===================================================== */
 
 .inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   height: var(--header-h);
+
   max-width: var(--container-w);
   margin: 0 auto;
   padding: 0 var(--container-px);
+
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  border-radius: 14px;
 }
+
+.clear .inner {
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.solid .inner {
+  background: rgba(255, 255, 255, 0.95);
+}
+
+/* =====================================================
+   LOGO
+===================================================== */
 
 .logo {
   display: inline-flex;
   align-items: center;
   height: var(--header-h);
-  max-width: 180px;
 }
 
 .logoImg {
   display: block;
-  padding-left: 4vw;
-  height: 60px; /* antes 34px */
   width: auto;
-  max-height: 60px;
-  max-width: 220px; /* deja respirar al logo */
+  max-height: 70px;
+  max-width: 220px;
   object-fit: contain;
+  padding-bottom: 5px;
 }
 
-/* Toggle (2 líneas -> X) por encima del overlay */
+/* =====================================================
+   BURGER (fuera del header)
+===================================================== */
+
 .burger {
   position: fixed;
-  top: 10px;
-  right: 3vw; /* pegado al padding del layout */
+
+  /* 👇 alineado con el mismo margen exterior del header */
+  top: 25px;
+  right: 20px;
+
   z-index: 10010;
 
-  width: 52px; /* un poco más ancho para que respire */
+  width: 52px;
   height: 52px;
 
   border: 0;
@@ -72,7 +97,7 @@
   height: 2px;
   min-height: 2px;
 
-  background: #111;
+  background: #a77e4d;
   border-radius: 2px;
 
   opacity: 1;

@@ -33,7 +33,6 @@ export function Header() {
   const goHomeStage0 = (e?: React.MouseEvent) => {
     e?.preventDefault();
 
-    // cerrar overlays/modales si estaban abiertos
     setMenuOpen(false);
     setOwnerOpen(false);
 
@@ -43,7 +42,6 @@ export function Header() {
 
     if (pathname !== "/") {
       router.push("/");
-      // esperamos a que monte el Hero
       window.setTimeout(fire, 80);
     } else {
       fire();
@@ -52,8 +50,11 @@ export function Header() {
 
   return (
     <>
+      {/* HEADER (solo logo y fondo) */}
       <header
-        className={`${styles.header} ${scrolled ? styles.solid : styles.clear}`}
+        className={`${styles.header} ${
+          scrolled ? styles.solid : styles.clear
+        }`}
       >
         <div className={styles.inner}>
           <Link
@@ -63,7 +64,7 @@ export function Header() {
             onClick={goHomeStage0}
           >
             <img
-              src="/logo-negro.png"
+              src="/logo-crema.png"
               alt="ARKA Living"
               className={styles.logoImg}
             />
@@ -71,6 +72,7 @@ export function Header() {
         </div>
       </header>
 
+      {/* BURGER FUERA DEL HEADER */}
       <button
         className={styles.burger}
         onClick={() => setMenuOpen((v) => !v)}
@@ -78,13 +80,18 @@ export function Header() {
         aria-expanded={menuOpen}
       >
         <span
-          className={`${styles.line} ${menuOpen ? styles.openTop : styles.top}`}
+          className={`${styles.line} ${
+            menuOpen ? styles.openTop : styles.top
+          }`}
         />
         <span
-          className={`${styles.line} ${menuOpen ? styles.openBot : styles.bot}`}
+          className={`${styles.line} ${
+            menuOpen ? styles.openBot : styles.bot
+          }`}
         />
       </button>
 
+      {/* OVERLAY MENU */}
       <MenuOverlay
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
@@ -94,7 +101,11 @@ export function Header() {
         }}
       />
 
-      <OwnerLoginModal open={ownerOpen} onClose={() => setOwnerOpen(false)} />
+      {/* OWNER MODAL */}
+      <OwnerLoginModal
+        open={ownerOpen}
+        onClose={() => setOwnerOpen(false)}
+      />
     </>
   );
 }
