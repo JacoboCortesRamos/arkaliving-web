@@ -1,5 +1,5 @@
 import { Hero } from "@/components/home/Hero";
-import { FloatingCTA } from "@/components/FloatingCTA";
+import { FloatingCTA } from "@/components/home/FloatingCTA";
 
 export default function Page() {
   return (

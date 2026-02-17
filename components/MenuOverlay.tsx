@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Instagram, MessageCircle } from "lucide-react";
 import styles from "./MenuOverlay.module.css";
 
 export function MenuOverlay({
@@ -17,14 +18,28 @@ export function MenuOverlay({
   return (
     <div className={styles.overlay} role="dialog" aria-modal="true">
       <div className={styles.backdrop} onClick={onClose} />
+
       <div className={styles.panel}>
         <nav className={styles.nav}>
-          <Link className={styles.link} href="/" onClick={onClose}>
+          <button
+            className={styles.linkBtn}
+            onClick={() => {
+              onClose();
+
+              // Ir al inicio
+              window.scrollTo({ top: 0, behavior: "instant" });
+
+              // Resetear stage
+              document.documentElement.setAttribute("data-hero-stage", "0");
+            }}
+          >
             HOME
-          </Link>
+          </button>
+
           <Link className={styles.link} href="/nosotros" onClick={onClose}>
             NOSOTROS
           </Link>
+
           <Link className={styles.link} href="/propiedades" onClick={onClose}>
             PROPIEDADES ARKA
           </Link>
@@ -40,29 +55,32 @@ export function MenuOverlay({
           >
             POSTULA TU PROPIEDAD
           </Link>
+
           <Link className={styles.link} href="/contacto" onClick={onClose}>
             CONTACTO
           </Link>
         </nav>
 
+        {/* Social Icons */}
         <div className={styles.socials}>
           <a
-            className={styles.socialLink}
-            href="#"
+            href="https://instagram.com/arka_living.co"
             target="_blank"
             rel="noopener noreferrer"
+            className={styles.socialLink}
             aria-label="Instagram"
           >
-            <img src="/instagram-bn.png" alt="Instagram" />
+            <Instagram className={styles.socialIcon} />
           </a>
+
           <a
-            className={styles.socialLink}
-            href="#"
+            href="https://wa.me/573158254384?text=Hola%20ARKA%2C%20quiero%20recibir%20informaci%C3%B3n."
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Facebook"
+            className={styles.socialLink}
+            aria-label="WhatsApp"
           >
-            <img src="/facebook-bn.png" alt="Facebook" />
+            <MessageCircle className={styles.socialIcon} />
           </a>
         </div>
       </div>

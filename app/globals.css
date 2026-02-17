@@ -7,8 +7,19 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
   --header-h: 72px;
   --container-px: 16px;
+
+  /* ✅ tu decisión */
+  --edge-space: 20px;
+  --header-top: 15px;
+
+  --arka-white: #fdfcf9;
+  --arka-brown-dark: #4a3424;
+  --arka-brown-mid: #a77e4d;
+  --arka-brown-light: #c8a67a;
+  --arka-text-soft: #6f5b4b;
 }
 
 body {
@@ -18,73 +29,46 @@ body {
   margin: 0;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   font-family: var(--font-display);
 }
 
-
 /* =====================================================
-   FLOATING CTA
+   FLOATING CTA (solo lógica por estado, vía variables)
 ===================================================== */
 
-.ctaFloat {
-  position: fixed;
-  right: 24px;
-  bottom: 20px;
-  z-index: 9999;
+/* defaults (opcional) */
+[data-cta="float"] {
+  --cta-left: auto;
+  --cta-right: var(--edge-space);
+  --cta-bottom: var(--edge-space);
+  --cta-transform: none;
 
-  /* NO animar bottom para evitar "rebote" */
-  transition:
-    transform 220ms ease,
-    opacity 220ms ease;
-  will-change: transform;
+  --cta-pad-y: 12px;
+  --cta-pad-x: 14px;
+  --cta-font: 14px;
 }
 
-.ctaFloat__btn {
-  display: inline-block;
-  padding: 14px 18px;
-  border-radius: 999px;
-  text-decoration: none;
-  font-weight: 600;
-
-  background: white;
-  color: #111;
-  border: 1px solid #e8e8e8;
-
-  transition:
-    transform 180ms ease,
-    background 180ms ease,
-    border-color 180ms ease;
+/* STAGE 9 — CTA grande y centrado */
+html[data-hero-stage="9"] [data-cta="float"] {
+  --cta-left: 50%;
+  --cta-right: auto;
+  --cta-transform: translateX(-50%);
+  --cta-bottom: 220px;
+  /* ✅ NO tocar --cta-pad-* ni --cta-font */
 }
 
-.ctaFloat__btn:hover {
-  transform: translateY(-1px);
+/* FOOTER IN VIEW — evita choque con footer (pero NUNCA en stage 9) */
+html[data-footer-in-view="true"]:not([data-hero-stage="9"]) [data-cta="float"] {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
 }
 
-/* =====================================================
-   STAGE 9 — CTA GRANDE Y CENTRADO
-===================================================== */
-
-html[data-hero-stage="9"] .ctaFloat {
-  left: 50%;
-  right: auto;
-  transform: translateX(-50%);
-  bottom: 200px;
-}
-
-html[data-hero-stage="9"] .ctaFloat__btn {
-  padding: 20px 28px;
-  font-size: 16px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-}
-
-/* =====================================================
-   FOOTER IN VIEW — SUBE CTA (PERO NUNCA EN STAGE 9)
-===================================================== */
-
-html[data-footer-in-view="true"]:not([data-hero-stage="9"]) .ctaFloat {
-  bottom: 80px; /* ajusta si lo quieres más arriba/abajo */
+html[data-footer-in-view="true"]:not([data-hero-stage="9"]) [data-cta-btn] {
+  animation: none;
 }
 
 /* =====================================================
@@ -92,52 +76,35 @@ html[data-footer-in-view="true"]:not([data-hero-stage="9"]) .ctaFloat {
 ===================================================== */
 
 @media (max-width: 640px) {
-  /* Base mobile: CTA centrado */
   :root {
     --container-px: 20px;
   }
-  .ctaFloat {
+
+  /* Base mobile: CTA centrado */
+  [data-cta="float"] {
     left: 50%;
     right: auto;
     transform: translateX(-50%);
     bottom: 18px;
 
     width: auto;
-    max-width: calc(100vw - 24px);
+    max-width: calc(100vw - (var(--edge-space) * 2));
 
     display: flex;
     justify-content: center;
     align-items: center;
   }
 
-  .ctaFloat > * {
-    width: auto;
-    max-width: 100%;
-  }
-
-  .ctaFloat a,
-  .ctaFloat button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    width: fit-content;
-    max-width: 100%;
-    min-width: 0;
-
-    white-space: nowrap;
-    text-align: center;
-
-    padding: 14px 22px;
-  }
-
-  /* En mobile: cuando footer entra, solo subimos bottom (sin tocar transform) */
-  html[data-footer-in-view="true"]:not([data-hero-stage="9"]) .ctaFloat {
-    bottom: 72px; /* súbelo si el footer lo tapa */
+  /* En mobile: si footer entra, lo ocultamos igual */
+  html[data-footer-in-view="true"]:not([data-hero-stage="9"])
+    [data-cta="float"] {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px);
   }
 
   /* En mobile: stage 9 manda sobre todo */
-  html[data-hero-stage="9"] .ctaFloat {
+  html[data-hero-stage="9"] [data-cta="float"] {
     bottom: 200px;
   }
 }

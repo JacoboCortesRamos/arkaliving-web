@@ -1,166 +1,134 @@
-/* components/Footer.module.css */
-
 .footer {
-  /* 👇 deja 10px reales a cada lado (igual que el header) */
-  width: calc(100% - 20px);
-  margin: 0 auto 15px;
+  width: calc(100% - (var(--edge-space) * 2));
+  margin-left: var(--edge-space);
+  margin-right: var(--edge-space);
+  margin-bottom: var(--header-top);
 
-  /* Degradé cálido premium (un poco más oscuro) */
-  background:
-    radial-gradient(
-      circle at 18% 20%,
-      rgba(175, 135, 90, 0.22),
-      transparent 62%
-    ),
-    radial-gradient(
-      circle at 82% 85%,
-      rgba(150, 110, 70, 0.18),
-      transparent 64%
-    ),
-    linear-gradient(180deg, #b88a5a 0%, #a77747 55%, #8f6238 100%);
+  background: radial-gradient(
+    60% 120% at 50% 100%,
+    var(--arka-brown-dark) 0%,
+    var(--arka-brown-mid) 55%,
+    var(--arka-brown-light) 100%
+  );
 
   position: relative;
   z-index: 20;
 
-  /* opcional pero recomendado: se ve más “card” */
   border-radius: 16px;
   overflow: hidden;
 }
 
 .inner {
-  max-width: 1100px;
-  margin: 0 auto;
-
-  /* compacto SIEMPRE (mobile y desktop) */
-  padding: 10px 16px 10px;
+  width: 100%;
+  padding: 10px 15px 10px;
 
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  /* controla la separación entre líneas */
-  gap: 4px;
-
+  gap: 10px;
   text-align: center;
 }
 
-.line {
+/* Línea 1 */
+.linePrimary {
   margin: 0;
   font-size: 14px;
-  line-height: 1.1;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.iconRow {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  gap: 10px;
-}
-
-/* Texto "¡Síguenos!" (no reutilizamos .line para no afectar spacing) */
-.followText {
-  font-size: 13px;
   line-height: 1;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.92);
+  color: var(--arka-white);
+  opacity: 0.95;
+  padding-bottom: 8px;
 }
 
-/* icono más pequeño para que no "abra" el layout */
-.iconLink {
-  width: 34px;
-  height: 34px;
-  border-radius: 999px;
-
-  display: inline-flex;
-  align-items: center;
+/* Línea 2 */
+.socialRow {
+  display: flex;
+  gap: 48px; /* buen espacio entre IG y Wapp */
+  align-items: flex-start;
   justify-content: center;
-
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  background: rgba(255, 255, 255, 0.1);
-
-  transition:
-    transform 120ms ease,
-    background 120ms ease,
-    border-color 120ms ease;
 }
 
-.iconLink:hover {
-  transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.34);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.icon {
-  width: 16px;
-  height: 16px;
-  opacity: 0.92;
-  color: rgba(255, 255, 255, 0.82);
-}
-
-.whatsRow {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  /* reduce separación entre texto e ícono */
-  gap: 8px;
-}
-
-.muted {
-  opacity: 0.78;
-}
-
-.bottomRow {
-  /* elimina el "aire" extra */
-  margin-top: 2px;
-
+.socialItem {
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  gap: 4px;
 }
 
-.bottomLinks {
+.socialLink {
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  gap: 10px;
-  flex-wrap: wrap;
+  width: fit-content;
+  height: fit-content;
+
+  color: var(--arka-white);
+  opacity: 0.95;
+
+  transition:
+    transform 200ms ease,
+    opacity 200ms ease;
 }
 
-.link {
+.socialLink:hover {
+  transform: translateY(-2px);
+  opacity: 1;
+}
+
+.socialIcon {
+  width: 26px;
+  height: 26px;
+  stroke-width: 1.5;
+}
+
+/* Texto debajo de iconos */
+.socialLabel {
+  font-size: 12px;
+  color: var(--arka-white);
+  line-height: 1.15;
+  opacity: 0.9;
+  padding-top: 5px;
+}
+
+/* Línea 3 */
+.bottomRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.bottomLink {
   text-decoration: none;
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--arka-white);
+  opacity: 0.9;
 }
 
-.link:hover {
-  color: rgb(255, 255, 255);
+.bottomLink:hover {
   text-decoration: underline;
+  opacity: 1;
 }
 
 .separator {
-  opacity: 0.55;
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.75);
+  color: var(--arka-white);
+  opacity: 0.7;
 }
 
-@media (min-width: 640px) {
-  .inner {
-    padding: 12px 20px 12px;
-    gap: 5px;
-  }
+.copyright {
+  font-size: 12px;
+  color: var(--arka-white);
+  opacity: 0.8;
+}
 
-  .line {
-    font-size: 13px;
-  }
-
+@media (max-width: 640px) {
   .bottomRow {
-    flex-direction: row;
-    gap: 10px;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .separator {
+    display: none;
   }
 }

@@ -25,54 +25,53 @@
 
   height: 100%;
   width: min(420px, 92vw);
-  background: white;
+  background: var(--arka-white);
 
-  /* respeta el header */
   padding: calc(var(--header-h) + 12px) 24px 24px;
 
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 4px;
 }
 
-/* ✅ NAV: su ancho será el del item más largo */
+/* NAV */
 .nav {
   display: flex;
   flex-direction: column;
   gap: 10px;
   align-items: flex-start;
 
-  width: max-content; /* 🔥 clave */
+  width: max-content;
   max-width: 100%;
 }
 
-/* ✅ LINKS: todos llenan el ancho del nav */
+/* LINKS */
 .link,
 .linkBtn {
   text-decoration: none;
-  color: #a77e4d;
+  color: var(--arka-brown-dark);
 
   padding: 8px 10px;
   line-height: 1.1;
   font-size: 14px;
   letter-spacing: 0.2px;
 
-  border: 1px solid #c8a67a;
+  border: 1px solid var(--arka-brown-light);
   background: transparent;
   text-align: left;
   cursor: pointer;
 
-  width: 100%; /* 🔥 todos mismo ancho */
+  width: 100%;
   max-width: 100%;
 
-  white-space: nowrap; /* 🔥 evita saltos */
+  white-space: nowrap;
 }
 
-/* Social icons */
+/* SOCIALS */
 .socials {
-  margin-top: 18px;
+  margin-top: 0px; /* antes 12px */
   display: flex;
-  gap: 16px;
+  gap: 3px; /* antes 16px */
   align-items: center;
 }
 
@@ -80,30 +79,33 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-}
 
-.socialLink img {
-  display: block;
-  width: 22px;
-  height: 22px;
-  max-width: 22px;
-  max-height: 22px;
-  object-fit: contain;
-  opacity: 0.8;
+  width: 46px;
+  height: 46px;
+
+  color: var(--arka-brown-mid);
+  opacity: 0.9;
+
   transition:
     opacity 200ms ease,
     transform 200ms ease;
 }
 
-.socialLink:hover img {
+.socialLink:hover {
   opacity: 1;
   transform: translateY(-2px);
 }
 
-/* ✅ MOBILE: panel más angosto y ajustado a contenido */
+.socialIcon {
+  width: 26px;
+  height: 26px;
+  stroke-width: 1.8;
+}
+
+/* MOBILE */
 @media (max-width: 640px) {
   .panel {
-    width: max-content; /* se ajusta a los textos */
-    max-width: calc(100vw - 28px); /* deja respiración lateral */
+    width: max-content;
+    max-width: calc(100vw - 28px);
   }
 }

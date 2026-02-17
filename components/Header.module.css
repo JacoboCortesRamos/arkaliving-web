@@ -1,16 +1,15 @@
 /* =====================================================
    HEADER WRAPPER
-   (no ocupa 100% - deja 10px a cada lado)
 ===================================================== */
 
 .header {
   position: sticky;
-  top: 15px;
+  top: var(--header-top);
   z-index: 10002;
 
-  /* 👇 deja 10px reales a cada lado */
-  width: calc(100% - 20px);
-  margin: 0 auto;
+  width: calc(100% - (var(--edge-space) * 2));
+  margin-left: var(--edge-space);
+  margin-right: var(--edge-space);
 
   transition: background 200ms ease;
 }
@@ -26,8 +25,8 @@
 
   height: var(--header-h);
 
-  max-width: var(--container-w);
-  margin: 0 auto;
+  /* ✅ sin max-width: full responsive real */
+  width: 100%;
   padding: 0 var(--container-px);
 
   background: rgba(255, 255, 255, 0.88);
@@ -71,9 +70,9 @@
 .burger {
   position: fixed;
 
-  /* 👇 alineado con el mismo margen exterior del header */
-  top: 25px;
-  right: 20px;
+  /* ✅ alineado con edge-space */
+  top: calc(var(--header-top) + 10px);
+  right: calc(var(--edge-space) + 10px);
 
   z-index: 10010;
 
@@ -97,7 +96,7 @@
   height: 2px;
   min-height: 2px;
 
-  background: #a77e4d;
+  background: var(--arka-brown-mid);
   border-radius: 2px;
 
   opacity: 1;
