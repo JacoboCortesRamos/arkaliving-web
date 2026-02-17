@@ -1,36 +1,142 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ARKA Living — Web
 
-## Getting Started
+Sitio web oficial de **ARKA Living**, gestora de rentas cortas en Colombia (Santa Marta y Bogotá).
 
-First, run the development server:
+Enfoque del proyecto:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- SEO fuerte
+- Performance
+- Seguridad
+- Arquitectura limpia y escalable
+- Preparado para portal de propietarios y pagos
+
+---
+
+## Stack
+
+**Frontend**
+
+- Next.js (App Router)
+- React
+- CSS Modules
+- lucide-react (iconografía)
+
+**Backend (próxima fase)**
+
+- Node.js + NestJS
+- MongoDB Atlas
+- API documentada (Swagger) y versionada
+
+**Infra (sugerida)**
+
+- Vercel (frontend)
+- Cloudflare (DNS + seguridad)
+- Railway/Render (backend)
+- Sentry + Uptime + Analytics (GA4/GTM)
+
+---
+
+## Estructura (referencial)
+
+```
+app/
+  (site)/
+    layout.tsx
+    page.tsx
+
+components/
+  home/
+    Hero.tsx
+    FloatingCTA.tsx
+    FloatingCTA.module.css
+    MenuOverlay.tsx
+    MenuOverlay.module.css
+    Footer.tsx
+    Footer.module.css
+  layout/
+  ui/
+
+public/
+styles/
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Sistema de UI
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Tokens de color (ARKA):**
 
-## Learn More
+- `--arka-white`
+- `--arka-brown-dark`
+- `--arka-brown-mid`
+- `--arka-brown-light`
 
-To learn more about Next.js, take a look at the following resources:
+**Layout**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Header sticky (card blur) alineado con `--edge-space`
+- Footer con degradé radial sólido
+- CTA flotante controlado por `data-hero-stage`
+- Estados globales controlados con `data-*` en `<html>`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## Funcionalidades actuales (MVP)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Hero con sistema de _stages_ (scroll/pinned)
+- CTA flotante con estilos modulares + lógica global por stage
+- Menú lateral (overlay) con iconos consistentes
+- Footer estructurado con redes y copy
+- Enlaces externos abren en nueva pestaña con `rel="noopener noreferrer"`
+- Click en **HOME** desde menú resetea el Hero al stage 0 (scroll top + `data-hero-stage="0"`)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Enlaces oficiales
+
+- Instagram: https://instagram.com/arka_living.co
+- WhatsApp: https://wa.me/573158254384
+
+---
+
+## Desarrollo local
+
+```bash
+npm install
+npm run dev
+```
+
+Abrir:
+
+- http://localhost:3000
+
+---
+
+## Flujo Git recomendado
+
+Crear rama de feature:
+
+```bash
+git checkout -b feature/nombre-corto
+```
+
+Merge a `main`:
+
+```bash
+git checkout main
+git pull origin main
+git merge feature/nombre-corto
+git push origin main
+```
+
+---
+
+## Próximos pasos
+
+- Catálogo + páginas por inmueble (SSR/ISR, metadata, OG, JSON-LD)
+- Portal de propietarios (RBAC + autorización por ownerId)
+- Calendario (iCal sync MVP + reglas anti-overbooking)
+- Pagos (payment_intent + webhooks idempotentes)
+
+---
+
+© 2026 — Sitio web creado por **JCR-Code**
