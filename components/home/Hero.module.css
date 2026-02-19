@@ -238,3 +238,9 @@ html[data-hero-stage="9"] .scrollIndicator,
 html[data-hero-stage="9"] .scrollCircle {
   display: none;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .scrollArrow {
+    animation: none !important;
+  }
+}
