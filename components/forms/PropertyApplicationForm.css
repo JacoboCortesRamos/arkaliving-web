@@ -1,0 +1,291 @@
+/* PropertyApplicationForm.css */
+/* =====================================================
+   FULL HEIGHT FORM (evita que el Footer aparezca sin scroll)
+===================================================== */
+
+.arkaFormPage {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--arka-white);
+}
+
+.arkaForm {
+  flex: 1;
+}
+
+/* 1) Fix duro: evita scroll horizontal en móviles */
+html,
+body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+@supports not (overflow-x: clip) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+}
+
+/* 2) Box sizing global local al form */
+.arkaForm,
+.arkaForm * {
+  box-sizing: border-box;
+}
+
+.arkaForm {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.arkaFormInner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* ✅ Intro spacing (req #1) */
+.formIntro {
+  margin-bottom: 22px;
+}
+
+.formTitle {
+  color: var(--arka-brown-dark);
+  margin: 0 0 8px;
+}
+
+.formSubtitle {
+  color: var(--arka-text-soft);
+  margin: 0;
+}
+
+.formSectionTitle {
+  margin: 26px 0 10px;
+  color: var(--arka-brown-dark);
+}
+
+.arkaForm label {
+  display: block;
+  margin: 14px 0 6px;
+  color: var(--arka-brown-dark);
+  font-weight: 600;
+}
+
+.arkaForm input,
+.arkaForm select,
+.arkaForm textarea {
+  width: 100%;
+  max-width: 100%;
+  padding: 12px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(74, 52, 36, 0.25);
+  background: var(--arka-white);
+  color: var(--arka-brown-dark);
+  outline: none;
+}
+
+.arkaForm textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.arkaFormActions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.arkaForm button {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(74, 52, 36, 0.25);
+  background: var(--arka-white);
+  color: var(--arka-brown-dark);
+  cursor: pointer;
+  font-weight: 700;
+  transition:
+    transform 120ms ease,
+    opacity 120ms ease;
+}
+
+.arkaForm button:hover {
+  transform: translateY(-1px);
+}
+
+.arkaForm button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Teléfono: select + input en grid */
+.phoneRow {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 10px;
+}
+
+@media (max-width: 520px) {
+  .phoneRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Fotos: previews */
+.photoHelp {
+  color: var(--arka-text-soft);
+}
+
+.photoGrid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+@media (max-width: 520px) {
+  .photoGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.photoCard {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(74, 52, 36, 0.2);
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.photoImg {
+  display: block;
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
+}
+
+.photoRemove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+
+  border: 1px solid rgba(74, 52, 36, 0.25);
+  background: rgba(253, 252, 249, 0.95);
+  cursor: pointer;
+
+  /* no dependemos del glifo */
+  padding: 0;
+  margin: 0;
+
+  display: grid;
+  place-items: center;
+
+  /* ocultar el “×” del HTML sin romper accesibilidad */
+  color: transparent;
+  font-size: 0;
+  line-height: 0;
+}
+
+.photoRemove::before,
+.photoRemove::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 2px;
+  background: var(--arka-brown-dark);
+  border-radius: 999px;
+  left: 50%;
+  top: 50%;
+  transform-origin: center;
+}
+
+.photoRemove::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.photoRemove::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* Success modal */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10050;
+  background: rgba(0, 0, 0, 0.55);
+  display: grid;
+  place-items: center;
+  padding: 18px;
+}
+
+.modalCard {
+  width: min(560px, 100%);
+  background: var(--arka-white);
+  border-radius: 18px;
+  border: 1px solid rgba(74, 52, 36, 0.18);
+  padding: 18px 18px 16px;
+  position: relative;
+}
+
+.modalClose {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+
+  border: 1px solid rgba(74, 52, 36, 0.22);
+  background: rgba(253, 252, 249, 0.9);
+  cursor: pointer;
+
+  padding: 0;
+  margin: 0;
+
+  display: grid;
+  place-items: center;
+
+  /* ocultamos el carácter × */
+  color: transparent;
+  font-size: 0;
+  line-height: 0;
+}
+
+/* X geométrica centrada */
+.modalClose::before,
+.modalClose::after {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 2px;
+  background: var(--arka-brown-dark);
+  border-radius: 999px;
+  left: 50%;
+  top: 50%;
+  transform-origin: center;
+}
+
+.modalClose::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.modalClose::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.modalTitle {
+  margin: 0 0 10px;
+  color: var(--arka-brown-dark);
+}
+
+.modalText {
+  margin: 0;
+  color: var(--arka-text-soft);
+  line-height: 1.4;
+}

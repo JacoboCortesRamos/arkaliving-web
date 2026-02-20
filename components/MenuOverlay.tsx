@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Instagram, MessageCircle } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 import styles from "./MenuOverlay.module.css";
 
 export function MenuOverlay({
@@ -13,7 +14,25 @@ export function MenuOverlay({
   onClose: () => void;
   onOpenOwner: () => void;
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
+
   if (!open) return null;
+
+  const goHomeStage0 = () => {
+    onClose();
+
+    const fire = () => {
+      window.dispatchEvent(new Event("arka:hero:stage0"));
+    };
+
+    if (pathname !== "/") {
+      router.push("/");
+      window.setTimeout(fire, 80);
+    } else {
+      fire();
+    }
+  };
 
   return (
     <div className={styles.overlay} role="dialog" aria-modal="true">
@@ -21,18 +40,7 @@ export function MenuOverlay({
 
       <div className={styles.panel}>
         <nav className={styles.nav}>
-          <button
-            className={styles.linkBtn}
-            onClick={() => {
-              onClose();
-
-              // Ir al inicio
-              window.scrollTo({ top: 0, behavior: "instant" });
-
-              // Resetear stage
-              document.documentElement.setAttribute("data-hero-stage", "0");
-            }}
-          >
+          <button className={styles.linkBtn} onClick={goHomeStage0}>
             HOME
           </button>
 
@@ -61,7 +69,6 @@ export function MenuOverlay({
           </Link>
         </nav>
 
-        {/* Social Icons */}
         <div className={styles.socials}>
           <a
             href="https://instagram.com/arka_living.co"

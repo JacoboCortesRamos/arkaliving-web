@@ -26,23 +26,32 @@ async function fileToBase64DataUri(file: File) {
   return `data:${file.type};base64,${b64}`;
 }
 
+function formatPhoneFolder(phoneE164: string) {
+  // Esperado: +573158254384 -> 57-3158254384  (sin +)
+  const s = String(phoneE164 || "").trim();
+  const m = s.match(/^(\+?)(\d{1,4})(\d+)$/);
+  if (!m) return "unknown-phone";
+  const cc = m[2]; // sin +
+  const rest = m[3];
+  return `${cc}-${rest}`;
+}
+
 async function uploadToCloudinary(
   file: File,
-  opts: { folder: string; publicId?: string },
+  opts: { folder: string; publicId: string; overwrite: boolean },
 ) {
   const cloudName = requireEnv("CLOUDINARY_CLOUD_NAME");
   const apiKey = requireEnv("CLOUDINARY_API_KEY");
   const apiSecret = requireEnv("CLOUDINARY_API_SECRET");
-
   const timestamp = Math.floor(Date.now() / 1000);
 
-  // Firma Cloudinary: params ordenados alfabéticamente + api_secret (SHA1)
-  // Firmamos: folder, public_id (si existe), timestamp
+  // params firmables (orden alfabético)
   const paramsToSign = [
     `folder=${opts.folder}`,
-    opts.publicId ? `public_id=${opts.publicId}` : null,
+    `overwrite=${opts.overwrite ? "true" : "false"}`,
+    `public_id=${opts.publicId}`,
     `timestamp=${timestamp}`,
-  ].filter(Boolean) as string[];
+  ];
 
   const signature = sha1(paramsToSign.join("&") + apiSecret);
 
@@ -54,7 +63,8 @@ async function uploadToCloudinary(
   body.set("timestamp", String(timestamp));
   body.set("signature", signature);
   body.set("folder", opts.folder);
-  if (opts.publicId) body.set("public_id", opts.publicId);
+  body.set("public_id", opts.publicId);
+  body.set("overwrite", opts.overwrite ? "true" : "false");
 
   const res = await fetch(
     `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
@@ -62,9 +72,8 @@ async function uploadToCloudinary(
   );
 
   const out = await res.json();
-  if (!res.ok) {
+  if (!res.ok)
     throw new Error(out?.error?.message || "Cloudinary upload failed");
-  }
 
   return {
     secure_url: out.secure_url as string,
@@ -73,19 +82,19 @@ async function uploadToCloudinary(
 }
 
 export async function POST(req: Request) {
-  // =========================
-  // 1) Token verification
-  // =========================
   const secret = process.env.FORM_TOKEN_SECRET;
   if (!secret) return json("Falta FORM_TOKEN_SECRET en env.", 500);
 
   const form = await req.formData();
   const verifiedToken = String(form.get("verifiedToken") || "");
   const payloadStr = String(form.get("payload") || "");
+  const submissionId = String(form.get("submissionId") || "");
 
   if (!verifiedToken) return json("Falta verifiedToken.");
   if (!payloadStr) return json("Falta payload.");
+  if (!submissionId) return json("Falta submissionId.");
 
+  // 1) verify token
   const [b64, sig] = verifiedToken.split(".");
   if (!b64 || !sig) return json("verifiedToken inválido.");
 
@@ -100,12 +109,10 @@ export async function POST(req: Request) {
 
   const payload = JSON.parse(payloadStr);
 
-  // =========================
-  // 2) Photos validation
-  // =========================
+  // 2) photos validation (✅ min 2 / max 5)
   const photos = form.getAll("photos") as File[];
-  const MIN_FILES = 3;
-  const MAX_FILES = 10;
+  const MIN_FILES = 2;
+  const MAX_FILES = 5;
   const MAX_MB = 10;
 
   if (!photos?.length || photos.length < MIN_FILES) {
@@ -123,45 +130,60 @@ export async function POST(req: Request) {
       return json(`Cada foto debe pesar máximo ${MAX_MB}MB.`);
   }
 
-  // =========================
-  // 3) Upload to Cloudinary
-  // =========================
-  const submissionId = crypto.randomBytes(10).toString("hex"); // único para TODO el submit
-  let photoUrls: string[] = [];
+  // DEV toggle (solo se respeta en dev)
+  const disableIdempotency =
+    process.env.NODE_ENV !== "production" &&
+    process.env.POSTULA_DISABLE_IDEMPOTENCY === "1";
 
+  // 3) upload cloudinary (✅ folder YYYY/MM/+57-315...)
+  let photoUrls: string[] = [];
   try {
-    // valida env
     requireEnv("CLOUDINARY_CLOUD_NAME");
     requireEnv("CLOUDINARY_API_KEY");
     requireEnv("CLOUDINARY_API_SECRET");
 
     const baseFolder = process.env.CLOUDINARY_FOLDER || "arka/postula";
-    const email = String(payload?.owner?.email || "unknown").toLowerCase();
-    const emailHash = sha1(email).slice(0, 10);
-    const ym = new Date().toISOString().slice(0, 7); // YYYY-MM
-    const folder = `${baseFolder}/${ym}/${emailHash}`;
+    const phoneE164 = String(payload?.owner?.phone || "");
+    const phoneFolder = formatPhoneFolder(phoneE164);
+
+    const now = new Date();
+    const yyyy = String(now.getFullYear());
+    const mm = String(now.getMonth() + 1).padStart(2, "0");
+
+    const folder = `${baseFolder}/${yyyy}/${mm}/${phoneFolder}`;
+
+    const requestId = disableIdempotency
+      ? crypto.randomBytes(6).toString("hex")
+      : "";
 
     const uploads = await Promise.all(
       photos.map((f, idx) =>
         uploadToCloudinary(f, {
           folder,
-          publicId: `${submissionId}_photo_${idx + 1}`,
+          publicId: disableIdempotency
+            ? `${submissionId}_${requestId}_photo_${idx + 1}`
+            : `${submissionId}_photo_${idx + 1}`,
+          overwrite: disableIdempotency ? true : false,
         }),
       ),
     );
 
     photoUrls = uploads.map((u) => u.secure_url);
   } catch (e: any) {
-    console.error("Cloudinary error:", e?.message || e);
+    const msg = String(e?.message || e);
+    console.error("Cloudinary error:", msg);
+
+    if (process.env.NODE_ENV !== "production") {
+      return json(`Cloudinary: ${msg}`, 500);
+    }
+
     return json(
       "No se pudieron subir las fotos. Intenta de nuevo en unos minutos.",
       500,
     );
   }
 
-  // =========================
-  // 4) Email sending (Resend)
-  // =========================
+  // 4) Resend emails
   const resendKey = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM;
   const internalTo = process.env.POSTULA_INTERNAL_TO;
@@ -173,55 +195,40 @@ export async function POST(req: Request) {
 ARKA - Nueva postulación recibida
 ID de postulación: ${submissionId}
 
-==============================
 PROPIETARIO
-==============================
 Nombre: ${payload.owner.fullName}
 Correo: ${payload.owner.email}
 Celular: ${payload.owner.phone}
 
-==============================
 UBICACIÓN
-==============================
 Ciudad: ${p.city}
 Localidad Bogotá: ${p.bogotaLocalidad || "N/A"}
 Sector SM: ${p.sectorGroup || "N/A"}
 Subsector SM: ${p.sectorSub || "N/A"}
 Descripción libre: ${p.sectorFreeText || "N/A"}
 
-==============================
-TIPO DE PROPIEDAD
-==============================
+TIPO
 Tipo: ${p.type}
 Habitaciones: ${p.rooms ?? "N/A"}
 Baños: ${p.baths ?? "N/A"}
-Otro tipo descripción: ${p.otherTypeText || "N/A"}
+Otro tipo: ${p.otherTypeText || "N/A"}
 
-==============================
 CONDICIONES
-==============================
 Amoblada: ${p.furnished}
-Propiedad Horizontal: ${p.isHOA}
-Permite rentas cortas: ${p.hoaAllowsSTR || "N/A"}
+PH: ${p.isHOA}
+Permite STR: ${p.hoaAllowsSTR || "N/A"}
 
-==============================
 OPERACIÓN
-==============================
-Estado actual: ${payload.ops.currentStatus}
-Disponible desde: ${payload.ops.startWhen}
+Estado: ${payload.ops.currentStatus}
+Inicio: ${payload.ops.startWhen}
 
-==============================
 EXPECTATIVA
-==============================
 ${payload.expectation.goal}
 
-==============================
 FOTOS (Cloudinary)
-==============================
 ${photoUrls.map((u, i) => `${i + 1}) ${u}`).join("\n")}
 `;
 
-  // correo interno
   if (resendKey && from && internalTo) {
     await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -240,7 +247,6 @@ ${photoUrls.map((u, i) => `${i + 1}) ${u}`).join("\n")}
     console.log("[DEV] Nueva postulación:", summary);
   }
 
-  // confirmación al propietario (sin links por privacidad)
   if (resendKey && from && ownerTo) {
     await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -259,8 +265,5 @@ ${photoUrls.map((u, i) => `${i + 1}) ${u}`).join("\n")}
     });
   }
 
-  // =========================
-  // 5) Response
-  // =========================
   return NextResponse.json({ ok: true, submissionId, photoUrls });
 }
