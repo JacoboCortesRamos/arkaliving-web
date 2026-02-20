@@ -14,19 +14,7 @@
   flex: 1;
 }
 
-/* 1) Fix duro: evita scroll horizontal en móviles */
-html,
-body {
-  max-width: 100%;
-  overflow-x: clip;
-}
-
-@supports not (overflow-x: clip) {
-  html,
-  body {
-    overflow-x: hidden;
-  }
-}
+/* ✅ FIX MOVIL (overflow-x) se movió a globals.css */
 
 /* 2) Box sizing global local al form */
 .arkaForm,
@@ -218,18 +206,31 @@ body {
   inset: 0;
   z-index: 10050;
   background: rgba(0, 0, 0, 0.55);
+
   display: grid;
   place-items: center;
   padding: 18px;
 }
 
 .modalCard {
-  width: min(560px, 100%);
+  width: min(520px, 92vw);
   background: var(--arka-white);
   border-radius: 18px;
   border: 1px solid rgba(74, 52, 36, 0.18);
+  box-shadow: 0 18px 70px rgba(0, 0, 0, 0.25);
   padding: 18px 18px 16px;
   position: relative;
+}
+
+.modalTitle {
+  margin: 0 0 8px;
+  color: var(--arka-brown-dark);
+}
+
+.modalText {
+  margin: 0;
+  color: var(--arka-text-soft);
+  line-height: 1.45;
 }
 
 .modalClose {
@@ -237,12 +238,12 @@ body {
   top: 10px;
   right: 10px;
 
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   border-radius: 999px;
 
-  border: 1px solid rgba(74, 52, 36, 0.22);
-  background: rgba(253, 252, 249, 0.9);
+  border: 1px solid rgba(74, 52, 36, 0.25);
+  background: rgba(253, 252, 249, 0.95);
   cursor: pointer;
 
   padding: 0;
@@ -251,18 +252,16 @@ body {
   display: grid;
   place-items: center;
 
-  /* ocultamos el carácter × */
   color: transparent;
   font-size: 0;
   line-height: 0;
 }
 
-/* X geométrica centrada */
 .modalClose::before,
 .modalClose::after {
   content: "";
   position: absolute;
-  width: 18px;
+  width: 16px;
   height: 2px;
   background: var(--arka-brown-dark);
   border-radius: 999px;
@@ -279,13 +278,14 @@ body {
   transform: translate(-50%, -50%) rotate(-45deg);
 }
 
-.modalTitle {
-  margin: 0 0 10px;
-  color: var(--arka-brown-dark);
+.errorText {
+  margin-top: 8px;
+  color: #b3261e;
+  font-weight: 600;
 }
 
-.modalText {
-  margin: 0;
+.helpText {
+  margin-top: 6px;
   color: var(--arka-text-soft);
-  line-height: 1.4;
+  font-size: 13px;
 }

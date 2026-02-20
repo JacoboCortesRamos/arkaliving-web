@@ -1,16 +1,27 @@
+/* =====================================================
+   INLINE FOOTER (normal) — intacto
+===================================================== */
+
 .footer {
   width: calc(100% - (var(--edge-space) * 2));
   margin-left: var(--edge-space);
   margin-right: var(--edge-space);
   margin-bottom: var(--header-top);
 
-  background: radial-gradient(
-    60% 120% at 50% 100%,
-    var(--arka-brown-dark) 0%,
-    var(--arka-brown-mid) 55%,
-    var(--arka-brown-light) 100%
-  );
+  background:
+    radial-gradient(
+      circle at 18% 20%,
+      rgba(175, 135, 90, 0.22),
+      transparent 62%
+    ),
+    radial-gradient(
+      circle at 82% 85%,
+      rgba(150, 110, 70, 0.18),
+      transparent 64%
+    ),
+    linear-gradient(180deg, #b88a5a 0%, #a77747 55%, #8f6238 100%);
 
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
   position: relative;
   z-index: 20;
 
@@ -29,7 +40,6 @@
   text-align: center;
 }
 
-/* Línea 1 */
 .linePrimary {
   margin: 0;
   font-size: 14px;
@@ -39,10 +49,9 @@
   padding-bottom: 8px;
 }
 
-/* Línea 2 */
 .socialRow {
   display: flex;
-  gap: 48px; /* buen espacio entre IG y Wapp */
+  gap: 48px;
   align-items: flex-start;
   justify-content: center;
 }
@@ -57,78 +66,269 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
-  width: fit-content;
-  height: fit-content;
-
   color: var(--arka-white);
   opacity: 0.95;
-
   transition:
     transform 200ms ease,
     opacity 200ms ease;
 }
 
 .socialLink:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
   opacity: 1;
 }
 
 .socialIcon {
-  width: 26px;
-  height: 26px;
-  stroke-width: 1.5;
+  width: 24px;
+  height: 24px;
 }
 
-/* Texto debajo de iconos */
 .socialLabel {
+  margin-top: 6px;
   font-size: 12px;
   color: var(--arka-white);
-  line-height: 1.15;
-  opacity: 0.9;
-  padding-top: 5px;
+  opacity: 0.92;
 }
 
-/* Línea 3 */
 .bottomRow {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
   flex-wrap: wrap;
   justify-content: center;
 }
 
 .bottomLink {
-  text-decoration: none;
   font-size: 12px;
   color: var(--arka-white);
   opacity: 0.9;
-}
-
-.bottomLink:hover {
   text-decoration: underline;
-  opacity: 1;
+  text-underline-offset: 2px;
 }
 
 .separator {
   font-size: 12px;
   color: var(--arka-white);
-  opacity: 0.7;
+  opacity: 0.75;
 }
 
 .copyright {
   font-size: 12px;
   color: var(--arka-white);
-  opacity: 0.8;
+  opacity: 0.75;
 }
 
-@media (max-width: 640px) {
-  .bottomRow {
-    flex-direction: column;
-    gap: 6px;
+/* =====================================================
+   TAKEOVER (Home - Stage 9)
+===================================================== */
+
+.takeover {
+  position: fixed;
+  inset: 0;
+  z-index: 10002; /* debajo del MenuOverlay (10003) */
+
+  background: linear-gradient(
+    180deg,
+    var(--arka-brown-mid) 0%,
+    var(--arka-brown-light) 65%,
+    var(--arka-brown-mid) 100%
+  );
+
+  transform: translateY(100%);
+  transition: transform 1200ms ease;
+
+  pointer-events: none;
+}
+
+.takeoverActive {
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Wrapper full screen */
+.takeoverInner {
+  height: 100dvh;
+  width: 100%;
+
+  padding-left: var(--edge-space);
+  padding-right: var(--edge-space);
+
+  /* poco padding-top para que el logo “crezca hacia arriba” */
+  padding-top: calc(8px + env(safe-area-inset-top, 0px));
+  padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Centro (Contenedor 1 + 2) */
+.takeoverMain {
+  flex: 1;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  /* controla separación entre C1 y C2 */
+  gap: 50px;
+}
+
+/* Contenedor 1: Logo + Slogan */
+.takeoverBrand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Logo grande, sin distorsión */
+.takeoverLogo {
+  width: auto;
+  height: auto;
+
+  max-width: min(820px, 88vw);
+  max-height: min(52vh, 460px);
+
+  object-fit: contain;
+  display: block;
+}
+
+/* Slogan pegado al logo (sin hacks frágiles) */
+.takeoverSlogan {
+  margin: -12px 0 0;
+  color: var(--arka-white);
+  font-size: clamp(16px, 2.1vw, 26px);
+  line-height: 1.15;
+  opacity: 0.95;
+}
+
+/* Contenedor 2: CTA + Operamos */
+.takeoverActions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  /* distancia CTA ↔ Operamos */
+  gap: 10px;
+}
+
+/* Solo wrapper, no estilo visual */
+.takeoverCTAWrapper {
+  margin: 0;
+  animation: none !important;
+}
+
+.takeoverCTA:hover {
+  transform: translateY(-1px);
+  background: rgba(253, 252, 249, 0.98);
+}
+
+.takeoverCTA:active {
+  transform: translateY(0);
+}
+
+/* Operamos */
+.takeoverOp {
+  margin: 0;
+  color: var(--arka-white);
+  font-size: clamp(14px, 1.6vw, 18px);
+  line-height: 1.2;
+  opacity: 0.95;
+}
+
+/* Contenedor 3: Iconos + Términos + Copyright (anclado abajo) */
+.takeoverLegal {
+  width: 100%;
+  margin-top: auto; /* ✅ siempre abajo */
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 2px; /* ✅ pegaditos */
+  padding-top: 0;
+}
+
+/* Iconos pegados a términos */
+.takeoverLegalSocial {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0;
+}
+
+.takeoverSocialLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--arka-white);
+  opacity: 0.95;
+  transition:
+    transform 160ms ease,
+    opacity 160ms ease;
+}
+
+.takeoverSocialLink:hover {
+  transform: translateY(-1px);
+  opacity: 1;
+}
+
+.takeoverSocialIcon {
+  width: 34px;
+  height: 34px;
+}
+
+.takeoverTerms {
+  font-size: 12px;
+  color: var(--arka-white);
+  opacity: 0.9;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.takeoverCopyright {
+  margin: 0;
+  font-size: 14px;
+  color: var(--arka-white);
+  opacity: 0.85;
+}
+
+/* Compact mode: laptops con poca altura */
+@media (max-height: 740px) {
+  .takeoverLogo {
+    max-width: min(680px, 78vw);
+    max-height: min(44vh, 360px);
   }
 
-  .separator {
-    display: none;
+  .takeoverSlogan {
+    margin-top: -10px;
+  }
+
+  .takeoverCTA {
+    padding: 11px 16px;
+    font-size: 11px;
+  }
+
+  .takeoverSocialIcon {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .takeoverLogo {
+    max-width: 86vw;
+    max-height: 38vh;
+  }
+
+  .takeoverSlogan {
+    margin-top: -10px;
   }
 }

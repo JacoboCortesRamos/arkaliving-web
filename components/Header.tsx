@@ -22,6 +22,7 @@ export function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // ✅ lock scroll solo cuando overlay o modal están abiertos
   useEffect(() => {
     const anyOpen = menuOpen || ownerOpen;
     document.body.style.overflow = anyOpen ? "hidden" : "";
@@ -29,6 +30,13 @@ export function Header() {
       document.body.style.overflow = "";
     };
   }, [menuOpen, ownerOpen]);
+
+  // ✅ señal global para cambiar color del burger / X
+  useEffect(() => {
+    const el = document.documentElement;
+    if (menuOpen) el.dataset.menuOpen = "true";
+    else delete el.dataset.menuOpen;
+  }, [menuOpen]);
 
   const goHomeStage0 = (e?: React.MouseEvent) => {
     e?.preventDefault();
@@ -50,11 +58,8 @@ export function Header() {
 
   return (
     <>
-      {/* HEADER (solo logo y fondo) */}
       <header
-        className={`${styles.header} ${
-          scrolled ? styles.solid : styles.clear
-        }`}
+        className={`${styles.header} ${scrolled ? styles.solid : styles.clear}`}
       >
         <div className={styles.inner}>
           <Link
@@ -72,7 +77,6 @@ export function Header() {
         </div>
       </header>
 
-      {/* BURGER FUERA DEL HEADER */}
       <button
         className={styles.burger}
         onClick={() => setMenuOpen((v) => !v)}
@@ -80,18 +84,13 @@ export function Header() {
         aria-expanded={menuOpen}
       >
         <span
-          className={`${styles.line} ${
-            menuOpen ? styles.openTop : styles.top
-          }`}
+          className={`${styles.line} ${menuOpen ? styles.openTop : styles.top}`}
         />
         <span
-          className={`${styles.line} ${
-            menuOpen ? styles.openBot : styles.bot
-          }`}
+          className={`${styles.line} ${menuOpen ? styles.openBot : styles.bot}`}
         />
       </button>
 
-      {/* OVERLAY MENU */}
       <MenuOverlay
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
@@ -101,11 +100,7 @@ export function Header() {
         }}
       />
 
-      {/* OWNER MODAL */}
-      <OwnerLoginModal
-        open={ownerOpen}
-        onClose={() => setOwnerOpen(false)}
-      />
+      <OwnerLoginModal open={ownerOpen} onClose={() => setOwnerOpen(false)} />
     </>
   );
 }
