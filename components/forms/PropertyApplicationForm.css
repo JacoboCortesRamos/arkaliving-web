@@ -48,6 +48,8 @@
 }
 
 .formSectionTitle {
+  font-size: large;
+  font-weight: 600;
   margin: 26px 0 10px;
   color: var(--arka-brown-dark);
 }

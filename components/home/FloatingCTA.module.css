@@ -7,7 +7,7 @@
   bottom: var(--cta-bottom, var(--edge-space));
   transform: var(--cta-transform, none);
 
-  z-index: 10002;
+  z-index: 10001;
 
   display: flex;
   align-items: center;
@@ -101,4 +101,8 @@
   }
 }
 
-
+/* Ocultar CTA flotante en stage 9 */
+html[data-hero-stage="9"] .wrap {
+  opacity: 0;
+  pointer-events: none;
+}

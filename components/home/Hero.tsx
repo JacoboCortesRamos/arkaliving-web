@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import styles from "./Hero.module.css";
+import { Gem, Handshake, HousePlus } from "lucide-react";
 
 function clamp(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, n));
@@ -267,17 +268,34 @@ export function Hero() {
           <ol className={styles.steps}>
             {stepCount >= 1 && (
               <li className={styles.step} style={enterStyle(6) ?? undefined}>
-                1. Postula tu propiedad.
+                <span className={styles.stepIconWrap} aria-hidden="true">
+                  <HousePlus className={styles.stepIcon} strokeWidth={1.6} />
+                </span>
+                <span className={styles.stepText}>
+                  1. Postula tu propiedad.
+                </span>
               </li>
             )}
+
             {stepCount >= 2 && (
               <li className={styles.step} style={enterStyle(7) ?? undefined}>
-                2. Te presentamos una oferta clara y transparente.
+                <span className={styles.stepIconWrap} aria-hidden="true">
+                  <Gem className={styles.stepIcon} strokeWidth={1.6} />
+                </span>
+                <span className={styles.stepText}>
+                  2. Te presentamos una oferta clara y transparente.
+                </span>
               </li>
             )}
+
             {stepCount >= 3 && (
               <li className={styles.step} style={enterStyle(8) ?? undefined}>
-                3. Firmamos y nos encargamos de todo.
+                <span className={styles.stepIconWrap} aria-hidden="true">
+                  <Handshake className={styles.stepIcon} strokeWidth={1.6} />
+                </span>
+                <span className={styles.stepText}>
+                  3. Firmamos y nos encargamos de todo.
+                </span>
               </li>
             )}
           </ol>

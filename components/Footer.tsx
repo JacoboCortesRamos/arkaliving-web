@@ -1,6 +1,6 @@
 "use client";
 
-import { Instagram, MessageCircle } from "lucide-react";
+import { Instagram, MessageCircleMore } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
@@ -72,7 +72,7 @@ export function Footer() {
                   // Si creaste noPulse, descomenta:
                   // className={`${styles.takeoverCTAWrapper} ${ctaStyles.btn} ${ctaStyles.noPulse}`}
                 >
-                  POSTULA TU PROPIEDAD AQUÍ
+                  POSTULA TU PROPIEDAD
                 </Link>
 
                 <p className={styles.takeoverOp}>
@@ -101,7 +101,7 @@ export function Footer() {
                   className={styles.takeoverSocialLink}
                   aria-label="WhatsApp"
                 >
-                  <MessageCircle className={styles.takeoverSocialIcon} />
+                  <MessageCircleMore className={styles.takeoverSocialIcon} />
                 </a>
               </div>
 
@@ -120,62 +120,40 @@ export function Footer() {
         </section>
       )}
 
-      {/* ✅ NO HOME: footer normal siempre */}
+      {/* ✅ NO HOME: footer slim */}
       {!isHome && (
-        <footer className={styles.footer} aria-label="ARKA Footer">
-          <div className={styles.inner}>
-            {/* Línea 1 */}
-            <p className={styles.linePrimary}>
-              Operamos en Santa Marta y Bogotá
-            </p>
-
-            {/* Línea 2 + 2.1 */}
-            <div className={styles.socialRow}>
-              {/* Instagram */}
-              <div className={styles.socialItem}>
-                <a
-                  href="https://instagram.com/arka_living.co"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.socialLink}
-                  aria-label="Instagram"
-                >
-                  <Instagram className={styles.socialIcon} />
-                </a>
-                <span className={styles.socialLabel}>¡Síguenos!</span>
-              </div>
-
-              {/* WhatsApp */}
-              <div className={styles.socialItem}>
-                <a
-                  href="https://wa.me/573158254384?text=Hola%20ARKA%2C%20quiero%20recibir%20informaci%C3%B3n."
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.socialLink}
-                  aria-label="WhatsApp"
-                >
-                  <MessageCircle className={styles.socialIcon} />
-                </a>
-                <span className={styles.socialLabel}>
-                  ¿Dudas?
-                  <br />
-                  ¡Escríbenos!
-                </span>
-              </div>
-            </div>
-
-            {/* Línea 3 */}
-            <div className={styles.bottomRow}>
-              <a href="/terminos-y-condiciones" className={styles.bottomLink}>
-                Términos y condiciones
+        <footer className={styles.footerSlim} aria-label="ARKA Footer">
+          <div className={styles.footerSlimInner}>
+            <div className={styles.footerSlimSocial}>
+              <a
+                href="https://instagram.com/arka_living.co"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+              >
+                <Instagram className={styles.footerSlimIcon} />
               </a>
 
-              <span className={styles.separator}>•</span>
-
-              <span className={styles.copyright}>
-                © 2026 Sitio web creado por JCR-Code
-              </span>
+              <a
+                href="https://wa.me/573158254384?text=Hola%20ARKA%2C%20quiero%20recibir%20informaci%C3%B3n."
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="WhatsApp"
+              >
+                <MessageCircleMore className={styles.footerSlimIcon} />
+              </a>
             </div>
+
+            <a
+              href="/terminos-y-condiciones"
+              className={styles.footerSlimTerms}
+            >
+              Términos y condiciones
+            </a>
+
+            <p className={styles.footerSlimCopy}>
+              © 2026 Sitio web creado por JCR-Code
+            </p>
           </div>
         </footer>
       )}

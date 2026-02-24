@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Instagram, MessageCircle } from "lucide-react";
+import { Instagram, MessageCircleMore } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useRef } from "react";
 import styles from "./MenuOverlay.module.css";
 
 export function MenuOverlay({
@@ -16,15 +17,32 @@ export function MenuOverlay({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const scrollYRef = useRef(0);
+
+  // ✅ Scroll lock sin jump y sin resetear stage
+  useEffect(() => {
+    if (!open) return;
+
+    scrollYRef.current = window.scrollY;
+
+    document.body.classList.add("menu-open");
+    document.body.style.top = `-${scrollYRef.current}px`;
+
+    return () => {
+      document.body.classList.remove("menu-open");
+      document.body.style.top = "";
+
+      window.scrollTo(0, scrollYRef.current);
+    };
+  }, [open]);
 
   if (!open) return null;
 
+  // ✅ SOLO HOME resetea stage 0
   const goHomeStage0 = () => {
     onClose();
 
-    const fire = () => {
-      window.dispatchEvent(new Event("arka:hero:stage0"));
-    };
+    const fire = () => window.dispatchEvent(new Event("arka:hero:stage0"));
 
     if (pathname !== "/") {
       router.push("/");
@@ -32,6 +50,11 @@ export function MenuOverlay({
     } else {
       fire();
     }
+  };
+
+  const onOwnerClick = () => {
+    onClose();
+    onOpenOwner();
   };
 
   return (
@@ -52,7 +75,7 @@ export function MenuOverlay({
             PROPIEDADES ARKA
           </Link>
 
-          <button className={styles.linkBtn} onClick={onOpenOwner}>
+          <button className={styles.linkBtn} onClick={onOwnerClick}>
             SOY PROPIETARIO
           </button>
 
@@ -87,7 +110,7 @@ export function MenuOverlay({
             className={styles.socialLink}
             aria-label="WhatsApp"
           >
-            <MessageCircle className={styles.socialIcon} />
+            <MessageCircleMore className={styles.socialIcon} />
           </a>
         </div>
       </div>

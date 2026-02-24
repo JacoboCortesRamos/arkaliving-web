@@ -1,4 +1,4 @@
-.header {
+/*.header {
   position: sticky;
   top: var(--header-top);
   z-index: 10002;
@@ -8,6 +8,16 @@
   margin-right: var(--edge-space);
 
   transition: background 200ms ease;
+}*/
+
+.header {
+  position: fixed;
+  top: var(--header-top);
+  margin-left: var(--edge-space);
+  margin-right: var(--edge-space);
+  left: 0;
+  right: 0;
+  z-index: 10002; /* < overlay 10003 */
 }
 
 .inner {

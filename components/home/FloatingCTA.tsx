@@ -5,7 +5,7 @@ export function FloatingCTA() {
     <div className={styles.wrap} data-cta="float" aria-live="polite">
       <a className={styles.btn} data-cta-btn href="/postula-tu-propiedad">
         <span className={styles.label}>
-          <span>POSTULA TU PROPIEDAD AQUÍ</span>
+          <span>POSTULA TU PROPIEDAD</span>
         </span>
       </a>
     </div>

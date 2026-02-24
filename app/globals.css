@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #fdfcf9;
   --foreground: #171717;
 
   --header-h: 72px;
@@ -31,6 +31,18 @@ html,
 body {
   max-width: 100%;
   overflow-x: clip;
+}
+
+html.menu-open,
+body.menu-open {
+  overflow: hidden;
+  height: 100%;
+}
+
+body.menu-open {
+  position: fixed;
+  width: 100%;
+  overflow: hidden;
 }
 
 @supports not (overflow-x: clip) {
