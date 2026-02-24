@@ -31,24 +31,47 @@ export function MenuOverlay({
     return () => {
       document.body.classList.remove("menu-open");
       document.body.style.top = "";
-
       window.scrollTo(0, scrollYRef.current);
     };
   }, [open]);
 
   if (!open) return null;
 
-  // ✅ SOLO HOME resetea stage 0
+  // 🔥 FIX REAL: mismo comportamiento estable que el logo
   const goHomeStage0 = () => {
     onClose();
 
-    const fire = () => window.dispatchEvent(new Event("arka:hero:stage0"));
+    const fireWhenReady = () => {
+      const start = Date.now();
 
-    if (pathname !== "/") {
-      router.push("/");
-      window.setTimeout(fire, 80);
+      const check = () => {
+        const heroMounted =
+          document.documentElement.dataset.heroStage !== undefined;
+
+        if (heroMounted) {
+          window.dispatchEvent(new Event("arka:hero:stage0"));
+          return;
+        }
+
+        // timeout defensivo (1s)
+        if (Date.now() - start > 1000) {
+          window.dispatchEvent(new Event("arka:hero:stage0"));
+          return;
+        }
+
+        requestAnimationFrame(check);
+      };
+
+      requestAnimationFrame(check);
+    };
+
+    if (pathname === "/") {
+      requestAnimationFrame(() => {
+        window.dispatchEvent(new Event("arka:hero:stage0"));
+      });
     } else {
-      fire();
+      router.push("/");
+      fireWhenReady();
     }
   };
 
