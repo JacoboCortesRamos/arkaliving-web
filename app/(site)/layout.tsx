@@ -16,10 +16,13 @@ const inter = Inter({
   variable: "--font-body",
 });
 
-
-export const metadata: Metadata = {
+export const metadata = {
   title: "ARKA Living",
-  description: "Gestión inteligente de rentas cortas en Colombia.",
+  description: "Gestión inteligente de rentas cortas",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function SiteLayout({
