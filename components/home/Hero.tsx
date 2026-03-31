@@ -205,14 +205,13 @@ export function Hero() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ✅ Scroll por stages (wheel)
+  // ✅ Scroll por stages (wheel + touch)
   useEffect(() => {
     let isScrolling = false;
+    let touchStartY = 0;
 
     const onWheel = (e: WheelEvent) => {
       if (!heroRef.current) return;
-
-      // Solo intercepta mientras el hero está en viewport
       const rect = heroRef.current.getBoundingClientRect();
       const inHero = rect.top <= 0 && rect.bottom >= 0;
       if (!inHero) return;
@@ -230,8 +229,39 @@ export function Hero() {
       }, 900);
     };
 
+    const onTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const onTouchEnd = (e: TouchEvent) => {
+      if (!heroRef.current) return;
+      const rect = heroRef.current.getBoundingClientRect();
+      const inHero = rect.top <= 0 && rect.bottom >= 0;
+      if (!inHero) return;
+      if (isScrolling) return;
+
+      const diff = touchStartY - e.changedTouches[0].clientY;
+      if (Math.abs(diff) < 30) return; // ignora swipes muy cortos
+
+      isScrolling = true;
+      const direction = diff > 0 ? 1 : -1;
+      const next = clamp(navStageRef.current + direction, 0, 9);
+      scrollToStage(next);
+
+      setTimeout(() => {
+        isScrolling = false;
+      }, 900);
+    };
+
     window.addEventListener("wheel", onWheel, { passive: false });
-    return () => window.removeEventListener("wheel", onWheel);
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
+
+    return () => {
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchend", onTouchEnd);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
