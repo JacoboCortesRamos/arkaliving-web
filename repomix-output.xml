@@ -1,0 +1,4160 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+.gitignore
+app/(site)/contacto/page.tsx
+app/(site)/layout.tsx
+app/(site)/nosotros/page.tsx
+app/(site)/page.tsx
+app/(site)/postula-tu-propiedad/page.tsx
+app/(site)/propiedades/page.tsx
+app/(site)/terminos-y-condiciones/page.tsx
+app/api/postula/start/route.ts
+app/api/postula/submit/route.ts
+app/api/postula/verify/route.ts
+app/favicon.ico
+app/globals.css
+components/Footer.module.css
+components/Footer.tsx
+components/forms/PropertyApplicationForm.css
+components/forms/PropertyApplicationForm.tsx
+components/Header.module.css
+components/Header.tsx
+components/home/FloatingCTA.module.css
+components/home/FloatingCTA.tsx
+components/home/Hero.module.css
+components/home/Hero.tsx
+components/home/SectionPropertiesPreview.tsx
+components/home/SectionSteps.tsx
+components/home/SectionValue.tsx
+components/MenuOverlay.module.css
+components/MenuOverlay.tsx
+components/OwnerLoginModal.tsx
+eslint.config.mjs
+next.config.ts
+package.json
+postcss.config.mjs
+public/2023_Facebook_icon.svg
+public/facebook-bn.png
+public/file.svg
+public/globe.svg
+public/hero-poster.jpeg
+public/Instagram_logo_2022.svg
+public/instagram-bn.png
+public/logo-crema.png
+public/logo-negro.png
+public/logo.png
+public/next.svg
+public/vercel.svg
+public/window.svg
+README.md
+tsconfig.json
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path=".gitignore">
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+</file>
+
+<file path="app/(site)/contacto/page.tsx">
+export default function ContactoPage() {
+  return (
+    <section className="page">
+      <h1>Contacto</h1>
+      <p>WhatsApp / Email / Redes (pendiente).</p>
+    </section>
+  );
+}
+</file>
+
+<file path="app/(site)/nosotros/page.tsx">
+export default function NosotrosPage() {
+  return (
+    <section className="page">
+      <h1>Nosotros</h1>
+      <p>Placeholder.</p>
+    </section>
+  );
+}
+</file>
+
+<file path="app/(site)/propiedades/page.tsx">
+export default function PropiedadesPage() {
+  return (
+    <section className="page">
+      <h1>Propiedades ARKA</h1>
+      <p>Placeholder (MVP: previsualización + links a Airbnb).</p>
+    </section>
+  );
+}
+</file>
+
+<file path="app/(site)/terminos-y-condiciones/page.tsx">
+export default function TerminosPage() {
+  return (
+    <main style={{ padding: "120px 16px 80px", maxWidth: 900, margin: "0 auto" }}>
+      <h1>Términos y condiciones</h1>
+      <p>Contenido pendiente.</p>
+    </main>
+  );
+}
+</file>
+
+<file path="app/api/postula/start/route.ts">
+import { NextResponse } from "next/server";
+import crypto from "crypto";
+
+function json(message: string, status = 400) {
+  return NextResponse.json({ message }, { status });
+}
+
+function isEmail(v: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+}
+
+function sign(data: string, secret: string) {
+  return crypto.createHmac("sha256", secret).update(data).digest("hex");
+}
+
+export async function POST(req: Request) {
+  const { fullName, email, phone } = await req.json();
+
+  if (!fullName?.trim()) return json("Nombre requerido.");
+  if (!isEmail(email || "")) return json("Correo inválido.");
+  if (!phone?.trim()) return json("Celular/WhatsApp requerido.");
+
+  const secret = process.env.FORM_TOKEN_SECRET;
+  if (!secret) return json("Falta FORM_TOKEN_SECRET en env.", 500);
+
+  const code = String(Math.floor(100000 + Math.random() * 900000)); // 6 dígitos
+  const exp = Date.now() + 10 * 60 * 1000; // 10 min
+
+  const payload = JSON.stringify({
+    email: email.trim().toLowerCase(),
+    exp,
+    codeHash: sign(code, secret),
+  });
+  const token =
+    Buffer.from(payload).toString("base64url") + "." + sign(payload, secret);
+
+  // Email (Resend) — MVP
+  const resendKey = process.env.RESEND_API_KEY;
+  const from = process.env.RESEND_FROM;
+  const to = email.trim().toLowerCase();
+
+  if (resendKey && from) {
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${resendKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from,
+        to,
+        subject: "Tu código de verificación - ARKA Living",
+        html: `<p>Tu código de verificación es:</p><p style="font-size:24px;font-weight:800;letter-spacing:2px">${code}</p><p>Vence en 10 minutos.</p>`,
+      }),
+    });
+  } else {
+    // DEV fallback
+    console.log("[DEV] OTP code:", code, "for", to);
+  }
+
+  return NextResponse.json({ token });
+}
+</file>
+
+<file path="app/api/postula/verify/route.ts">
+import { NextResponse } from "next/server";
+import crypto from "crypto";
+
+function json(message: string, status = 400) {
+  return NextResponse.json({ message }, { status });
+}
+function sign(data: string, secret: string) {
+  return crypto.createHmac("sha256", secret).update(data).digest("hex");
+}
+
+export async function POST(req: Request) {
+  const { token, code } = await req.json();
+  const secret = process.env.FORM_TOKEN_SECRET;
+  if (!secret) return json("Falta FORM_TOKEN_SECRET en env.", 500);
+  if (!token || !code) return json("Token y código requeridos.");
+
+  const [b64, sig] = String(token).split(".");
+  if (!b64 || !sig) return json("Token inválido.");
+
+  const payloadStr = Buffer.from(b64, "base64url").toString("utf8");
+  if (sign(payloadStr, secret) !== sig) return json("Token inválido.");
+
+  const payload = JSON.parse(payloadStr);
+  if (Date.now() > payload.exp) return json("Código expirado.");
+
+  const codeHash = sign(String(code).trim(), secret);
+  if (codeHash !== payload.codeHash) return json("Código incorrecto.");
+
+  const verifiedPayload = JSON.stringify({
+    email: payload.email,
+    verified: true,
+    exp: Date.now() + 60 * 60 * 1000,
+  });
+  const verifiedToken =
+    Buffer.from(verifiedPayload).toString("base64url") +
+    "." +
+    sign(verifiedPayload, secret);
+
+  return NextResponse.json({ verifiedToken });
+}
+</file>
+
+<file path="components/home/SectionPropertiesPreview.tsx">
+import Link from "next/link";
+
+const preview = [
+  { name: "Apartamento Terraz", city: "Santa Marta" },
+  { name: "Apartamento Vitra", city: "Bogotá" },
+  { name: "Habitaciones (Casa)", city: "Bogotá" },
+];
+
+export function SectionPropertiesPreview() {
+  return (
+    <section id="s3" className="section">
+      <h2 className="section__h2">Propiedades ARKA</h2>
+      <p className="section__p">
+        Previsualización del portafolio. (Fotos y links finales pendientes)
+      </p>
+
+      <div className="grid">
+        {preview.map((p) => (
+          <div key={p.name} className="card">
+            <div className="card__img" aria-hidden="true" />
+            <div className="card__body">
+              <h3 className="card__h3">{p.name}</h3>
+              <p className="card__p">{p.city}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="section__cta">
+        <Link className="btn btn--ghost" href="/propiedades">
+          Ver todas las propiedades
+        </Link>
+      </div>
+    </section>
+  );
+}
+</file>
+
+<file path="components/home/SectionValue.tsx">
+export function SectionValue() {
+  return (
+    <section id="s1" className="section">
+      <h2 className="section__h2">Creamos tu alojamiento para rentas cortas</h2>
+      <p className="section__p">
+        Diseñamos, optimizamos y operamos tu inmueble para maximizar ocupación y
+        rentabilidad. (Copy detallado pendiente)
+      </p>
+
+      <ul className="bullets">
+        <li>Optimización del anuncio y contenido</li>
+        <li>Operación y atención al huésped</li>
+        <li>Control y visibilidad del calendario (pronto portal propietario)</li>
+      </ul>
+    </section>
+  );
+}
+</file>
+
+<file path="components/OwnerLoginModal.tsx">
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+
+export function OwnerLoginModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  if (!open) return null;
+
+  return (
+    <div className="overlay" role="dialog" aria-modal="true" aria-label="Soy propietario">
+      <div className="overlay__backdrop" onClick={onClose} />
+      <div className="overlay__panel">
+        <div className="overlay__top">
+          <span className="overlay__title">Acceso propietarios</span>
+          <button className="overlay__close" onClick={onClose} aria-label="Cerrar">
+            ✕
+          </button>
+        </div>
+
+        <form
+          className="form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            alert("Portal en construcción. (Login real se implementará en /portal)");
+          }}
+        >
+          <label className="form__label">
+            Correo electrónico
+            <input
+              className="form__input"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              placeholder="correo@ejemplo.com"
+            />
+          </label>
+
+          <label className="form__label">
+            Contraseña
+            <input
+              className="form__input"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              placeholder="••••••••"
+            />
+          </label>
+
+          <div className="form__row">
+            <Link className="form__link" href="/portal/forgot-password">
+              Olvidé mi contraseña
+            </Link>
+          </div>
+
+          <button className="form__submit" type="submit">
+            Ingresar
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+</file>
+
+<file path="eslint.config.mjs">
+import { defineConfig, globalIgnores } from "eslint/config";
+import nextVitals from "eslint-config-next/core-web-vitals";
+import nextTs from "eslint-config-next/typescript";
+
+const eslintConfig = defineConfig([
+  ...nextVitals,
+  ...nextTs,
+  // Override default ignores of eslint-config-next.
+  globalIgnores([
+    // Default ignores of eslint-config-next:
+    ".next/**",
+    "out/**",
+    "build/**",
+    "next-env.d.ts",
+  ]),
+]);
+
+export default eslintConfig;
+</file>
+
+<file path="next.config.ts">
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  /* config options here */
+};
+
+export default nextConfig;
+</file>
+
+<file path="postcss.config.mjs">
+const config = {
+  plugins: {
+    "@tailwindcss/postcss": {},
+  },
+};
+
+export default config;
+</file>
+
+<file path="public/2023_Facebook_icon.svg">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg9"
+   width="666.66669"
+   height="666.66718"
+   viewBox="0 0 666.66668 666.66717"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs13">
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath25">
+      <path
+         d="M 0,700 H 700 V 0 H 0 Z"
+         id="path23" />
+    </clipPath>
+  </defs>
+  <g
+     id="g17"
+     transform="matrix(1.3333333,0,0,-1.3333333,-133.33333,799.99999)">
+    <g
+       id="g19">
+      <g
+         id="g21"
+         clip-path="url(#clipPath25)">
+        <g
+           id="g27"
+           transform="translate(600,350)">
+          <path
+             d="m 0,0 c 0,138.071 -111.929,250 -250,250 -138.071,0 -250,-111.929 -250,-250 0,-117.245 80.715,-215.622 189.606,-242.638 v 166.242 h -51.552 V 0 h 51.552 v 32.919 c 0,85.092 38.508,124.532 122.048,124.532 15.838,0 43.167,-3.105 54.347,-6.211 V 81.986 c -5.901,0.621 -16.149,0.932 -28.882,0.932 -40.993,0 -56.832,-15.528 -56.832,-55.9 V 0 h 81.659 l -14.028,-76.396 h -67.631 V -248.169 C -95.927,-233.218 0,-127.818 0,0"
+             style="fill:#0866ff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="path29" />
+        </g>
+        <g
+           id="g31"
+           transform="translate(447.9175,273.6036)">
+          <path
+             d="M 0,0 14.029,76.396 H -67.63 v 27.019 c 0,40.372 15.838,55.899 56.831,55.899 12.733,0 22.981,-0.31 28.882,-0.931 v 69.253 c -11.18,3.106 -38.509,6.212 -54.347,6.212 -83.539,0 -122.048,-39.441 -122.048,-124.533 V 76.396 h -51.552 V 0 h 51.552 v -166.242 c 19.343,-4.798 39.568,-7.362 60.394,-7.362 10.254,0 20.358,0.632 30.288,1.831 L -67.63,0 Z"
+             style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="path33" />
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
+</file>
+
+<file path="public/file.svg">
+<svg fill="none" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M14.5 13.5V5.41a1 1 0 0 0-.3-.7L9.8.29A1 1 0 0 0 9.08 0H1.5v13.5A2.5 2.5 0 0 0 4 16h8a2.5 2.5 0 0 0 2.5-2.5m-1.5 0v-7H8v-5H3v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1M9.5 5V2.12L12.38 5zM5.13 5h-.62v1.25h2.12V5zm-.62 3h7.12v1.25H4.5zm.62 3h-.62v1.25h7.12V11z" clip-rule="evenodd" fill="#666" fill-rule="evenodd"/></svg>
+</file>
+
+<file path="public/globe.svg">
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><g clip-path="url(#a)"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.27 14.1a6.5 6.5 0 0 0 3.67-3.45q-1.24.21-2.7.34-.31 1.83-.97 3.1M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.48-1.52a7 7 0 0 1-.96 0H7.5a4 4 0 0 1-.84-1.32q-.38-.89-.63-2.08a40 40 0 0 0 3.92 0q-.25 1.2-.63 2.08a4 4 0 0 1-.84 1.31zm2.94-4.76q1.66-.15 2.95-.43a7 7 0 0 0 0-2.58q-1.3-.27-2.95-.43a18 18 0 0 1 0 3.44m-1.27-3.54a17 17 0 0 1 0 3.64 39 39 0 0 1-4.3 0 17 17 0 0 1 0-3.64 39 39 0 0 1 4.3 0m1.1-1.17q1.45.13 2.69.34a6.5 6.5 0 0 0-3.67-3.44q.65 1.26.98 3.1M8.48 1.5l.01.02q.41.37.84 1.31.38.89.63 2.08a40 40 0 0 0-3.92 0q.25-1.2.63-2.08a4 4 0 0 1 .85-1.32 7 7 0 0 1 .96 0m-2.75.4a6.5 6.5 0 0 0-3.67 3.44 29 29 0 0 1 2.7-.34q.31-1.83.97-3.1M4.58 6.28q-1.66.16-2.95.43a7 7 0 0 0 0 2.58q1.3.27 2.95.43a18 18 0 0 1 0-3.44m.17 4.71q-1.45-.12-2.69-.34a6.5 6.5 0 0 0 3.67 3.44q-.65-1.27-.98-3.1" fill="#666"/></g><defs><clipPath id="a"><path fill="#fff" d="M0 0h16v16H0z"/></clipPath></defs></svg>
+</file>
+
+<file path="public/Instagram_logo_2022.svg">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="1000" height="1000" viewBox="0 0 264.5833 264.5833" inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)" sodipodi:docname="Instagram_(2022).svg"><defs><radialGradient id="f" cx="158.429" cy="578.088" r="52.3515" xlink:href="#a" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0 -4.03418 4.28018 0 -2332.2273 942.2356)" fx="158.429" fy="578.088"/><radialGradient inkscape:collect="always" xlink:href="#b" id="g" gradientUnits="userSpaceOnUse" gradientTransform="matrix(.67441 -1.16203 1.51283 .87801 -814.3657 -47.8354)" cx="172.6149" cy="600.6924" fx="172.6149" fy="600.6924" r="65"/><radialGradient inkscape:collect="always" xlink:href="#c" id="h" cx="144.012" cy="51.3367" fx="144.012" fy="51.3367" r="67.081" gradientTransform="matrix(-2.3989 .67549 -.23008 -.81732 464.9957 -26.4035)" gradientUnits="userSpaceOnUse"/><radialGradient inkscape:collect="always" xlink:href="#d" id="e" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-3.10797 .87652 -.6315 -2.23914 1345.6503 1374.1983)" cx="199.7884" cy="628.4379" fx="199.7884" fy="628.4379" r="52.3515"/><linearGradient inkscape:collect="always" id="d"><stop offset="0" stop-color="#ff005f"/><stop offset="1" stop-color="#fc01d8"/></linearGradient><linearGradient id="c"><stop offset="0" stop-color="#780cff"/><stop stop-color="#820bff" offset="1" stop-opacity="0"/></linearGradient><linearGradient inkscape:collect="always" id="b"><stop offset="0" stop-color="#fc0"/><stop offset="1" stop-color="#fc0" stop-opacity="0"/></linearGradient><linearGradient id="a"><stop offset="0" stop-color="#fc0"/><stop offset=".1242" stop-color="#fc0"/><stop offset=".5672" stop-color="#fe4a05"/><stop offset=".6942" stop-color="#ff0f3f"/><stop offset="1" stop-color="#fe0657" stop-opacity="0"/></linearGradient></defs><sodipodi:namedview pagecolor="#ffffff" bordercolor="#666666" borderopacity="1" inkscape:pageopacity="0" inkscape:pageshadow="2" inkscape:zoom=".515" inkscape:cx="500" inkscape:cy="500" inkscape:document-units="mm" inkscape:current-layer="layer1" inkscape:document-rotation="0" showgrid="false" inkscape:window-width="1366" inkscape:window-height="705" inkscape:window-x="-8" inkscape:window-y="-8" inkscape:window-maximized="1"/><g inkscape:label="Layer 1" inkscape:groupmode="layer"><path d="M204.1503 18.1429c-55.2305 0-71.3834.057-74.5232.3175-11.3342.9424-18.387 2.7275-26.0708 6.554-5.9214 2.9413-10.5915 6.3506-15.2005 11.1298-8.3938 8.7157-13.481 19.4383-15.3226 32.1842-.8953 6.1877-1.1558 7.4496-1.2087 39.0558-.0203 10.5354 0 24.4007 0 42.9984 0 55.2008.061 71.3418.3256 74.4764.9157 11.032 2.6453 17.9728 6.3081 25.565 7 14.5329 20.369 25.4428 36.119 29.5137 5.4535 1.4044 11.4767 2.1779 19.2092 2.5442 3.2762.1425 36.6684.2443 70.081.2443 33.4127 0 66.8253-.0407 70.02-.2035 8.9535-.4214 14.1526-1.1195 19.9011-2.6054 15.8517-4.0912 28.9767-14.8383 36.119-29.5748 3.5916-7.409 5.4128-14.6144 6.237-25.0704.179-2.2796.2543-38.6263.2543-74.924 0-36.304-.0814-72.5835-.2605-74.8632-.8343-10.6249-2.6555-17.7692-6.363-25.3207-3.0421-6.1816-6.42-10.798-11.324-15.518-8.752-8.3616-19.4555-13.4502-32.2101-15.2902-6.18-.8936-7.411-1.1582-39.033-1.2131z" inkscape:connector-curvature="0" fill="url(#e)" transform="translate(-71.8155 -18.1429)"/><path d="M204.1503 18.1429c-55.2305 0-71.3834.057-74.5232.3175-11.3342.9424-18.387 2.7275-26.0708 6.554-5.9214 2.9413-10.5915 6.3506-15.2005 11.1298-8.3938 8.7157-13.481 19.4383-15.3226 32.1842-.8953 6.1877-1.1558 7.4496-1.2087 39.0558-.0203 10.5354 0 24.4007 0 42.9984 0 55.2008.061 71.3418.3256 74.4764.9157 11.032 2.6453 17.9728 6.3081 25.565 7 14.5329 20.369 25.4428 36.119 29.5137 5.4535 1.4044 11.4767 2.1779 19.2092 2.5442 3.2762.1425 36.6684.2443 70.081.2443 33.4127 0 66.8253-.0407 70.02-.2035 8.9535-.4214 14.1526-1.1195 19.9011-2.6054 15.8517-4.0912 28.9767-14.8383 36.119-29.5748 3.5916-7.409 5.4128-14.6144 6.237-25.0704.179-2.2796.2543-38.6263.2543-74.924 0-36.304-.0814-72.5835-.2605-74.8632-.8343-10.6249-2.6555-17.7692-6.363-25.3207-3.0421-6.1816-6.42-10.798-11.324-15.518-8.752-8.3616-19.4555-13.4502-32.2101-15.2902-6.18-.8936-7.411-1.1582-39.033-1.2131z" inkscape:connector-curvature="0" fill="url(#f)" transform="translate(-71.8155 -18.1429)"/><path d="M204.1503 18.1429c-55.2305 0-71.3834.057-74.5232.3175-11.3342.9424-18.387 2.7275-26.0708 6.554-5.9214 2.9413-10.5915 6.3506-15.2005 11.1298-8.3938 8.7157-13.481 19.4383-15.3226 32.1842-.8953 6.1877-1.1558 7.4496-1.2087 39.0558-.0203 10.5354 0 24.4007 0 42.9984 0 55.2008.061 71.3418.3256 74.4764.9157 11.032 2.6453 17.9728 6.3081 25.565 7 14.5329 20.369 25.4428 36.119 29.5137 5.4535 1.4044 11.4767 2.1779 19.2092 2.5442 3.2762.1425 36.6684.2443 70.081.2443 33.4127 0 66.8253-.0407 70.02-.2035 8.9535-.4214 14.1526-1.1195 19.9011-2.6054 15.8517-4.0912 28.9767-14.8383 36.119-29.5748 3.5916-7.409 5.4128-14.6144 6.237-25.0704.179-2.2796.2543-38.6263.2543-74.924 0-36.304-.0814-72.5835-.2605-74.8632-.8343-10.6249-2.6555-17.7692-6.363-25.3207-3.0421-6.1816-6.42-10.798-11.324-15.518-8.752-8.3616-19.4555-13.4502-32.2101-15.2902-6.18-.8936-7.411-1.1582-39.033-1.2131z" inkscape:connector-curvature="0" fill="url(#g)" transform="translate(-71.8155 -18.1429)"/><path d="M204.1503 18.1429c-55.2305 0-71.3834.057-74.5232.3175-11.3342.9424-18.387 2.7275-26.0708 6.554-5.9214 2.9413-10.5915 6.3506-15.2005 11.1298-8.3938 8.7157-13.481 19.4383-15.3226 32.1842-.8953 6.1877-1.1558 7.4496-1.2087 39.0558-.0203 10.5354 0 24.4007 0 42.9984 0 55.2008.061 71.3418.3256 74.4764.9157 11.032 2.6453 17.9728 6.3081 25.565 7 14.5329 20.369 25.4428 36.119 29.5137 5.4535 1.4044 11.4767 2.1779 19.2092 2.5442 3.2762.1425 36.6684.2443 70.081.2443 33.4127 0 66.8253-.0407 70.02-.2035 8.9535-.4214 14.1526-1.1195 19.9011-2.6054 15.8517-4.0912 28.9767-14.8383 36.119-29.5748 3.5916-7.409 5.4128-14.6144 6.237-25.0704.179-2.2796.2543-38.6263.2543-74.924 0-36.304-.0814-72.5835-.2605-74.8632-.8343-10.6249-2.6555-17.7692-6.363-25.3207-3.0421-6.1816-6.42-10.798-11.324-15.518-8.752-8.3616-19.4555-13.4502-32.2101-15.2902-6.18-.8936-7.411-1.1582-39.033-1.2131z" inkscape:connector-curvature="0" fill="url(#h)" transform="translate(-71.8155 -18.1429)"/><path d="M132.3452 33.973c-26.7167 0-30.0696.1167-40.5629.5939-10.4727.4792-17.6212 2.136-23.8762 4.567-6.4701 2.5107-11.9586 5.8693-17.4265 11.3352-5.472 5.464-8.8332 10.9483-11.354 17.4116-2.4389 6.2524-4.099 13.3976-4.5703 23.8585-.4693 10.4854-.5923 13.8379-.5923 40.5348 0 26.697.1189 30.0371.5943 40.5225.4817 10.465 2.1397 17.6082 4.5703 23.8585 2.5147 6.4654 5.8758 11.9497 11.3458 17.4136 5.466 5.468 10.9544 8.8349 17.4204 11.3456 6.259 2.4309 13.4097 4.0877 23.8803 4.567 10.4933.477 13.8441.5938 40.5588.5938 26.7188 0 30.0615-.1167 40.5547-.5939 10.4728-.4792 17.6295-2.136 23.8885-4.567 6.4681-2.5106 11.9484-5.8775 17.4143-11.3455 5.472-5.4639 8.8332-10.9482 11.354-17.4115 2.4183-6.2524 4.0784-13.3976 4.5703-23.8585.4713-10.4854.5943-13.8277.5943-40.5246 0-26.697-.123-30.0473-.5943-40.5328-.4919-10.465-2.152-17.6081-4.5703-23.8584-2.5208-6.4654-5.882-11.9498-11.354-17.4137-5.4721-5.468-10.9442-8.8266-17.4204-11.3353-6.2714-2.4309-13.424-4.0877-23.8967-4.5669-10.4933-.4772-13.8339-.5939-40.5588-.5939zm-8.825 17.7147c2.6193-.0041 5.5418 0 8.825 0 26.2659 0 29.379.0942 39.7513.5652 9.5915.4383 14.7971 2.0397 18.2648 3.3852 4.5908 1.7817 7.8638 3.9116 11.3048 7.3521 3.4431 3.4406 5.5745 6.7173 7.3617 11.3046 1.3465 3.461 2.9512 8.6628 3.3877 18.2472.4714 10.3625.5739 13.4754.5739 39.7095 0 26.234-.1025 29.347-.5739 39.7095-.4386 9.5843-2.0412 14.7861-3.3877 18.2471-1.783 4.5874-3.9186 7.8539-7.3617 11.2923-3.443 3.4406-6.712 5.5704-11.3048 7.3521-3.4636 1.3517-8.6733 2.949-18.2648 3.3873-10.3702.471-13.4854.5734-39.7513.5734-26.2679 0-29.381-.1024-39.7513-.5734-9.5914-.4423-14.797-2.0438-18.2668-3.3893-4.5908-1.7817-7.87-3.9116-11.313-7.3521-3.4431-3.4405-5.5745-6.709-7.3617-11.2985-1.3465-3.461-2.9512-8.6628-3.3877-18.2471-.4714-10.3626-.5657-13.4754-.5657-39.7259 0-26.2504.0943-29.347.5657-39.7095.4386-9.5844 2.0412-14.7861 3.3877-18.2512 1.783-4.5874 3.9186-7.8641 7.3617-11.3046 3.443-3.4406 6.7222-5.5704 11.313-7.3562 3.4677-1.3517 8.6754-2.949 18.2668-3.3894 9.075-.4096 12.5919-.5324 30.9264-.553zm61.3363 16.322c-6.5173 0-11.805 5.2776-11.805 11.792 0 6.5125 5.2877 11.7962 11.805 11.7962 6.5172 0 11.8049-5.2837 11.8049-11.7962 0-6.5124-5.2877-11.796-11.805-11.796zm-52.5113 13.7826c-27.8993 0-50.5191 22.6031-50.5191 50.4817 0 27.8786 22.6198 50.4714 50.5191 50.4714s50.511-22.5928 50.511-50.4714c0-27.8786-22.6137-50.4817-50.513-50.4817zm0 17.7147c18.109 0 32.7914 14.6694 32.7914 32.767 0 18.0956-14.6824 32.767-32.7914 32.767-18.111 0-32.7913-14.6714-32.7913-32.767 0-18.0976 14.6803-32.767 32.7913-32.767z" inkscape:connector-curvature="0" fill="#fff"/></g></svg>
+</file>
+
+<file path="public/next.svg">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 394 80"><path fill="#000" d="M262 0h68.5v12.7h-27.2v66.6h-13.6V12.7H262V0ZM149 0v12.7H94v20.4h44.3v12.6H94v21h55v12.6H80.5V0h68.7zm34.3 0h-17.8l63.8 79.4h17.9l-32-39.7 32-39.6h-17.9l-23 28.6-23-28.6zm18.3 56.7-9-11-27.1 33.7h17.8l18.3-22.7z"/><path fill="#000" d="M81 79.3 17 0H0v79.3h13.6V17l50.2 62.3H81Zm252.6-.4c-1 0-1.8-.4-2.5-1s-1.1-1.6-1.1-2.6.3-1.8 1-2.5 1.6-1 2.6-1 1.8.3 2.5 1a3.4 3.4 0 0 1 .6 4.3 3.7 3.7 0 0 1-3 1.8zm23.2-33.5h6v23.3c0 2.1-.4 4-1.3 5.5a9.1 9.1 0 0 1-3.8 3.5c-1.6.8-3.5 1.3-5.7 1.3-2 0-3.7-.4-5.3-1s-2.8-1.8-3.7-3.2c-.9-1.3-1.4-3-1.4-5h6c.1.8.3 1.6.7 2.2s1 1.2 1.6 1.5c.7.4 1.5.5 2.4.5 1 0 1.8-.2 2.4-.6a4 4 0 0 0 1.6-1.8c.3-.8.5-1.8.5-3V45.5zm30.9 9.1a4.4 4.4 0 0 0-2-3.3 7.5 7.5 0 0 0-4.3-1.1c-1.3 0-2.4.2-3.3.5-.9.4-1.6 1-2 1.6a3.5 3.5 0 0 0-.3 4c.3.5.7.9 1.3 1.2l1.8 1 2 .5 3.2.8c1.3.3 2.5.7 3.7 1.2a13 13 0 0 1 3.2 1.8 8.1 8.1 0 0 1 3 6.5c0 2-.5 3.7-1.5 5.1a10 10 0 0 1-4.4 3.5c-1.8.8-4.1 1.2-6.8 1.2-2.6 0-4.9-.4-6.8-1.2-2-.8-3.4-2-4.5-3.5a10 10 0 0 1-1.7-5.6h6a5 5 0 0 0 3.5 4.6c1 .4 2.2.6 3.4.6 1.3 0 2.5-.2 3.5-.6 1-.4 1.8-1 2.4-1.7a4 4 0 0 0 .8-2.4c0-.9-.2-1.6-.7-2.2a11 11 0 0 0-2.1-1.4l-3.2-1-3.8-1c-2.8-.7-5-1.7-6.6-3.2a7.2 7.2 0 0 1-2.4-5.7 8 8 0 0 1 1.7-5 10 10 0 0 1 4.3-3.5c2-.8 4-1.2 6.4-1.2 2.3 0 4.4.4 6.2 1.2 1.8.8 3.2 2 4.3 3.4 1 1.4 1.5 3 1.5 5h-5.8z"/></svg>
+</file>
+
+<file path="public/vercel.svg">
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1155 1000"><path d="m577.3 0 577.4 1000H0z" fill="#fff"/></svg>
+</file>
+
+<file path="public/window.svg">
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" clip-rule="evenodd" d="M1.5 2.5h13v10a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1zM0 1h16v11.5a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 0 12.5zm3.75 4.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5M7 4.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0m1.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5" fill="#666"/></svg>
+</file>
+
+<file path="tsconfig.json">
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+    "**/*.mts"
+  ],
+  "exclude": ["node_modules"]
+}
+</file>
+
+<file path="app/(site)/postula-tu-propiedad/page.tsx">
+import { PropertyApplicationForm } from "../../../components/forms/PropertyApplicationForm";
+
+export const metadata = {
+  title: "Postula tu propiedad | ARKA Living",
+  description:
+    "Postula tu propiedad para gestión de rentas cortas en Santa Marta y Bogotá. Te contactamos en máximo 48 horas.",
+};
+
+export default function PostulaTuPropiedadPage() {
+  return <PropertyApplicationForm />;
+}
+</file>
+
+<file path="app/api/postula/submit/route.ts">
+import { NextResponse } from "next/server";
+import crypto from "crypto";
+
+function json(message: string, status = 400) {
+  return NextResponse.json({ message }, { status });
+}
+
+function signHmac(data: string, secret: string) {
+  return crypto.createHmac("sha256", secret).update(data).digest("hex");
+}
+
+function sha1(input: string) {
+  return crypto.createHash("sha1").update(input).digest("hex");
+}
+
+function requireEnv(name: string) {
+  const v = process.env[name];
+  if (!v) throw new Error(`Falta ${name} en env.`);
+  return v;
+}
+
+async function fileToBase64DataUri(file: File) {
+  const ab = await file.arrayBuffer();
+  const buf = Buffer.from(ab);
+  const b64 = buf.toString("base64");
+  return `data:${file.type};base64,${b64}`;
+}
+
+function formatPhoneFolder(phoneE164: string) {
+  // Esperado: +573158254384 -> 57-3158254384  (sin +)
+  const s = String(phoneE164 || "").trim();
+  const m = s.match(/^(\+?)(\d{1,4})(\d+)$/);
+  if (!m) return "unknown-phone";
+  const cc = m[2]; // sin +
+  const rest = m[3];
+  return `${cc}-${rest}`;
+}
+
+async function uploadToCloudinary(
+  file: File,
+  opts: { folder: string; publicId: string; overwrite: boolean },
+) {
+  const cloudName = requireEnv("CLOUDINARY_CLOUD_NAME");
+  const apiKey = requireEnv("CLOUDINARY_API_KEY");
+  const apiSecret = requireEnv("CLOUDINARY_API_SECRET");
+  const timestamp = Math.floor(Date.now() / 1000);
+
+  // params firmables (orden alfabético)
+  const paramsToSign = [
+    `folder=${opts.folder}`,
+    `overwrite=${opts.overwrite ? "true" : "false"}`,
+    `public_id=${opts.publicId}`,
+    `timestamp=${timestamp}`,
+  ];
+
+  const signature = sha1(paramsToSign.join("&") + apiSecret);
+
+  const fileData = await fileToBase64DataUri(file);
+
+  const body = new URLSearchParams();
+  body.set("file", fileData);
+  body.set("api_key", apiKey);
+  body.set("timestamp", String(timestamp));
+  body.set("signature", signature);
+  body.set("folder", opts.folder);
+  body.set("public_id", opts.publicId);
+  body.set("overwrite", opts.overwrite ? "true" : "false");
+
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+    { method: "POST", body },
+  );
+
+  const out = await res.json();
+  if (!res.ok)
+    throw new Error(out?.error?.message || "Cloudinary upload failed");
+
+  return {
+    secure_url: out.secure_url as string,
+    public_id: out.public_id as string,
+  };
+}
+
+export async function POST(req: Request) {
+  const secret = process.env.FORM_TOKEN_SECRET;
+  if (!secret) return json("Falta FORM_TOKEN_SECRET en env.", 500);
+
+  const form = await req.formData();
+  const verifiedToken = String(form.get("verifiedToken") || "");
+  const payloadStr = String(form.get("payload") || "");
+  const submissionId = String(form.get("submissionId") || "");
+
+  if (!verifiedToken) return json("Falta verifiedToken.");
+  if (!payloadStr) return json("Falta payload.");
+  if (!submissionId) return json("Falta submissionId.");
+
+  // 1) verify token
+  const [b64, sig] = verifiedToken.split(".");
+  if (!b64 || !sig) return json("verifiedToken inválido.");
+
+  const tokenPayloadStr = Buffer.from(b64, "base64url").toString("utf8");
+  if (signHmac(tokenPayloadStr, secret) !== sig)
+    return json("verifiedToken inválido.");
+
+  const tokenPayload = JSON.parse(tokenPayloadStr);
+  if (!tokenPayload.verified) return json("Correo no verificado.");
+  if (Date.now() > tokenPayload.exp)
+    return json("Sesión expirada, valida tu correo de nuevo.");
+
+  const payload = JSON.parse(payloadStr);
+
+  // 2) photos validation (✅ min 2 / max 5)
+  const photos = form.getAll("photos") as File[];
+  const MIN_FILES = 2;
+  const MAX_FILES = 5;
+  const MAX_MB = 10;
+
+  if (!photos?.length || photos.length < MIN_FILES) {
+    return json(`Debes subir al menos ${MIN_FILES} fotos.`);
+  }
+  if (photos.length > MAX_FILES) {
+    return json(`Máximo ${MAX_FILES} fotos.`);
+  }
+
+  for (const f of photos) {
+    if (!f.type?.startsWith("image/"))
+      return json("Solo se permiten imágenes.");
+    const sizeMb = f.size / (1024 * 1024);
+    if (sizeMb > MAX_MB)
+      return json(`Cada foto debe pesar máximo ${MAX_MB}MB.`);
+  }
+
+  // DEV toggle (solo se respeta en dev)
+  const disableIdempotency =
+    process.env.NODE_ENV !== "production" &&
+    process.env.POSTULA_DISABLE_IDEMPOTENCY === "1";
+
+  // 3) upload cloudinary (✅ folder YYYY/MM/+57-315...)
+  let photoUrls: string[] = [];
+  try {
+    requireEnv("CLOUDINARY_CLOUD_NAME");
+    requireEnv("CLOUDINARY_API_KEY");
+    requireEnv("CLOUDINARY_API_SECRET");
+
+    const baseFolder = process.env.CLOUDINARY_FOLDER || "arka/postula";
+    const phoneE164 = String(payload?.owner?.phone || "");
+    const phoneFolder = formatPhoneFolder(phoneE164);
+
+    const now = new Date();
+    const yyyy = String(now.getFullYear());
+    const mm = String(now.getMonth() + 1).padStart(2, "0");
+
+    const folder = `${baseFolder}/${yyyy}/${mm}/${phoneFolder}`;
+
+    const requestId = disableIdempotency
+      ? crypto.randomBytes(6).toString("hex")
+      : "";
+
+    const uploads = await Promise.all(
+      photos.map((f, idx) =>
+        uploadToCloudinary(f, {
+          folder,
+          publicId: disableIdempotency
+            ? `${submissionId}_${requestId}_photo_${idx + 1}`
+            : `${submissionId}_photo_${idx + 1}`,
+          overwrite: disableIdempotency ? true : false,
+        }),
+      ),
+    );
+
+    photoUrls = uploads.map((u) => u.secure_url);
+  } catch (e: any) {
+    const msg = String(e?.message || e);
+    console.error("Cloudinary error:", msg);
+
+    if (process.env.NODE_ENV !== "production") {
+      return json(`Cloudinary: ${msg}`, 500);
+    }
+
+    return json(
+      "No se pudieron subir las fotos. Intenta de nuevo en unos minutos.",
+      500,
+    );
+  }
+
+  // 4) Resend emails
+  const resendKey = process.env.RESEND_API_KEY;
+  const from = process.env.RESEND_FROM;
+  const internalTo = process.env.POSTULA_INTERNAL_TO;
+  const ownerTo = payload?.owner?.email;
+
+  const p = payload.property;
+
+  const summary = `
+ARKA - Nueva postulación recibida
+ID de postulación: ${submissionId}
+
+PROPIETARIO
+Nombre: ${payload.owner.fullName}
+Correo: ${payload.owner.email}
+Celular: ${payload.owner.phone}
+
+UBICACIÓN
+Ciudad: ${p.city}
+Localidad Bogotá: ${p.bogotaLocalidad || "N/A"}
+Sector SM: ${p.sectorGroup || "N/A"}
+Subsector SM: ${p.sectorSub || "N/A"}
+Descripción libre: ${p.sectorFreeText || "N/A"}
+
+TIPO
+Tipo: ${p.type}
+Habitaciones: ${p.rooms ?? "N/A"}
+Baños: ${p.baths ?? "N/A"}
+Otro tipo: ${p.otherTypeText || "N/A"}
+
+CONDICIONES
+Amoblada: ${p.furnished}
+PH: ${p.isHOA}
+Permite STR: ${p.hoaAllowsSTR || "N/A"}
+
+OPERACIÓN
+Estado: ${payload.ops.currentStatus}
+Inicio: ${payload.ops.startWhen}
+
+EXPECTATIVA
+${payload.expectation.goal}
+
+FOTOS (Cloudinary)
+${photoUrls.map((u, i) => `${i + 1}) ${u}`).join("\n")}
+`;
+
+  if (resendKey && from && internalTo) {
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${resendKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from,
+        to: internalTo,
+        subject: "Nueva postulación de propiedad - ARKA",
+        text: summary,
+      }),
+    });
+  } else {
+    console.log("[DEV] Nueva postulación:", summary);
+  }
+
+  if (resendKey && from && ownerTo) {
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${resendKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from,
+        to: ownerTo,
+        subject: "Recibimos tu postulación - ARKA Living",
+        html: `<p>¡Gracias por postular tu propiedad!</p>
+               <p>Revisaremos tu información y te contactaremos en un plazo máximo de <strong>48 horas</strong>.</p>
+               <p>ARKA Living</p>`,
+      }),
+    });
+  }
+
+  return NextResponse.json({ ok: true, submissionId, photoUrls });
+}
+</file>
+
+<file path="components/forms/PropertyApplicationForm.tsx">
+"use client";
+
+import { useMemo, useRef, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import "./PropertyApplicationForm.css";
+
+type City = "Bogotá" | "Santa Marta";
+
+const BOGOTA_LOCALIDADES = [
+  "Usaquén",
+  "Chapinero",
+  "Santa Fe",
+  "San Cristóbal",
+  "Usme",
+  "Tunjuelito",
+  "Bosa",
+  "Kennedy",
+  "Fontibón",
+  "Engativá",
+  "Suba",
+  "Barrios Unidos",
+  "Teusaquillo",
+  "Los Mártires",
+  "Antonio Nariño",
+  "Puente Aranda",
+  "La Candelaria",
+  "Rafael Uribe Uribe",
+  "Ciudad Bolívar",
+  "Sumapaz",
+];
+
+const SM_SECTORES: Array<{
+  group: string;
+  subs?: string[];
+  freeText?: boolean;
+}> = [
+  {
+    group: "Centro",
+    subs: ["Centro Histórico", "El Centro", "Pescaíto", "San Francisco"],
+  },
+  {
+    group: "Rodadero – Gaira",
+    subs: [
+      "El Rodadero",
+      "Rodadero Sur",
+      "Rodadero Reservado",
+      "Gaira",
+      "Playa Salguero",
+    ],
+  },
+  {
+    group: "Corredor Pozos Colorados – Bello Horizonte",
+    subs: ["Pozos Colorados", "Bello Horizonte", "Aeropuerto", "Cabo Tortuga"],
+  },
+  {
+    group: "Zona Urbana Tradicional",
+    subs: [
+      "Bavaria",
+      "Los Almendros",
+      "Jardín",
+      "María Eugenia",
+      "Mamatoco",
+      "Olaya Herrera",
+    ],
+  },
+  { group: "Zonas Alternativas", subs: ["Taganga", "Bonda"] },
+  { group: "Otro / No estoy seguro", freeText: true },
+];
+
+// ✅ Lista reducida + "Otro"
+const COUNTRY_CODES = [
+  { label: "Colombia (+57)", code: "+57" },
+  { label: "Estados Unidos (+1)", code: "+1" },
+  { label: "Canadá (+1)", code: "+1" },
+  { label: "México (+52)", code: "+52" },
+  { label: "España (+34)", code: "+34" },
+  { label: "Panamá (+507)", code: "+507" },
+  { label: "Venezuela (+58)", code: "+58" },
+  { label: "Brasil (+55)", code: "+55" },
+  { label: "Perú (+51)", code: "+51" },
+  { label: "Otro", code: "OTHER" },
+] as const;
+
+function isEmail(v: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+}
+
+function onlyDigits(v: string) {
+  return v.replace(/[^\d]/g, "");
+}
+
+function normalizeCountryCode(raw: string) {
+  const s = raw.trim();
+  if (!s) return "";
+  const withPlus = s.startsWith("+") ? s : `+${s}`;
+  // deja + y dígitos únicamente
+  return "+" + onlyDigits(withPlus);
+}
+
+type PhotoItem = { id: string; file: File; url: string };
+
+function makeClientId() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const c: any = globalThis.crypto;
+  return (
+    c?.randomUUID?.() ?? `${Date.now()}_${Math.random().toString(16).slice(2)}`
+  );
+}
+
+export function PropertyApplicationForm() {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const [step, setStep] = useState<number>(1);
+
+  const [startToken, setStartToken] = useState<string | null>(null);
+  const [verifiedToken, setVerifiedToken] = useState<string | null>(null);
+
+  // page 1
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+
+  // phone with country code
+  const [countryCode, setCountryCode] = useState<string>("+57");
+  const [otherCountryCode, setOtherCountryCode] = useState<string>("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+
+  // otp
+  const [otp, setOtp] = useState("");
+
+  // page 2
+  const [city, setCity] = useState<City | "">("");
+  const [bogotaLocalidad, setBogotaLocalidad] = useState("");
+  const [smSectorGroup, setSmSectorGroup] = useState("");
+  const [smSectorSub, setSmSectorSub] = useState("");
+  const [smSectorFreeText, setSmSectorFreeText] = useState("");
+
+  const [propertyType, setPropertyType] = useState<
+    "" | "Studio o único espacio" | "Apartamento" | "Casa" | "Otro"
+  >("");
+  const [rooms, setRooms] = useState<number | "">("");
+  const [baths, setBaths] = useState<number | "">("");
+  const [otherTypeText, setOtherTypeText] = useState("");
+
+  const [furnished, setFurnished] = useState<"" | "Sí" | "Parcialmente" | "No">(
+    "",
+  );
+  const [isHOA, setIsHOA] = useState<"" | "Sí" | "No">("");
+  const [hoaAllowsSTR, setHoaAllowsSTR] = useState<
+    "" | "Sí" | "No" | "No estoy seguro"
+  >("");
+
+  // page 3
+  const [currentStatus, setCurrentStatus] = useState<
+    "" | "Desocupada" | "Arrendada a largo plazo" | "Ya en Airbnb / Booking"
+  >("");
+  const [startWhen, setStartWhen] = useState<
+    "" | "Inmediato" | "En 1–3 meses" | "Más adelante"
+  >("");
+
+  // page 4
+  const [goal, setGoal] = useState<
+    | ""
+    | "Ingreso fijo mensual"
+    | "Ingreso optimizado por noche"
+    | "Mezcla de ambos"
+    | "Aún no lo tengo claro"
+  >("");
+
+  // page 5 photos (✅ min 2 / max 5)
+  const [photos, setPhotos] = useState<PhotoItem[]>([]);
+  const MIN_PHOTOS = 2;
+  const MAX_PHOTOS = 5;
+  const minPhotosOk = photos.length >= MIN_PHOTOS;
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const submissionIdRef = useRef<string | null>(null);
+
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const smGroupObj = useMemo(
+    () => SM_SECTORES.find((s) => s.group === smSectorGroup),
+    [smSectorGroup],
+  );
+
+  function goHomeStage0() {
+    const fire = () => window.dispatchEvent(new Event("arka:hero:stage0"));
+
+    if (pathname !== "/") {
+      router.push("/");
+      window.setTimeout(fire, 80);
+    } else {
+      fire();
+    }
+  }
+
+  function closeSuccessAndGoHome() {
+    setShowSuccess(false);
+    goHomeStage0();
+  }
+
+  function back() {
+    if (step === 1.5) setStep(1);
+    else setStep((s) => Math.max(1, s - 1));
+  }
+
+  function validateStepOrAlert(current: number): boolean {
+    if (current === 2) {
+      if (!city) return (alert("Selecciona la ciudad."), false);
+
+      if (city === "Bogotá" && !bogotaLocalidad)
+        return (alert("Selecciona la localidad."), false);
+
+      if (city === "Santa Marta") {
+        if (!smSectorGroup) return (alert("Selecciona el sector."), false);
+        if (smGroupObj?.subs?.length && !smSectorSub)
+          return (alert("Selecciona el sub-sector."), false);
+        if (smGroupObj?.freeText && !smSectorFreeText.trim())
+          return (
+            alert("Describe la ubicación general (máx. 50 palabras)."),
+            false
+          );
+      }
+
+      if (!propertyType)
+        return (alert("Selecciona el tipo de propiedad."), false);
+
+      const needsRoomsBaths =
+        propertyType === "Apartamento" || propertyType === "Casa";
+      if (needsRoomsBaths && (rooms === "" || baths === ""))
+        return (alert("Indica habitaciones y baños."), false);
+
+      if (propertyType === "Otro" && !otherTypeText.trim())
+        return (alert("Describe el tipo (máx. 50 palabras)."), false);
+
+      if (!furnished) return (alert("Indica si está amoblada."), false);
+      if (!isHOA)
+        return (alert("Indica si hace parte de propiedad horizontal."), false);
+      if (isHOA === "Sí" && !hoaAllowsSTR)
+        return (alert("Indica si permite rentas cortas."), false);
+
+      return true;
+    }
+
+    if (current === 3) {
+      if (!currentStatus) return (alert("Indica el estado actual."), false);
+      if (!startWhen)
+        return (alert("Indica desde cuándo estaría disponible."), false);
+      return true;
+    }
+
+    if (current === 4) {
+      if (!goal) return (alert("Indica tu expectativa."), false);
+      return true;
+    }
+
+    if (current === 5) {
+      if (!minPhotosOk)
+        return (
+          alert(
+            `Sube al menos ${MIN_PHOTOS} fotos (habitación principal y baño).`,
+          ),
+          false
+        );
+      return true;
+    }
+
+    return true;
+  }
+
+  function next() {
+    if (!validateStepOrAlert(step)) return;
+    setStep((s) => Math.min(5, s + 1));
+  }
+
+  function getFinalCountryCodeOrEmpty() {
+    if (countryCode === "OTHER") return normalizeCountryCode(otherCountryCode);
+    return countryCode;
+  }
+
+  async function startEmailVerification() {
+    const phoneDigits = onlyDigits(phoneNumber);
+
+    if (!fullName.trim()) return alert("Ingresa tu nombre completo.");
+    if (!isEmail(email)) return alert("Ingresa un correo válido.");
+
+    const cc = getFinalCountryCodeOrEmpty();
+    if (!cc) return alert("Selecciona el indicativo del país.");
+    if (countryCode === "OTHER" && !cc)
+      return alert("Escribe el indicativo (ej: +49).");
+
+    if (!phoneDigits) return alert("Ingresa tu número de celular o WhatsApp.");
+    if (phoneDigits.length < 7)
+      return alert("El número parece demasiado corto.");
+
+    const phoneE164 = `${cc}${phoneDigits}`;
+
+    const res = await fetch("/api/postula/start", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fullName, email, phone: phoneE164 }),
+    });
+
+    const data = await res.json();
+    if (!res.ok)
+      return alert(
+        data?.message || "No se pudo enviar el correo de validación.",
+      );
+
+    setStartToken(data.token);
+    setStep(1.5);
+  }
+
+  async function verifyCode() {
+    if (!startToken) return alert("No hay verificación iniciada.");
+    if (!otp.trim()) return alert("Ingresa el código.");
+
+    const res = await fetch("/api/postula/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: startToken, code: otp.trim() }),
+    });
+
+    const data = await res.json();
+    if (!res.ok) return alert(data?.message || "Código inválido o expirado.");
+
+    setVerifiedToken(data.verifiedToken);
+    setStep(2);
+  }
+
+  function addPhotos(files: File[]) {
+    const toAdd = files
+      .filter((f) => f.type.startsWith("image/"))
+      .slice(0, Math.max(0, MAX_PHOTOS - photos.length))
+      .map((file) => {
+        const id = makeClientId();
+        const url = URL.createObjectURL(file);
+        return { id, file, url };
+      });
+
+    setPhotos((prev) => [...prev, ...toAdd]);
+  }
+
+  function removePhoto(id: string) {
+    setPhotos((prev) => {
+      const target = prev.find((p) => p.id === id);
+      if (target) URL.revokeObjectURL(target.url);
+      return prev.filter((p) => p.id !== id);
+    });
+  }
+
+  async function submitAll() {
+    if (isSubmitting) return;
+
+    const verified = verifiedToken;
+    if (!verified) return alert("Debes validar tu correo para continuar.");
+
+    if (
+      !validateStepOrAlert(2) ||
+      !validateStepOrAlert(3) ||
+      !validateStepOrAlert(4) ||
+      !validateStepOrAlert(5)
+    ) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    if (!submissionIdRef.current) {
+      submissionIdRef.current = makeClientId();
+    }
+    const submissionId = submissionIdRef.current;
+    if (!submissionId) {
+      setIsSubmitting(false);
+      return alert("No se pudo generar el ID de envío. Intenta de nuevo.");
+    }
+
+    const needsRoomsBaths =
+      propertyType === "Apartamento" || propertyType === "Casa";
+
+    const cc = getFinalCountryCodeOrEmpty();
+    if (!cc) {
+      setIsSubmitting(false);
+      return alert("Falta el indicativo del país.");
+    }
+    const phoneE164 = `${cc}${onlyDigits(phoneNumber)}`;
+
+    const payload = {
+      submissionId,
+      owner: { fullName, email, phone: phoneE164 },
+      property: {
+        city,
+        bogotaLocalidad: city === "Bogotá" ? bogotaLocalidad : null,
+        sectorGroup: city === "Santa Marta" ? smSectorGroup : null,
+        sectorSub: city === "Santa Marta" ? smSectorSub : null,
+        sectorFreeText: city === "Santa Marta" ? smSectorFreeText : null,
+        type: propertyType,
+        rooms: needsRoomsBaths ? rooms : null,
+        baths: needsRoomsBaths ? baths : null,
+        otherTypeText: propertyType === "Otro" ? otherTypeText : null,
+        furnished,
+        isHOA,
+        hoaAllowsSTR: isHOA === "Sí" ? hoaAllowsSTR : null,
+      },
+      ops: { currentStatus, startWhen },
+      expectation: { goal },
+    };
+
+    try {
+      const fd = new FormData();
+      fd.append("verifiedToken", verified);
+      fd.append("payload", JSON.stringify(payload));
+      fd.append("submissionId", submissionId);
+      photos.forEach((p) => fd.append("photos", p.file));
+
+      const res = await fetch("/api/postula/submit", {
+        method: "POST",
+        body: fd,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setIsSubmitting(false);
+        return alert(data?.message || "No se pudo enviar el formulario.");
+      }
+
+      setShowSuccess(true);
+    } catch (e) {
+      console.error(e);
+      setIsSubmitting(false);
+      alert("Ocurrió un error enviando la postulación. Intenta de nuevo.");
+    }
+  }
+
+  return (
+    <section
+      className="arkaFormPage"
+      style={{ padding: "calc(var(--header-h) + 24px) var(--edge-space) 56px" }}
+    >
+      <div className="arkaForm">
+        <div className="arkaFormInner">
+          <div className="formIntro">
+            <h1 className="formTitle">Postula tu propiedad</h1>
+            <p className="formSubtitle">
+              Completa la información y te contactaremos en un plazo máximo de
+              48 horas.
+            </p>
+          </div>
+
+          {/* STEP 1 */}
+          {step === 1 && (
+            <div>
+              <h3 className="formSectionTitle">Datos del propietario</h3>
+
+              <label>Nombre completo</label>
+              <input
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+              />
+
+              <label>Correo electrónico</label>
+              <input value={email} onChange={(e) => setEmail(e.target.value)} />
+
+              <label>Número de celular o WhatsApp</label>
+              <div className="phoneRow">
+                <select
+                  value={countryCode}
+                  onChange={(e) => setCountryCode(e.target.value)}
+                >
+                  {COUNTRY_CODES.map((c) => (
+                    <option key={`${c.label}_${c.code}`} value={c.code}>
+                      {c.label}
+                    </option>
+                  ))}
+                </select>
+
+                <input
+                  value={phoneNumber}
+                  inputMode="tel"
+                  placeholder="Ej: 3158254384"
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                />
+              </div>
+
+              {countryCode === "OTHER" && (
+                <>
+                  <label>Indicativo (ej: +49)</label>
+                  <input
+                    value={otherCountryCode}
+                    onChange={(e) => setOtherCountryCode(e.target.value)}
+                    placeholder="Ej: +49"
+                    inputMode="tel"
+                  />
+                </>
+              )}
+
+              <button onClick={startEmailVerification}>Continuar</button>
+            </div>
+          )}
+
+          {/* STEP 1.5 */}
+          {step === 1.5 && (
+            <div>
+              <h3 className="formSectionTitle">Validación de correo</h3>
+              <p>
+                <strong>
+                  Para continuar, revisa tu correo electrónico y valida tu
+                  cuenta.
+                </strong>
+              </p>
+              <p style={{ color: "var(--arka-text-soft)" }}>
+                Te enviamos un código de verificación. Escríbelo aquí:
+              </p>
+
+              <input
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                placeholder="Código"
+              />
+
+              <div className="arkaFormActions">
+                <button onClick={back}>Atrás</button>
+                <button onClick={verifyCode}>Validar y continuar</button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 2 */}
+          {step === 2 && (
+            <div>
+              <h3 className="formSectionTitle">Datos de la propiedad</h3>
+
+              <label>Ciudad</label>
+              <select
+                value={city}
+                onChange={(e) => setCity(e.target.value as any)}
+              >
+                <option value="">Selecciona</option>
+                <option value="Bogotá">Bogotá</option>
+                <option value="Santa Marta">Santa Marta</option>
+              </select>
+
+              {city === "Bogotá" && (
+                <>
+                  <label>Localidad</label>
+                  <select
+                    value={bogotaLocalidad}
+                    onChange={(e) => setBogotaLocalidad(e.target.value)}
+                  >
+                    <option value="">Selecciona</option>
+                    {BOGOTA_LOCALIDADES.map((l) => (
+                      <option key={l} value={l}>
+                        {l}
+                      </option>
+                    ))}
+                  </select>
+                </>
+              )}
+
+              {city === "Santa Marta" && (
+                <>
+                  <label>Sector</label>
+                  <select
+                    value={smSectorGroup}
+                    onChange={(e) => {
+                      setSmSectorGroup(e.target.value);
+                      setSmSectorSub("");
+                      setSmSectorFreeText("");
+                    }}
+                  >
+                    <option value="">Selecciona</option>
+                    {SM_SECTORES.map((s) => (
+                      <option key={s.group} value={s.group}>
+                        {s.group}
+                      </option>
+                    ))}
+                  </select>
+
+                  {!!smGroupObj?.subs?.length && (
+                    <>
+                      <label>Sub-sector</label>
+                      <select
+                        value={smSectorSub}
+                        onChange={(e) => setSmSectorSub(e.target.value)}
+                      >
+                        <option value="">Selecciona</option>
+                        {smGroupObj.subs!.map((sub) => (
+                          <option key={sub} value={sub}>
+                            {sub}
+                          </option>
+                        ))}
+                      </select>
+                    </>
+                  )}
+
+                  {smGroupObj?.freeText && (
+                    <>
+                      <label>
+                        Describe en máximo 50 palabras la ubicación general
+                      </label>
+                      <textarea
+                        value={smSectorFreeText}
+                        onChange={(e) => setSmSectorFreeText(e.target.value)}
+                      />
+                    </>
+                  )}
+                </>
+              )}
+
+              <label>Tipo de propiedad</label>
+              <select
+                value={propertyType}
+                onChange={(e) => setPropertyType(e.target.value as any)}
+              >
+                <option value="">Selecciona</option>
+                <option value="Studio o único espacio">
+                  Studio o único espacio
+                </option>
+                <option value="Apartamento">
+                  Apartamento de 1 o más habitaciones
+                </option>
+                <option value="Casa">Casa</option>
+                <option value="Otro">Otro</option>
+              </select>
+
+              {(propertyType === "Apartamento" || propertyType === "Casa") && (
+                <>
+                  <label>¿Cuántas habitaciones tiene?</label>
+                  <input
+                    type="number"
+                    value={rooms}
+                    onChange={(e) =>
+                      setRooms(e.target.value ? Number(e.target.value) : "")
+                    }
+                    min={0}
+                  />
+
+                  <label>¿Cuántos baños tiene?</label>
+                  <input
+                    type="number"
+                    value={baths}
+                    onChange={(e) =>
+                      setBaths(e.target.value ? Number(e.target.value) : "")
+                    }
+                    min={0}
+                  />
+                </>
+              )}
+
+              {propertyType === "Otro" && (
+                <>
+                  <label>Descríbelo en máximo 50 palabras</label>
+                  <textarea
+                    value={otherTypeText}
+                    onChange={(e) => setOtherTypeText(e.target.value)}
+                  />
+                </>
+              )}
+
+              <label>¿La propiedad está actualmente amoblada?</label>
+              <select
+                value={furnished}
+                onChange={(e) => setFurnished(e.target.value as any)}
+              >
+                <option value="">Selecciona</option>
+                <option value="Sí">Sí</option>
+                <option value="Parcialmente">Parcialmente</option>
+                <option value="No">No</option>
+              </select>
+
+              <label>¿Hace parte de una propiedad horizontal?</label>
+              <select
+                value={isHOA}
+                onChange={(e) => setIsHOA(e.target.value as any)}
+              >
+                <option value="">Selecciona</option>
+                <option value="Sí">Sí</option>
+                <option value="No">No</option>
+              </select>
+
+              {isHOA === "Sí" && (
+                <>
+                  <label>
+                    ¿El manual de propiedad horizontal permite rentas cortas?
+                  </label>
+                  <select
+                    value={hoaAllowsSTR}
+                    onChange={(e) => setHoaAllowsSTR(e.target.value as any)}
+                  >
+                    <option value="">Selecciona</option>
+                    <option value="Sí">Sí</option>
+                    <option value="No">No</option>
+                    <option value="No estoy seguro">No estoy seguro</option>
+                  </select>
+                </>
+              )}
+
+              <div className="arkaFormActions">
+                <button onClick={back}>Atrás</button>
+                <button onClick={next}>Continuar</button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 3 */}
+          {step === 3 && (
+            <div>
+              <h3 className="formSectionTitle">Información operativa básica</h3>
+
+              <label>¿Actualmente la propiedad está?</label>
+              <select
+                value={currentStatus}
+                onChange={(e) => setCurrentStatus(e.target.value as any)}
+              >
+                <option value="">Selecciona</option>
+                <option value="Desocupada">Desocupada</option>
+                <option value="Arrendada a largo plazo">
+                  Arrendada a largo plazo
+                </option>
+                <option value="Ya en Airbnb / Booking">
+                  Ya en Airbnb / Booking
+                </option>
+              </select>
+
+              <label>
+                ¿Desde cuándo estaría disponible para iniciar operación?
+              </label>
+              <select
+                value={startWhen}
+                onChange={(e) => setStartWhen(e.target.value as any)}
+              >
+                <option value="">Selecciona</option>
+                <option value="Inmediato">Inmediato</option>
+                <option value="En 1–3 meses">En 1–3 meses</option>
+                <option value="Más adelante">Más adelante</option>
+              </select>
+
+              <div className="arkaFormActions">
+                <button onClick={back}>Atrás</button>
+                <button onClick={next}>Continuar</button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 4 */}
+          {step === 4 && (
+            <div>
+              <h3 className="formSectionTitle">Expectativa del propietario</h3>
+
+              <label>¿Qué busca principalmente?</label>
+              <select
+                value={goal}
+                onChange={(e) => setGoal(e.target.value as any)}
+              >
+                <option value="">Selecciona</option>
+                <option value="Ingreso fijo mensual">
+                  Ingreso fijo mensual
+                </option>
+                <option value="Ingreso optimizado por noche">
+                  Ingreso optimizado por noche
+                </option>
+                <option value="Mezcla de ambos">Mezcla de ambos</option>
+                <option value="Aún no lo tengo claro">
+                  Aún no lo tengo claro
+                </option>
+              </select>
+
+              <div className="arkaFormActions">
+                <button onClick={back}>Atrás</button>
+                <button onClick={next}>Continuar</button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 5 */}
+          {step === 5 && (
+            <div>
+              <h3 className="formSectionTitle">Fotos</h3>
+
+              <p className="photoHelp">
+                Sube al menos 2 fotos de la habitación principal y baño.
+                Opcionalmente, sube otras que consideres importantes. Máximo: 5
+                fotos en total.
+              </p>
+
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={(e) => {
+                  const list = Array.from(e.target.files || []);
+                  addPhotos(list);
+                  e.currentTarget.value = "";
+                }}
+              />
+
+              <p style={{ color: minPhotosOk ? "inherit" : "crimson" }}>
+                {minPhotosOk
+                  ? `OK: ${photos.length} archivos`
+                  : `Faltan fotos: tienes ${photos.length}/${MIN_PHOTOS}`}
+              </p>
+
+              {photos.length > 0 && (
+                <div className="photoGrid">
+                  {photos.map((p) => (
+                    <div className="photoCard" key={p.id}>
+                      <img className="photoImg" src={p.url} alt="Foto subida" />
+                      <button
+                        type="button"
+                        className="photoRemove"
+                        aria-label="Borrar foto"
+                        onClick={() => removePhoto(p.id)}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="arkaFormActions">
+                <button onClick={back} disabled={isSubmitting}>
+                  Atrás
+                </button>
+                <button onClick={submitAll} disabled={isSubmitting}>
+                  {isSubmitting ? "Enviando…" : "Enviar postulación"}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* SUCCESS MODAL */}
+      {showSuccess && (
+        <div
+          className="modalOverlay"
+          role="dialog"
+          aria-modal="true"
+          onClick={closeSuccessAndGoHome} // ✅ click fuera también redirige
+        >
+          <div className="modalCard" onClick={(e) => e.stopPropagation()}>
+            <button
+              className="modalClose"
+              aria-label="Cerrar"
+              onClick={closeSuccessAndGoHome}
+            >
+              ×
+            </button>
+
+            <h3 className="modalTitle">¡Gracias por postular tu propiedad!</h3>
+            <p className="modalText">
+              Revisaremos tu información y te contactaremos en un plazo máximo
+              de 48 horas.
+            </p>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+</file>
+
+<file path="components/home/FloatingCTA.module.css">
+.wrap {
+  position: fixed;
+
+  /* ✅ posición controlada por variables (stage manda) */
+  left: var(--cta-left, auto);
+  right: var(--cta-right, var(--edge-space));
+  bottom: var(--cta-bottom, var(--edge-space));
+  transform: var(--cta-transform, none);
+
+  z-index: 10001;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition:
+    transform 220ms ease,
+    opacity 220ms ease,
+    filter 220ms ease;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: var(--cta-pad-y, 12px) var(--cta-pad-x, 14px);
+  border-radius: 999px;
+
+  background: var(--arka-white);
+  color: var(--arka-brown-dark);
+
+  border: 1px solid var(--arka-brown-light);
+
+  font-weight: 600;
+  line-height: 1;
+  font-size: var(--cta-font, 14px);
+
+  box-shadow: 0 8px 20px rgba(74, 52, 36, 0.15);
+
+  text-decoration: none;
+
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 26px rgba(74, 52, 36, 0.22);
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon svg,
+.icon img {
+  width: 1em;
+  height: 1em;
+  display: block;
+}
+
+.label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+@keyframes ctaPulseBg {
+  0% {
+    background: rgba(255, 255, 255, 0.55);
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
+  }
+  50% {
+    background: rgba(255, 255, 255, 0.85);
+    border-color: rgba(0, 0, 0, 0.16);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+  }
+  100% {
+    background: rgba(255, 255, 255, 0.55);
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
+  }
+}
+
+/* ✅ Resalta que es clickable sin cambiar tamaño */
+.btn {
+  animation: ctaPulseBg 1.8s ease-in-out infinite;
+}
+
+/* Accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    animation: none;
+  }
+}
+
+/* Ocultar CTA flotante en stage 9 */
+html[data-hero-stage="9"] .wrap {
+  opacity: 0;
+  pointer-events: none;
+}
+</file>
+
+<file path="components/home/FloatingCTA.tsx">
+import styles from "./FloatingCTA.module.css";
+
+export function FloatingCTA() {
+  return (
+    <div className={styles.wrap} data-cta="float" aria-live="polite">
+      <a className={styles.btn} data-cta-btn href="/postula-tu-propiedad">
+        <span className={styles.label}>
+          <span>POSTULA TU PROPIEDAD</span>
+        </span>
+      </a>
+    </div>
+  );
+}
+</file>
+
+<file path="components/home/SectionSteps.tsx">
+import Link from "next/link";
+import { Gem, Handshake, HousePlus } from "lucide-react";
+
+export function SectionSteps() {
+  return (
+    <section id="s2" className="section">
+      <h2 className="section__h2">Tu progreso en tres simples pasos</h2>
+
+      <ol className="steps mt-10 flex flex-col gap-6">
+        {/* Step 1 */}
+        <li className="steps__item flex items-start gap-4">
+          <div className="steps__iconWrap flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[rgba(167,126,77,0.14)]">
+            <HousePlus
+              className="steps__icon h-6 w-6 text-[var(--arka-brown-mid)]"
+              strokeWidth={1.6}
+              aria-hidden="true"
+            />
+          </div>
+
+          <div className="steps__content">
+            <h3 className="steps__h3 m-0 text-[18px] leading-tight">
+              Postula tu propiedad
+            </h3>
+            <p className="steps__p mt-2 mb-0 text-[14px] leading-snug text-[var(--arka-text-soft)]">
+              Completa el formulario con la información básica.
+            </p>
+          </div>
+        </li>
+
+        {/* Step 2 */}
+        <li className="steps__item flex items-start gap-4">
+          <div className="steps__iconWrap flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[rgba(167,126,77,0.14)]">
+            <Gem
+              className="steps__icon h-6 w-6 text-[var(--arka-brown-mid)]"
+              strokeWidth={1.6}
+              aria-hidden="true"
+            />
+          </div>
+
+          <div className="steps__content">
+            <h3 className="steps__h3 m-0 text-[18px] leading-tight">
+              Estudia nuestra oferta
+            </h3>
+            <p className="steps__p mt-2 mb-0 text-[14px] leading-snug text-[var(--arka-text-soft)]">
+              Te enviamos una propuesta clara y sin letras pequeñas.
+            </p>
+          </div>
+        </li>
+
+        {/* Step 3 */}
+        <li className="steps__item flex items-start gap-4">
+          <div className="steps__iconWrap flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[rgba(167,126,77,0.14)]">
+            <Handshake
+              className="steps__icon h-6 w-6 text-[var(--arka-brown-mid)]"
+              strokeWidth={1.6}
+              aria-hidden="true"
+            />
+          </div>
+
+          <div className="steps__content">
+            <h3 className="steps__h3 m-0 text-[18px] leading-tight">
+              Firmemos el contrato
+            </h3>
+            <p className="steps__p mt-2 mb-0 text-[14px] leading-snug text-[var(--arka-text-soft)]">
+              Arrancamos operación y preparación del inmueble.
+            </p>
+          </div>
+        </li>
+      </ol>
+
+      <div className="section__cta mt-10">
+        <Link className="btn" href="/postula-tu-propiedad">
+          Postula tu propiedad aquí
+        </Link>
+      </div>
+    </section>
+  );
+}
+</file>
+
+<file path="package.json">
+{
+  "name": "nextjs",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "lucide-react": "^0.574.0",
+    "next": "16.1.6",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.6",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
+</file>
+
+<file path="README.md">
+# ARKA Living — Web
+
+Sitio web oficial de **ARKA Living**, gestora de rentas cortas en Colombia (Santa Marta y Bogotá).
+
+Enfoque del proyecto:
+
+- SEO fuerte
+- Performance
+- Seguridad
+- Arquitectura limpia y escalable
+- Preparado para portal de propietarios y pagos
+
+---
+
+## Stack
+
+**Frontend**
+
+- Next.js (App Router)
+- React
+- CSS Modules
+- lucide-react (iconografía)
+
+**Backend (próxima fase)**
+
+- Node.js + NestJS
+- MongoDB Atlas
+- API documentada (Swagger) y versionada
+
+**Infra (sugerida)**
+
+- Vercel (frontend)
+- Cloudflare (DNS + seguridad)
+- Railway/Render (backend)
+- Sentry + Uptime + Analytics (GA4/GTM)
+
+---
+
+## Estructura (referencial)
+
+```
+app/
+  (site)/
+    layout.tsx
+    page.tsx
+
+components/
+  home/
+    Hero.tsx
+    FloatingCTA.tsx
+    FloatingCTA.module.css
+    MenuOverlay.tsx
+    MenuOverlay.module.css
+    Footer.tsx
+    Footer.module.css
+  layout/
+  ui/
+
+public/
+styles/
+```
+
+---
+
+## Sistema de UI
+
+**Tokens de color (ARKA):**
+
+- `--arka-white`
+- `--arka-brown-dark`
+- `--arka-brown-mid`
+- `--arka-brown-light`
+
+**Layout**
+
+- Header sticky (card blur) alineado con `--edge-space`
+- Footer con degradé radial sólido
+- CTA flotante controlado por `data-hero-stage`
+- Estados globales controlados con `data-*` en `<html>`
+
+---
+
+## Funcionalidades actuales (MVP)
+
+- Hero con sistema de _stages_ (scroll/pinned)
+- CTA flotante con estilos modulares + lógica global por stage
+- Menú lateral (overlay) con iconos consistentes
+- Footer estructurado con redes y copy
+- Enlaces externos abren en nueva pestaña con `rel="noopener noreferrer"`
+- Click en **HOME** desde menú resetea el Hero al stage 0 (scroll top + `data-hero-stage="0"`)
+
+---
+
+## Enlaces oficiales
+
+- Instagram: https://instagram.com/arka_living.co
+- WhatsApp: https://wa.me/573158254384
+
+---
+
+## Desarrollo local
+
+```bash
+npm install
+npm run dev
+```
+
+Abrir:
+
+- http://localhost:3000
+
+---
+
+## Flujo Git recomendado
+
+Crear rama de feature:
+
+```bash
+git checkout -b feature/nombre-corto
+```
+
+Merge a `main`:
+
+```bash
+git checkout main
+git pull origin main
+git merge feature/nombre-corto
+git push origin main
+```
+
+---
+
+## Próximos pasos
+
+- Catálogo + páginas por inmueble (SSR/ISR, metadata, OG, JSON-LD)
+- Portal de propietarios (RBAC + autorización por ownerId)
+- Calendario (iCal sync MVP + reglas anti-overbooking)
+- Pagos (payment_intent + webhooks idempotentes)
+
+---
+
+© 2026 — Sitio web creado por **JCR-Code**
+</file>
+
+<file path="components/forms/PropertyApplicationForm.css">
+/* PropertyApplicationForm.css */
+/* =====================================================
+   FULL HEIGHT FORM (evita que el Footer aparezca sin scroll)
+===================================================== */
+
+.arkaFormPage {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--arka-white);
+}
+
+.arkaForm {
+  flex: 1;
+}
+
+/* ✅ FIX MOVIL (overflow-x) se movió a globals.css */
+
+/* 2) Box sizing global local al form */
+.arkaForm,
+.arkaForm * {
+  box-sizing: border-box;
+}
+
+.arkaForm {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.arkaFormInner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* ✅ Intro spacing (req #1) */
+.formIntro {
+  margin-bottom: 22px;
+}
+
+.formTitle {
+  color: var(--arka-brown-dark);
+  margin: 0 0 8px;
+}
+
+.formSubtitle {
+  color: var(--arka-text-soft);
+  margin: 0;
+}
+
+.formSectionTitle {
+  font-size: large;
+  font-weight: 600;
+  margin: 26px 0 10px;
+  color: var(--arka-brown-dark);
+}
+
+.arkaForm label {
+  display: block;
+  margin: 14px 0 6px;
+  color: var(--arka-brown-dark);
+  font-weight: 600;
+}
+
+.arkaForm input,
+.arkaForm select,
+.arkaForm textarea {
+  width: 100%;
+  max-width: 100%;
+  padding: 12px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(74, 52, 36, 0.25);
+  background: var(--arka-white);
+  color: var(--arka-brown-dark);
+  outline: none;
+}
+
+.arkaForm textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.arkaFormActions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.arkaForm button {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(74, 52, 36, 0.25);
+  background: var(--arka-white);
+  color: var(--arka-brown-dark);
+  cursor: pointer;
+  font-weight: 700;
+  transition:
+    transform 120ms ease,
+    opacity 120ms ease;
+}
+
+.arkaForm button:hover {
+  transform: translateY(-1px);
+}
+
+.arkaForm button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Teléfono: select + input en grid */
+.phoneRow {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 10px;
+}
+
+@media (max-width: 520px) {
+  .phoneRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Fotos: previews */
+.photoHelp {
+  color: var(--arka-text-soft);
+}
+
+.photoGrid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+@media (max-width: 520px) {
+  .photoGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.photoCard {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(74, 52, 36, 0.2);
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.photoImg {
+  display: block;
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
+}
+
+.photoRemove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+
+  border: 1px solid rgba(74, 52, 36, 0.25);
+  background: rgba(253, 252, 249, 0.95);
+  cursor: pointer;
+
+  /* no dependemos del glifo */
+  padding: 0;
+  margin: 0;
+
+  display: grid;
+  place-items: center;
+
+  /* ocultar el “×” del HTML sin romper accesibilidad */
+  color: transparent;
+  font-size: 0;
+  line-height: 0;
+}
+
+.photoRemove::before,
+.photoRemove::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 2px;
+  background: var(--arka-brown-dark);
+  border-radius: 999px;
+  left: 50%;
+  top: 50%;
+  transform-origin: center;
+}
+
+.photoRemove::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.photoRemove::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* Success modal */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10050;
+  background: rgba(0, 0, 0, 0.55);
+
+  display: grid;
+  place-items: center;
+  padding: 18px;
+}
+
+.modalCard {
+  width: min(520px, 92vw);
+  background: var(--arka-white);
+  border-radius: 18px;
+  border: 1px solid rgba(74, 52, 36, 0.18);
+  box-shadow: 0 18px 70px rgba(0, 0, 0, 0.25);
+  padding: 18px 18px 16px;
+  position: relative;
+}
+
+.modalTitle {
+  margin: 0 0 8px;
+  color: var(--arka-brown-dark);
+}
+
+.modalText {
+  margin: 0;
+  color: var(--arka-text-soft);
+  line-height: 1.45;
+}
+
+.modalClose {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+
+  border: 1px solid rgba(74, 52, 36, 0.25);
+  background: rgba(253, 252, 249, 0.95);
+  cursor: pointer;
+
+  padding: 0;
+  margin: 0;
+
+  display: grid;
+  place-items: center;
+
+  color: transparent;
+  font-size: 0;
+  line-height: 0;
+}
+
+.modalClose::before,
+.modalClose::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 2px;
+  background: var(--arka-brown-dark);
+  border-radius: 999px;
+  left: 50%;
+  top: 50%;
+  transform-origin: center;
+}
+
+.modalClose::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.modalClose::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.errorText {
+  margin-top: 8px;
+  color: #b3261e;
+  font-weight: 600;
+}
+
+.helpText {
+  margin-top: 6px;
+  color: var(--arka-text-soft);
+  font-size: 13px;
+}
+</file>
+
+<file path="components/Footer.module.css">
+/* =========================================
+   FOOTER SLIM (NO HOME)
+========================================= */
+
+.footerSlim {
+  width: 100%;
+  margin: 0;
+
+  padding-top: 28px;
+  padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px));
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+
+  color: var(--arka-white);
+
+  /* 🎨 Mismo lenguaje cromático que el takeover */
+  background: radial-gradient(
+    ellipse at 50% 120%,
+    var(--arka-brown-dark) 0%,
+    var(--arka-brown-mid) 60%,
+    var(--arka-brown-light) 95%
+  );
+
+  display: flex;
+  justify-content: center;
+}
+
+.footerSlimInner {
+  width: 100%;
+  max-width: 980px;
+
+  padding-left: var(--edge-space);
+  padding-right: var(--edge-space);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.footerSlimSocial {
+  display: flex;
+  gap: 16px;
+}
+
+.footerSlimSocial a {
+  color: var(--arka-white);
+  opacity: 0.95;
+  transition:
+    transform 160ms ease,
+    opacity 160ms ease;
+}
+
+.footerSlimSocial a:hover {
+  transform: translateY(-1px);
+  opacity: 1;
+}
+
+.footerSlimIcon {
+  width: 22px;
+  height: 22px;
+  color: var(--arka-white);
+}
+
+/* 🔻 2px más pequeña */
+.footerSlimTerms {
+  font-size: 11px; /* antes 13px */
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  color: var(--arka-white);
+  opacity: 0.9;
+}
+
+/* 🔺 2px más grande */
+.footerSlimCopy {
+  font-size: 14px; /* antes 12px */
+  margin: 0;
+  color: var(--arka-white);
+  opacity: 0.85;
+}
+
+/* =====================================================
+   TAKEOVER (Home - Stage 9)
+===================================================== */
+
+.takeover {
+  position: fixed;
+  inset: 0;
+  z-index: 10002; /* debajo del MenuOverlay (10003) */
+
+  background: linear-gradient(
+    180deg,
+    var(--arka-brown-mid) 0%,
+    var(--arka-brown-light) 65%,
+    var(--arka-brown-mid) 100%
+  );
+
+  transform: translateY(100%);
+  transition: transform 1200ms ease;
+
+  pointer-events: none;
+}
+
+.takeoverActive {
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Wrapper full screen */
+.takeoverInner {
+  height: 100dvh;
+  width: 100%;
+
+  padding-left: var(--edge-space);
+  padding-right: var(--edge-space);
+
+  /* poco padding-top para que el logo “crezca hacia arriba” */
+  padding-top: calc(8px + env(safe-area-inset-top, 0px));
+  padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Centro (Contenedor 1 + 2) */
+.takeoverMain {
+  flex: 1;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  /* controla separación entre C1 y C2 */
+  gap: 50px;
+}
+
+/* Contenedor 1: Logo + Slogan */
+.takeoverBrand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Logo grande, sin distorsión */
+.takeoverLogo {
+  width: auto;
+  height: auto;
+
+  max-width: min(820px, 88vw);
+  max-height: min(52vh, 460px);
+
+  object-fit: contain;
+  display: block;
+}
+
+/* Slogan pegado al logo (sin hacks frágiles) */
+.takeoverSlogan {
+  margin: -12px 0 0;
+  color: var(--arka-white);
+  font-size: clamp(16px, 2.1vw, 26px);
+  line-height: 1.15;
+  opacity: 0.95;
+}
+
+/* Contenedor 2: CTA + Operamos */
+.takeoverActions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  /* distancia CTA ↔ Operamos */
+  gap: 10px;
+}
+
+/* Solo wrapper, no estilo visual */
+.takeoverCTAWrapper {
+  margin: 0;
+  animation: none !important;
+}
+
+.takeoverCTA:hover {
+  transform: translateY(-1px);
+  background: rgba(253, 252, 249, 0.98);
+}
+
+.takeoverCTA:active {
+  transform: translateY(0);
+}
+
+/* Operamos */
+.takeoverOp {
+  margin: 0;
+  color: var(--arka-white);
+  font-size: clamp(14px, 1.6vw, 18px);
+  line-height: 1.2;
+  opacity: 0.95;
+}
+
+/* Contenedor 3: Iconos + Términos + Copyright (anclado abajo) */
+.takeoverLegal {
+  width: 100%;
+  margin-top: auto; /* ✅ siempre abajo */
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 2px; /* ✅ pegaditos */
+  padding-top: 0;
+}
+
+/* Iconos pegados a términos */
+.takeoverLegalSocial {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0;
+}
+
+.takeoverSocialLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--arka-white);
+  opacity: 0.95;
+  transition:
+    transform 160ms ease,
+    opacity 160ms ease;
+}
+
+.takeoverSocialLink:hover {
+  transform: translateY(-1px);
+  opacity: 1;
+}
+
+.takeoverSocialIcon {
+  width: 34px;
+  height: 34px;
+}
+
+.takeoverTerms {
+  font-size: 12px;
+  color: var(--arka-white);
+  opacity: 0.9;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.takeoverCopyright {
+  margin: 0;
+  font-size: 14px;
+  color: var(--arka-white);
+  opacity: 0.85;
+}
+
+/* Compact mode: laptops con poca altura */
+@media (max-height: 740px) {
+  .takeoverLogo {
+    max-width: min(680px, 78vw);
+    max-height: min(44vh, 360px);
+  }
+
+  .takeoverSlogan {
+    margin-top: -10px;
+  }
+
+  .takeoverCTA {
+    padding: 11px 16px;
+    font-size: 11px;
+  }
+
+  .takeoverSocialIcon {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .takeoverLogo {
+    max-width: 86vw;
+    max-height: 38vh;
+  }
+
+  .takeoverSlogan {
+    margin-top: -10px;
+  }
+}
+</file>
+
+<file path="components/Header.tsx">
+"use client";
+
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { MenuOverlay } from "./MenuOverlay";
+import { OwnerLoginModal } from "./OwnerLoginModal";
+import styles from "./Header.module.css";
+
+export function Header() {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [ownerOpen, setOwnerOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // ✅ lock scroll solo cuando overlay o modal están abiertos
+  useEffect(() => {
+    const anyOpen = menuOpen || ownerOpen;
+    document.body.style.overflow = anyOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen, ownerOpen]);
+
+  // ✅ señal global para cambiar color del burger / X
+  useEffect(() => {
+    const el = document.documentElement;
+    if (menuOpen) el.dataset.menuOpen = "true";
+    else delete el.dataset.menuOpen;
+  }, [menuOpen]);
+
+  const goHomeStage0 = (e?: React.MouseEvent) => {
+    e?.preventDefault();
+
+    setMenuOpen(false);
+    setOwnerOpen(false);
+
+    const fire = () => {
+      window.dispatchEvent(new Event("arka:hero:stage0"));
+    };
+
+    if (pathname !== "/") {
+      router.push("/");
+      window.setTimeout(fire, 80);
+    } else {
+      fire();
+    }
+  };
+
+  return (
+    <>
+      <header
+        className={`${styles.header} ${scrolled ? styles.solid : styles.clear}`}
+      >
+        <div className={styles.inner}>
+          <Link
+            className={styles.logo}
+            href="/"
+            aria-label="Ir al inicio"
+            onClick={goHomeStage0}
+          >
+            <img
+              src="/logo-crema.png"
+              alt="ARKA Living"
+              className={styles.logoImg}
+            />
+          </Link>
+        </div>
+      </header>
+
+      <button
+        className={styles.burger}
+        onClick={() => setMenuOpen((v) => !v)}
+        aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
+        aria-expanded={menuOpen}
+      >
+        <span
+          className={`${styles.line} ${menuOpen ? styles.openTop : styles.top}`}
+        />
+        <span
+          className={`${styles.line} ${menuOpen ? styles.openBot : styles.bot}`}
+        />
+      </button>
+
+      <MenuOverlay
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        onOpenOwner={() => {
+          setMenuOpen(false);
+          setOwnerOpen(true);
+        }}
+      />
+
+      <OwnerLoginModal open={ownerOpen} onClose={() => setOwnerOpen(false)} />
+    </>
+  );
+}
+</file>
+
+<file path="components/MenuOverlay.module.css">
+/* components/MenuOverlay.module.css */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10003;
+  pointer-events: none;
+  overscroll-behavior: contain;
+}
+
+.backdrop,
+.panel {
+  pointer-events: auto;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.panel {
+  position: absolute;
+  right: 0;
+  top: 0;
+
+  height: 100%;
+  width: min(420px, 92vw);
+  background: var(--arka-white);
+
+  padding: calc(var(--header-h) + 12px) 24px 24px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  /* IMPORTANTE: permite que la sombra no se corte */
+  overflow: visible;
+}
+
+/* NAV */
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+
+  width: max-content;
+  max-width: 100%;
+}
+
+/* LINKS */
+.link,
+.linkBtn {
+  text-decoration: none;
+  color: var(--arka-brown-dark);
+
+  padding: 8px 10px;
+  line-height: 1.1;
+  font-size: 14px;
+  letter-spacing: 0.2px;
+
+  border: 1px solid var(--arka-brown-light);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+
+  width: 100%;
+  max-width: 100%;
+
+  white-space: nowrap;
+
+  /* transición premium */
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    background 200ms ease;
+
+  will-change: transform;
+}
+
+/* HOVER PREMIUM */
+.link:hover,
+.linkBtn:hover {
+  transform: translate(5px, -1px);
+
+  /* sombra suave café claro hacia izquierda y abajo */
+  box-shadow: -12px 12px 28px rgba(184, 138, 90, 0.18);
+}
+
+/* FOCUS accesible */
+.link:focus-visible,
+.linkBtn:focus-visible {
+  outline: 2px solid rgba(184, 138, 90, 0.6);
+  outline-offset: 3px;
+}
+
+/* SOCIALS */
+.socials {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.socialLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  height: 40px;
+
+  background: var(--arka-white); /* ✅ fondo blanco fijo */
+  border-radius: 12px; /* opcional, más elegante */
+
+  color: var(--arka-brown-mid);
+  opacity: 0.95;
+
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease,
+    box-shadow 200ms ease;
+}
+
+/* Hover: NO cambia el fondo */
+.socialLink:hover {
+  background: #ffffff; /* 🔒 se mantiene blanco */
+  opacity: 1;
+  transform: translateY(-2px);
+
+  box-shadow: 0 8px 20px rgba(184, 138, 90, 0.25);
+}
+
+.socialIcon {
+  width: 26px;
+  height: 26px;
+  stroke-width: 1.8;
+
+  filter: drop-shadow(0 4px 10px rgba(184, 138, 90, 0.35));
+  transition:
+    filter 200ms ease,
+    transform 200ms ease;
+}
+
+/* MOBILE */
+@media (max-width: 640px) {
+  .panel {
+    width: max-content;
+    max-width: calc(100vw - 28px);
+  }
+}
+
+/* Respeta usuarios con reducción de movimiento */
+@media (prefers-reduced-motion: reduce) {
+  .link,
+  .linkBtn {
+    transition: box-shadow 220ms ease;
+  }
+
+  .link:hover,
+  .linkBtn:hover {
+    transform: none;
+  }
+}
+</file>
+
+<file path="app/(site)/layout.tsx">
+import "../globals.css";
+import type { Metadata } from "next";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { Playfair_Display, Inter } from "next/font/google";
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  variable: "--font-display",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-body",
+});
+
+export const metadata = {
+  title: "ARKA Living",
+  description: "Gestión inteligente de rentas cortas",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
+export default function SiteLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="es">
+      <body>
+        <div id="app-root">
+          <Header />
+          <main>{children}</main>
+
+          <Footer />
+        </div>
+      </body>
+    </html>
+  );
+}
+</file>
+
+<file path="app/(site)/page.tsx">
+import { Hero } from "@/components/home/Hero";
+import { FloatingCTA } from "@/components/home/FloatingCTA";
+
+export default function Page() {
+  return (
+    <>
+      <Hero />
+      <FloatingCTA />
+    </>
+  );
+}
+</file>
+
+<file path="components/Header.module.css">
+/*.header {
+  position: sticky;
+  top: var(--header-top);
+  z-index: 10002;
+
+  width: calc(100% - (var(--edge-space) * 2));
+  margin-left: var(--edge-space);
+  margin-right: var(--edge-space);
+
+  transition: background 200ms ease;
+}*/
+
+.header {
+  position: fixed;
+  top: var(--header-top);
+  margin-left: var(--edge-space);
+  margin-right: var(--edge-space);
+  left: 0;
+  right: 0;
+  z-index: 10002; /* < overlay 10003 */
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  height: var(--header-h);
+  width: 100%;
+  padding: 0 var(--container-px);
+
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  border-radius: 14px;
+}
+
+.clear .inner {
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.solid .inner {
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  height: var(--header-h);
+}
+
+.logoImg {
+  display: block;
+  width: auto;
+  max-height: 70px;
+  max-width: 220px;
+  object-fit: contain;
+  padding-bottom: 5px;
+}
+
+.burger {
+  position: fixed;
+  top: calc(var(--header-top) + 10px);
+  right: calc(var(--edge-space) + 10px);
+
+  z-index: 10010;
+
+  width: 52px;
+  height: 52px;
+
+  border: 0;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+
+  display: grid;
+  place-items: center;
+}
+
+.line {
+  position: absolute;
+
+  width: 24px;
+  height: 2px;
+  min-height: 2px;
+
+  /* ✅ ahora cambia con stage 9 */
+  background: var(--burger-color, var(--arka-brown-mid));
+
+  border-radius: 2px;
+
+  opacity: 1;
+  visibility: visible;
+
+  transform-origin: center center;
+  transition: transform 260ms ease;
+}
+
+.top {
+  transform: translateY(-6px);
+}
+
+.bot {
+  transform: translateY(6px);
+}
+
+.openTop {
+  transform: rotate(45deg);
+}
+
+.openBot {
+  transform: rotate(-45deg);
+}
+</file>
+
+<file path="components/MenuOverlay.tsx">
+"use client";
+
+import Link from "next/link";
+import { Instagram, MessageCircleMore } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useRef } from "react";
+import styles from "./MenuOverlay.module.css";
+
+export function MenuOverlay({
+  open,
+  onClose,
+  onOpenOwner,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onOpenOwner: () => void;
+}) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const scrollYRef = useRef(0);
+
+  // ✅ Scroll lock sin jump y sin resetear stage
+  useEffect(() => {
+    if (!open) return;
+
+    scrollYRef.current = window.scrollY;
+
+    document.body.classList.add("menu-open");
+    document.body.style.top = `-${scrollYRef.current}px`;
+
+    return () => {
+      document.body.classList.remove("menu-open");
+      document.body.style.top = "";
+      window.scrollTo(0, scrollYRef.current);
+    };
+  }, [open]);
+
+  if (!open) return null;
+
+  // 🔥 FIX REAL: mismo comportamiento estable que el logo
+  const goHomeStage0 = () => {
+    onClose();
+
+    const fireWhenReady = () => {
+      const start = Date.now();
+
+      const check = () => {
+        const heroMounted =
+          document.documentElement.dataset.heroStage !== undefined;
+
+        if (heroMounted) {
+          window.dispatchEvent(new Event("arka:hero:stage0"));
+          return;
+        }
+
+        // timeout defensivo (1s)
+        if (Date.now() - start > 1000) {
+          window.dispatchEvent(new Event("arka:hero:stage0"));
+          return;
+        }
+
+        requestAnimationFrame(check);
+      };
+
+      requestAnimationFrame(check);
+    };
+
+    if (pathname === "/") {
+      requestAnimationFrame(() => {
+        window.dispatchEvent(new Event("arka:hero:stage0"));
+      });
+    } else {
+      router.push("/");
+      fireWhenReady();
+    }
+  };
+
+  const onOwnerClick = () => {
+    onClose();
+    onOpenOwner();
+  };
+
+  return (
+    <div className={styles.overlay} role="dialog" aria-modal="true">
+      <div className={styles.backdrop} onClick={onClose} />
+
+      <div className={styles.panel}>
+        <nav className={styles.nav}>
+          <button className={styles.linkBtn} onClick={goHomeStage0}>
+            HOME
+          </button>
+
+          <Link className={styles.link} href="/nosotros" onClick={onClose}>
+            NOSOTROS
+          </Link>
+
+          <Link className={styles.link} href="/propiedades" onClick={onClose}>
+            PROPIEDADES ARKA
+          </Link>
+
+          <button className={styles.linkBtn} onClick={onOwnerClick}>
+            SOY PROPIETARIO
+          </button>
+
+          <Link
+            className={styles.link}
+            href="/postula-tu-propiedad"
+            onClick={onClose}
+          >
+            POSTULA TU PROPIEDAD
+          </Link>
+
+          <Link className={styles.link} href="/contacto" onClick={onClose}>
+            CONTACTO
+          </Link>
+        </nav>
+
+        <div className={styles.socials}>
+          <a
+            href="https://instagram.com/arka_living.co"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.socialLink}
+            aria-label="Instagram"
+          >
+            <Instagram className={styles.socialIcon} />
+          </a>
+
+          <a
+            href="https://wa.me/573158254384?text=Hola%20ARKA%2C%20quiero%20recibir%20informaci%C3%B3n."
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.socialLink}
+            aria-label="WhatsApp"
+          >
+            <MessageCircleMore className={styles.socialIcon} />
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+</file>
+
+<file path="components/Footer.tsx">
+"use client";
+
+import { Instagram, MessageCircleMore } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
+import { usePathname } from "next/navigation";
+import styles from "./Footer.module.css";
+import ctaStyles from "./home/FloatingCTA.module.css";
+
+export function Footer() {
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+
+  const [heroStage, setHeroStage] = useState<string | null>(null);
+
+  // ✅ Stage sync robusto: observa cambios en <html data-hero-stage="...">
+  useEffect(() => {
+    const el = document.documentElement;
+
+    const readStage = () => {
+      setHeroStage(el.dataset.heroStage ?? null);
+    };
+
+    readStage();
+
+    const obs = new MutationObserver(readStage);
+    obs.observe(el, { attributes: true, attributeFilter: ["data-hero-stage"] });
+
+    // Fallback (por si algún flujo dispara eventos custom)
+    window.addEventListener("arka:hero:stage0", readStage);
+
+    return () => {
+      obs.disconnect();
+      window.removeEventListener("arka:hero:stage0", readStage);
+    };
+  }, []);
+
+  const takeoverActive = useMemo(() => {
+    return isHome && heroStage === "9";
+  }, [isHome, heroStage]);
+
+  return (
+    <>
+      {/* ✅ HOME: solo takeover (montado siempre en home; activo solo en stage 9) */}
+      {isHome && (
+        <section
+          className={`${styles.takeover} ${
+            takeoverActive ? styles.takeoverActive : ""
+          }`}
+          aria-label="ARKA Footer Takeover"
+        >
+          <div className={styles.takeoverInner}>
+            {/* Centro (contenedores 1 y 2) */}
+            <div className={styles.takeoverMain}>
+              {/* Contenedor 1: Logo + slogan */}
+              <div className={styles.takeoverBrand}>
+                <img
+                  src="/logo.png"
+                  alt="ARKA"
+                  className={styles.takeoverLogo}
+                />
+                <p className={styles.takeoverSlogan}>
+                  Gestión inteligente de rentas cortas
+                </p>
+              </div>
+
+              {/* Contenedor 2: CTA + Operamos */}
+              <div className={styles.takeoverActions}>
+                <Link
+                  href="/postula-tu-propiedad"
+                  className={`${styles.takeoverCTAWrapper} ${ctaStyles.btn}`}
+                  // Si creaste noPulse, descomenta:
+                  // className={`${styles.takeoverCTAWrapper} ${ctaStyles.btn} ${ctaStyles.noPulse}`}
+                >
+                  POSTULA TU PROPIEDAD
+                </Link>
+
+                <p className={styles.takeoverOp}>
+                  Operamos en Santa Marta y Bogotá
+                </p>
+              </div>
+            </div>
+
+            {/* Contenedor 3: iconos + términos + copyright (anclado abajo) */}
+            <div className={styles.takeoverLegal}>
+              <div className={styles.takeoverLegalSocial}>
+                <a
+                  href="https://instagram.com/arka_living.co"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.takeoverSocialLink}
+                  aria-label="Instagram"
+                >
+                  <Instagram className={styles.takeoverSocialIcon} />
+                </a>
+
+                <a
+                  href="https://wa.me/573158254384?text=Hola%20ARKA%2C%20quiero%20recibir%20informaci%C3%B3n."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.takeoverSocialLink}
+                  aria-label="WhatsApp"
+                >
+                  <MessageCircleMore className={styles.takeoverSocialIcon} />
+                </a>
+              </div>
+
+              <a
+                href="/terminos-y-condiciones"
+                className={styles.takeoverTerms}
+              >
+                Términos y condiciones
+              </a>
+
+              <p className={styles.takeoverCopyright}>
+                © 2026 Sitio web creado por JCR-Code
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ✅ NO HOME: footer slim */}
+      {!isHome && (
+        <footer className={styles.footerSlim} aria-label="ARKA Footer">
+          <div className={styles.footerSlimInner}>
+            <div className={styles.footerSlimSocial}>
+              <a
+                href="https://instagram.com/arka_living.co"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+              >
+                <Instagram className={styles.footerSlimIcon} />
+              </a>
+
+              <a
+                href="https://wa.me/573158254384?text=Hola%20ARKA%2C%20quiero%20recibir%20informaci%C3%B3n."
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="WhatsApp"
+              >
+                <MessageCircleMore className={styles.footerSlimIcon} />
+              </a>
+            </div>
+
+            <a
+              href="/terminos-y-condiciones"
+              className={styles.footerSlimTerms}
+            >
+              Términos y condiciones
+            </a>
+
+            <p className={styles.footerSlimCopy}>
+              © 2026 Sitio web creado por JCR-Code
+            </p>
+          </div>
+        </footer>
+      )}
+    </>
+  );
+}
+</file>
+
+<file path="components/home/Hero.tsx">
+"use client";
+
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+import styles from "./Hero.module.css";
+import { Gem, Handshake, HousePlus } from "lucide-react";
+
+function clamp(n: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, n));
+}
+
+function lerp(a: number, b: number, t: number) {
+  return a + (b - a) * t;
+}
+
+function easeOutCubic(t: number) {
+  return 1 - Math.pow(1 - t, 3);
+}
+
+export function Hero() {
+  const heroRef = useRef<HTMLElement | null>(null);
+  const rafRef = useRef<number | null>(null);
+  const [progress, setProgress] = useState(0);
+
+  // stage de navegación por clicks
+  const navStageRef = useRef(0);
+
+  useEffect(() => {
+    const read = () => {
+      if (!heroRef.current) return;
+
+      const rect = heroRef.current.getBoundingClientRect();
+      const height = heroRef.current.offsetHeight;
+
+      const scrolled = clamp(-rect.top, 0, height);
+      const p = height > 0 ? clamp(scrolled / height, 0, 1) : 0;
+
+      setProgress(p);
+    };
+
+    const onScroll = () => {
+      if (rafRef.current) return;
+      rafRef.current = window.requestAnimationFrame(() => {
+        read();
+        rafRef.current = null;
+      });
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    read();
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (rafRef.current) window.cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
+
+  /**
+   * STAGES (0..9) -> S1..S10
+   */
+  const STAGES = 10;
+  const raw = progress * STAGES;
+  const stage = clamp(Math.floor(raw), 0, STAGES - 1);
+  const stageProgress = clamp(raw - stage, 0, 1);
+
+  useEffect(() => {
+    document.documentElement.dataset.heroStage = String(stage);
+    navStageRef.current = stage;
+
+    return () => {
+      delete document.documentElement.dataset.heroStage;
+    };
+  }, [stage]);
+
+  // Overlay progresivo
+  const overlayT = clamp(progress * 1.9, 0, 1);
+  const overlayOpacity = 0.62 * easeOutCubic(overlayT);
+
+  // Guion
+  const showH1 = stage === 2;
+  const showH3 = stage >= 5;
+  const stepCount = stage >= 8 ? 3 : stage >= 7 ? 2 : stage >= 6 ? 1 : 0;
+  const brandCompact = stage >= 1;
+
+  /**
+   * BRAND (ajustado para tus S1..S10):
+   * S1 (stage 0): limpio -> brand 0
+   * S2 (stage 1): brand visible
+   * S3 (stage 2): brand + H1 (brand full)
+   * S4 (stage 3): brand visible y aquí SE DESVANECE hacia el final
+   * S5 (stage 4): limpio -> brand 0
+   * S6+ (stage >=5): apagado -> brand 0
+   */
+  const baseBrandOpacity =
+    stage === 0 ? 0 : stage === 2 ? 1 : brandCompact ? 0.92 : 0.28;
+
+  // Fade-out ocurre en stage 3 (S4)
+  const brandFade = stage === 3 ? 1 - stageProgress : stage >= 4 ? 0 : 1;
+  const brandOpacity = baseBrandOpacity * brandFade;
+
+  // Stage 2 timings (H1)
+  const h1InEnd = 0.18;
+  const h1HoldEnd = 0.7;
+  const h1OutStart = h1HoldEnd;
+
+  const h1Enter = clamp(stageProgress / h1InEnd, 0, 1);
+
+  const h1ExitT = clamp((stageProgress - h1OutStart) / (1 - h1OutStart), 0, 1);
+  const h1Exit = easeOutCubic(h1ExitT);
+
+  const h1Opacity = stageProgress < h1OutStart ? h1Enter : 1 - h1Exit;
+
+  const yHold = -70;
+  const yOutEnd = -170;
+  const yStartH1 = 180;
+
+  let h1Y: number;
+
+  if (stageProgress < h1InEnd) {
+    const tIn = easeOutCubic(clamp(stageProgress / h1InEnd, 0, 1));
+    h1Y = lerp(yStartH1, yHold, tIn);
+  } else if (stageProgress < h1OutStart) {
+    h1Y = yHold;
+  } else {
+    h1Y = lerp(yHold, yOutEnd, h1Exit);
+  }
+
+  /**
+   * H3 + Steps: entrada desde abajo con delay interno
+   */
+  const enterStyle = (itemStage: number) => {
+    if (stage < itemStage) return null;
+
+    const t = stage === itemStage ? stageProgress : 1;
+
+    const delayStart = 0.35;
+    const duration = 0.65;
+
+    const normalized =
+      t < delayStart ? 0 : clamp((t - delayStart) / duration, 0, 1);
+
+    const eased = easeOutCubic(normalized);
+
+    const yStart = 160;
+    const yEnd = -20;
+
+    return {
+      opacity: eased,
+      transform: `translateY(${lerp(yStart, yEnd, eased)}px)`,
+    } as const;
+  };
+
+  /**
+   * Ajuste para snap/hold al navegar por click
+   */
+  const stageInner = (targetStage: number) => {
+    // S3: caer en el HOLD del H1
+    if (targetStage === 2) return 0.45;
+
+    // S6..S9 (stages 5..8): forzar estado final de cada texto
+    if (targetStage >= 5 && targetStage <= 8) return 0.95;
+
+    return 0.55;
+  };
+
+  const scrollToStage = (targetStage: number) => {
+    if (!heroRef.current) return;
+
+    const rect = heroRef.current.getBoundingClientRect();
+    const heroTop = window.scrollY + rect.top;
+    const heroHeight = heroRef.current.offsetHeight;
+
+    const next = clamp(targetStage, 0, 9);
+
+    // Último stage: salir del hero para ver Footer (S10)
+    if (next >= 9) {
+      const padding = Math.max(24, window.innerHeight * 0.15);
+      window.scrollTo({
+        top: heroTop + heroHeight + padding,
+        behavior: "smooth",
+      });
+      return;
+    }
+
+    // Stage 0 = inicio real del hero
+    if (next === 0) {
+      window.scrollTo({ top: heroTop, behavior: "smooth" });
+      return;
+    }
+
+    const inner = stageInner(next);
+    const targetProgress = (next + inner) / STAGES;
+
+    window.scrollTo({
+      top: heroTop + heroHeight * targetProgress,
+      behavior: "smooth",
+    });
+  };
+
+  // ✅ Listener: el Header puede disparar este evento para volver al stage 0
+  useEffect(() => {
+    const onGoStage0 = () => scrollToStage(0);
+    window.addEventListener("arka:hero:stage0", onGoStage0);
+    return () => window.removeEventListener("arka:hero:stage0", onGoStage0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const showScrollIndicator = stage < 9;
+
+  const onScrollIndicatorClick = () => {
+    const currentNav = navStageRef.current;
+    const next = clamp(currentNav + 1, 0, 9);
+    navStageRef.current = next;
+    scrollToStage(next);
+  };
+
+  return (
+    <section ref={heroRef} className={styles.hero} aria-label="ARKA Landing">
+      <div className={styles.media} aria-hidden="true" />
+      <div
+        className={styles.overlay}
+        style={{ opacity: overlayOpacity }}
+        aria-hidden="true"
+      />
+
+      {/* Brand */}
+      <div
+        className={`${styles.brand} ${brandCompact ? styles.brandCompact : ""}`}
+      >
+        <div className={styles.brandInner} style={{ opacity: brandOpacity }}>
+          <Image
+            src="/logo.png"
+            alt="ARKA"
+            width={320}
+            height={90}
+            priority
+            className={styles.logo}
+          />
+          <h2 className={styles.slogan}>
+            Gestión inteligente de rentas cortas
+          </h2>
+        </div>
+      </div>
+
+      {/* H1 */}
+      {showH1 && (
+        <div className={styles.h1Wrap}>
+          <h1
+            className={styles.h1}
+            style={{
+              opacity: h1Opacity,
+              transform: `translateY(${h1Y}px)`,
+            }}
+          >
+            Administramos tu propiedad para rentas cortas en Santa Marta y
+            Bogotá
+          </h1>
+        </div>
+      )}
+
+      {/* H3 + pasos */}
+      {showH3 && (
+        <div className={styles.stepsWrap}>
+          <h3 className={styles.h3} style={enterStyle(5) ?? undefined}>
+            Rentabiliza tu propiedad en 3 simples pasos:
+          </h3>
+
+          <ol className={styles.steps}>
+            {stepCount >= 1 && (
+              <li className={styles.step} style={enterStyle(6) ?? undefined}>
+                <span className={styles.stepIconWrap} aria-hidden="true">
+                  <HousePlus className={styles.stepIcon} strokeWidth={1.6} />
+                </span>
+                <span className={styles.stepText}>
+                  1. Postula tu propiedad.
+                </span>
+              </li>
+            )}
+
+            {stepCount >= 2 && (
+              <li className={styles.step} style={enterStyle(7) ?? undefined}>
+                <span className={styles.stepIconWrap} aria-hidden="true">
+                  <Gem className={styles.stepIcon} strokeWidth={1.6} />
+                </span>
+                <span className={styles.stepText}>
+                  2. Te presentamos una oferta clara y transparente.
+                </span>
+              </li>
+            )}
+
+            {stepCount >= 3 && (
+              <li className={styles.step} style={enterStyle(8) ?? undefined}>
+                <span className={styles.stepIconWrap} aria-hidden="true">
+                  <Handshake className={styles.stepIcon} strokeWidth={1.6} />
+                </span>
+                <span className={styles.stepText}>
+                  3. Firmamos y nos encargamos de todo.
+                </span>
+              </li>
+            )}
+          </ol>
+        </div>
+      )}
+
+      {/* Scroll indicator */}
+      {showScrollIndicator && (
+        <button
+          type="button"
+          className={styles.scrollIndicator}
+          onClick={onScrollIndicatorClick}
+          aria-label="Scroll to next stage"
+        >
+          <span className={styles.scrollCircle} aria-hidden="true">
+            <span className={styles.scrollArrow} aria-hidden="true" />
+          </span>
+        </button>
+      )}
+    </section>
+  );
+}
+</file>
+
+<file path="components/home/Hero.module.css">
+:root {
+  --header-h: 72px;
+}
+
+.hero {
+  position: relative;
+  min-height: 1000vh;
+  overflow: hidden;
+}
+
+/* Poster fijo */
+.media {
+  position: fixed;
+  inset: 0;
+  height: 100vh;
+  width: 100vw;
+  background-image: var(--hero-poster, url("/hero-poster.JPEG"));
+  background-size: cover;
+  background-position: center;
+  transform: scale(1.02);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Overlay progresivo */
+.overlay {
+  position: fixed;
+  inset: 0;
+  height: 100vh;
+  width: 100vw;
+  background: linear-gradient(
+    180deg,
+    var(--arka-brown-light) 0%,
+    var(--arka-brown-mid) 10%,
+    var(--arka-brown-dark) 80%
+  );
+  opacity: 0;
+  transition: opacity 120ms linear;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Brand */
+.brand {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 3;
+  pointer-events: none;
+  transition: transform 320ms ease;
+}
+
+.brandInner {
+  display: grid;
+  place-items: center;
+  gap: 12px;
+  text-align: center;
+  padding: 0 16px;
+
+  opacity: 0.28;
+  filter: saturate(0);
+  transition:
+    opacity 320ms ease,
+    filter 320ms ease,
+    transform 320ms ease;
+}
+
+.logo {
+  width: clamp(220px, 26vw, 380px);
+  height: auto;
+  filter: drop-shadow(0 16px 44px rgba(0, 0, 0, 0.2));
+}
+
+.slogan {
+  margin: 0;
+  font-weight: 300;
+  letter-spacing: 0.2px;
+  color: #fff;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.3);
+  font-size: clamp(16px, 3vw, 25px);
+  transform: translateY(-15px);
+}
+
+/* Compact brand */
+.brandCompact {
+  transform: translateY(calc(-22vh + var(--header-h) * 0.55));
+}
+
+.brandCompact .brandInner {
+  opacity: 0.92;
+  filter: saturate(1);
+  transform: scale(0.82);
+}
+
+/* H1 */
+.h1Wrap {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 10vh;
+  z-index: 2;
+  pointer-events: none;
+  padding: 0 20px;
+  display: grid;
+  place-items: center;
+}
+
+.h1 {
+  margin: 0;
+  max-width: 1100px;
+  width: 100%;
+  text-align: center;
+  color: #fff;
+  font-size: clamp(30px, 5vw, 58px);
+  line-height: 1.05;
+  text-shadow: 0 2px 26px rgba(0, 0, 0, 0.4);
+}
+
+/* ============================= */
+/* H3 + Steps                    */
+/* ============================= */
+
+.stepsWrap {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: calc(var(--header-h) + 65px);
+  z-index: 3;
+  pointer-events: none;
+  padding: 0 20px;
+  display: grid;
+  place-items: center;
+  gap: 18px;
+}
+
+.h3 {
+  margin: 0;
+  max-width: 820px;
+  width: 100%;
+  text-align: center;
+  color: #fff;
+  font-size: 28px;
+  text-shadow: 0 2px 22px rgba(0, 0, 0, 0.35);
+}
+
+.steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-width: 820px;
+  width: 100%;
+  display: grid;
+  gap: 18px;
+}
+
+/* ===== NUEVA ESTRUCTURA DE STEP ===== */
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+
+  color: #fff;
+  font-size: 22px;
+  line-height: 1.2;
+  text-shadow: 0 2px 22px rgba(0, 0, 0, 0.35);
+  opacity: 0.95;
+}
+
+/* Columna fija izquierda */
+.stepIconWrap {
+  flex: 0 0 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(2px);
+}
+
+/* Icono */
+.stepIcon {
+  width: 24px;
+  height: 24px;
+  color: #fff;
+}
+
+/* Texto */
+.stepText {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ============================= */
+/* Scroll Indicator              */
+/* ============================= */
+
+.scrollIndicator {
+  position: fixed;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.scrollCircle {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  background: rgba(140, 140, 140, 0.22);
+  backdrop-filter: blur(2px);
+}
+
+.scrollArrow {
+  width: 18px;
+  height: 18px;
+  border-left: 3px solid white;
+  border-bottom: 3px solid white;
+  transform: rotate(-45deg);
+  animation: scrollBlink 1.4s ease-in-out infinite;
+}
+
+@keyframes scrollBlink {
+  0% {
+    transform: translateY(-8px) rotate(-45deg);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translateY(3px) rotate(-45deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-8px) rotate(-45deg);
+    opacity: 0.2;
+  }
+}
+
+/* Tablet / Mobile */
+@media (max-width: 1024px) {
+  .scrollIndicator {
+    bottom: 92px;
+  }
+
+  .h1Wrap {
+    top: 65%;
+    bottom: auto;
+    transform: translateY(-50%);
+  }
+
+  .step {
+    font-size: 18px;
+    gap: 14px;
+  }
+
+  .stepIconWrap {
+    flex: 0 0 36px;
+    height: 36px;
+  }
+
+  .stepIcon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* Ocultar scroll indicator en último stage */
+html[data-hero-stage="9"] .scrollIndicator,
+html[data-hero-stage="9"] .scrollCircle {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scrollArrow {
+    animation: none !important;
+  }
+}
+</file>
+
+<file path="app/globals.css">
+@import "tailwindcss";
+
+:root {
+  --background: #fdfcf9;
+  --foreground: #171717;
+
+  --header-h: 72px;
+  --container-px: 16px;
+
+  --edge-space: 20px;
+  --header-top: 15px;
+
+  --arka-white: #fdfcf9;
+  --arka-brown-dark: #4a3424;
+  --arka-brown-mid: #a77e4d;
+  --arka-brown-light: #c8a67a;
+  --arka-text-soft: #6f5b4b;
+
+  /* burger default */
+  --burger-color: var(--arka-brown-mid);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  margin: 0;
+}
+
+/* evita scroll horizontal */
+html,
+body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+html.menu-open,
+body.menu-open {
+  overflow: hidden;
+  height: 100%;
+}
+
+body.menu-open {
+  position: fixed;
+  width: 100%;
+  overflow: hidden;
+}
+
+@supports not (overflow-x: clip) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+}
+
+/* ✅ Stage 9 => burger blanco (solo si NO está el menú abierto) */
+html[data-hero-stage="9"]:not([data-menu-open="true"]) {
+  --burger-color: var(--arka-white);
+}
+
+/* ✅ Menú abierto => burger/X vuelve a café */
+html[data-menu-open="true"] {
+  --burger-color: var(--arka-brown-mid);
+}
+
+/* CTA float: oculto cuando footer real está en view (no en stage 9) */
+html[data-footer-in-view="true"]:not([data-hero-stage="9"]) [data-cta="float"] {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+}
+
+html[data-footer-in-view="true"]:not([data-hero-stage="9"]) [data-cta-btn] {
+  animation: none;
+}
+</file>
+
+</files>

@@ -216,7 +216,11 @@ export function Hero() {
 
   return (
     <section ref={heroRef} className={styles.hero} aria-label="ARKA Landing">
-      <div className={styles.media} aria-hidden="true" />
+      <div className={styles.media} aria-hidden="true">
+        <video autoPlay muted loop playsInline className={styles.mediaVideo}>
+          <source src="/hero-video.mp4" type="video/mp4" />
+        </video>
+      </div>
       <div
         className={styles.overlay}
         style={{ opacity: overlayOpacity }}
