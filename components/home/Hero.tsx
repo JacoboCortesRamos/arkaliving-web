@@ -210,56 +210,53 @@ export function Hero() {
     let isScrolling = false;
     let touchStartY = 0;
 
-    const onWheel = (e: WheelEvent) => {
-      if (!heroRef.current) return;
+    const inHero = () => {
+      if (!heroRef.current) return false;
       const rect = heroRef.current.getBoundingClientRect();
-      const inHero = rect.top <= 0 && rect.bottom >= 0;
-      if (!inHero) return;
+      return rect.top <= 0 && rect.bottom >= 0;
+    };
 
-      e.preventDefault();
+    const goToStage = (direction: number) => {
       if (isScrolling) return;
-
       isScrolling = true;
-      const direction = e.deltaY > 0 ? 1 : -1;
       const next = clamp(navStageRef.current + direction, 0, 9);
       scrollToStage(next);
-
       setTimeout(() => {
         isScrolling = false;
-      }, 900);
+      }, 1000);
+    };
+
+    const onWheel = (e: WheelEvent) => {
+      if (!inHero()) return;
+      e.preventDefault();
+      goToStage(e.deltaY > 0 ? 1 : -1);
     };
 
     const onTouchStart = (e: TouchEvent) => {
       touchStartY = e.touches[0].clientY;
     };
 
+    const onTouchMove = (e: TouchEvent) => {
+      if (!inHero()) return;
+      e.preventDefault(); // ← bloquea el scroll nativo del navegador
+    };
+
     const onTouchEnd = (e: TouchEvent) => {
-      if (!heroRef.current) return;
-      const rect = heroRef.current.getBoundingClientRect();
-      const inHero = rect.top <= 0 && rect.bottom >= 0;
-      if (!inHero) return;
-      if (isScrolling) return;
-
+      if (!inHero()) return;
       const diff = touchStartY - e.changedTouches[0].clientY;
-      if (Math.abs(diff) < 30) return; // ignora swipes muy cortos
-
-      isScrolling = true;
-      const direction = diff > 0 ? 1 : -1;
-      const next = clamp(navStageRef.current + direction, 0, 9);
-      scrollToStage(next);
-
-      setTimeout(() => {
-        isScrolling = false;
-      }, 900);
+      if (Math.abs(diff) < 30) return;
+      goToStage(diff > 0 ? 1 : -1);
     };
 
     window.addEventListener("wheel", onWheel, { passive: false });
     window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
     window.addEventListener("touchend", onTouchEnd, { passive: true });
 
     return () => {
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
       window.removeEventListener("touchend", onTouchEnd);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
