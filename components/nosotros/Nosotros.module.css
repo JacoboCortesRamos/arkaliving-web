@@ -1,0 +1,493 @@
+/* ============================================================
+   nosotros.module.css
+   Página "Nosotros" — ARKA Living
+   Sistema: scroll-reveal con IntersectionObserver
+   ============================================================ */
+
+/* ─── BASE DE PÁGINA ─────────────────────────────────────── */
+
+.page {
+  padding-top: calc(var(--header-h) + 48px);
+  padding-bottom: 120px;
+  background: var(--arka-white);
+  color: var(--arka-brown-dark);
+  overflow-x: hidden;
+}
+
+/* ─── SISTEMA DE REVEAL (estados base: invisible) ────────── */
+/*
+  Cada elemento que debe animarse lleva una de estas clases
+  Y TAMBIÉN [data-reveal="stay"|"toggle"] en el HTML.
+  El JS añade .revealed cuando entra al viewport.
+*/
+
+.revealFade {
+  opacity: 0;
+  transition: opacity 700ms ease;
+}
+
+.revealUp {
+  opacity: 0;
+  transform: translateY(44px);
+  transition:
+    opacity 700ms ease,
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  /* delay controlado por --delay CSS variable */
+  transition-delay: var(--delay, 0ms);
+}
+
+.revealScale {
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition:
+    opacity 900ms ease,
+    transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Estado VISIBLE — añadido por el JS */
+.revealed {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* ─── SECCIÓN HERO TITLE ─────────────────────────────────── */
+
+.heroSection {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 var(--edge-space) 80px;
+}
+
+.heroTitle {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.heroTitleLine {
+  display: block;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(38px, 6vw, 80px);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--arka-brown-dark);
+}
+
+.heroTitleSoft {
+  color: var(--arka-brown-mid);
+  font-weight: 400;
+  font-style: italic;
+}
+
+.heroDivider {
+  margin-top: 36px;
+  height: 2px;
+  width: 72px;
+  background: var(--arka-brown-light);
+  border-radius: 2px;
+}
+
+/* ─── MANIFIESTO ─────────────────────────────────────────── */
+
+.manifesto {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 var(--edge-space) 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.bodyLarge {
+  font-size: clamp(20px, 2.4vw, 26px);
+  line-height: 1.45;
+  font-weight: 400;
+  color: var(--arka-brown-dark);
+}
+
+.body {
+  font-size: clamp(16px, 1.8vw, 19px);
+  line-height: 1.75;
+  color: var(--arka-text-soft);
+}
+
+/* Pull quote grande */
+.pullQuote {
+  margin: 0;
+  padding: 28px 0 28px 28px;
+  border-left: 3px solid var(--arka-brown-light);
+
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(26px, 3.4vw, 42px);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--arka-brown-dark);
+  font-style: normal;
+}
+
+/* Pull quote secundario */
+.pullQuoteSmall {
+  margin: 0;
+  padding: 20px 0 20px 24px;
+  border-left: 2px solid var(--arka-brown-light);
+
+  font-size: clamp(18px, 2vw, 24px);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--arka-brown-mid);
+  font-style: italic;
+}
+
+/* Insight card */
+.insight {
+  padding: 28px 32px;
+  background: rgba(167, 126, 77, 0.07);
+  border: 1px solid rgba(167, 126, 77, 0.18);
+  border-radius: 16px;
+}
+
+.insightLabel {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--arka-brown-mid);
+  margin-bottom: 10px;
+}
+
+.insightText {
+  margin: 0;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(22px, 2.8vw, 34px);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--arka-brown-dark);
+}
+
+/* ─── CREENCIAS ──────────────────────────────────────────── */
+
+.beliefsSection {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 var(--edge-space) 100px;
+}
+
+.beliefsTitle {
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(24px, 3vw, 36px);
+  font-weight: 700;
+  color: var(--arka-brown-dark);
+  margin: 0 0 28px;
+}
+
+/* Texto resaltado inline */
+.highlight {
+  background: rgba(167, 126, 77, 0.13);
+  border-bottom: 2px solid var(--arka-brown-light);
+  padding: 0 3px 1px;
+  border-radius: 3px;
+  font-style: normal;
+  color: var(--arka-brown-dark);
+}
+
+/* Recuadro "ARKA nace para resolver eso" — visual hermano del insight */
+.arkaCallout {
+  padding: 24px 32px;
+  border: 2px solid var(--arka-brown-mid);
+  border-radius: 16px;
+  background: transparent;
+}
+
+.arkaCalloutText {
+  margin: 0;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(20px, 2.4vw, 28px);
+  font-weight: 700;
+  color: var(--arka-brown-mid);
+  line-height: 1.2;
+}
+
+/* Recuadro propietario — "stay", tono oscuro */
+.ownerCallout {
+  margin-top: 40px;
+  padding: 28px 32px;
+  background: rgba(74, 52, 36, 0.06);
+  border-left: 3px solid var(--arka-brown-mid);
+  border-radius: 0 14px 14px 0;
+}
+
+.ownerCalloutText {
+  margin: 0;
+  font-size: clamp(16px, 1.8vw, 20px);
+  line-height: 1.65;
+  color: var(--arka-brown-dark);
+}
+
+.ownerCalloutText strong {
+  font-weight: 700;
+  color: var(--arka-brown-mid);
+}
+
+/* Spacer físico entre "No creemos" y "Creemos" */
+.beliefsSpacer {
+  height: 35vh;
+}
+
+.beliefsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 28px; /* más separación entre items */
+}
+
+.beliefItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  font-size: clamp(16px, 1.8vw, 19px);
+  line-height: 1.55;
+  color: var(--arka-text-soft);
+  transition-delay: var(--delay, 0ms) !important;
+}
+
+/* Versión lenta con más espacio vertical */
+.beliefItemSlow {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  font-size: clamp(16px, 1.8vw, 19px);
+  line-height: 1.55;
+  color: var(--arka-text-soft);
+  transition-delay: var(--delay, 0ms) !important;
+  /* animación más lenta */
+  transition-duration: 900ms !important;
+}
+
+.beliefCross {
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(167, 126, 77, 0.5);
+  margin-top: 3px;
+}
+
+.beliefCheck {
+  flex-shrink: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--arka-brown-mid);
+  margin-top: 2px;
+}
+
+/* ─── VISIÓN ─────────────────────────────────────────────── */
+
+.visionSection {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 var(--edge-space) 48px;
+}
+
+.visionCard {
+  padding: 40px 44px;
+  background: var(--arka-brown-dark);
+  border-radius: 20px; /* bordes completos, separado de las cards */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.visionText {
+  margin: 0;
+  font-size: clamp(17px, 1.9vw, 21px);
+  line-height: 1.7;
+  color: rgba(253, 252, 249, 0.88);
+}
+
+.visionClosure {
+  margin: 0;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(22px, 2.6vw, 30px);
+  font-weight: 700;
+  color: var(--arka-white);
+  font-style: italic;
+}
+
+/* ─── FUNDADORES ─────────────────────────────────────────── */
+
+.foundersSection {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 var(--edge-space) 80px;
+}
+
+.foundersGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  padding-top: 52px; /* espacio para que el círculo sobresalga sin clippearse */
+}
+
+/* ── Card ── */
+.founderCard {
+  position: relative;
+  border: 1px solid rgba(167, 126, 77, 0.2);
+  border-radius: 20px;
+  background: var(--arka-white);
+  display: flex;
+  flex-direction: column;
+  overflow: visible; /* permite que el círculo sobresalga */
+  transition:
+    box-shadow 260ms ease,
+    transform 260ms ease;
+}
+
+.founderCard:hover {
+  box-shadow: 0 12px 40px rgba(74, 52, 36, 0.1);
+  transform: translateY(-3px);
+}
+
+/* ── Cabecera: círculo + firma ── */
+.founderHeader {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0 28px;
+  /* el círculo sobresale por arriba: margin-top negativo = radio del círculo */
+  margin-top: -44px; /* mitad del círculo de 88px */
+  min-height: 88px;
+}
+
+/* Círculo de foto — sobresale del borde superior de la card */
+.founderCircle {
+  position: relative;
+  flex-shrink: 0;
+  width: 88px;
+  height: 88px;
+  border-radius: 999px;
+  background: rgba(167, 126, 77, 0.1);
+  border: 3px solid var(--arka-white);
+  box-shadow: 0 4px 16px rgba(74, 52, 36, 0.12);
+  display: grid;
+  place-items: center;
+  overflow: hidden; /* contiene la foto cuando la agregues */
+}
+
+/*
+  Cuando agregues la foto real, usa esta clase en el <Image>:
+  className={styles.founderCircleImg}
+*/
+.founderCircleImg {
+  object-fit: cover;
+  object-position: center top;
+}
+
+.founderInitial {
+  font-family: var(--font-display, Georgia, serif);
+  font-size: 32px;
+  font-weight: 700;
+  color: rgba(167, 126, 77, 0.4);
+  line-height: 1;
+  user-select: none;
+}
+
+/* Área de firma — a la derecha del círculo */
+.founderSignaturePlaceholder {
+  flex: 1;
+  height: 40px;
+  border-bottom: 1.5px solid rgba(167, 126, 77, 0.28);
+  border-radius: 0;
+}
+
+/*
+  Cuando tengas el PNG/SVG de la firma, usa:
+  className={styles.founderSignature}
+*/
+.founderSignature {
+  flex-shrink: 0;
+  height: 44px;
+  width: auto;
+  max-width: 160px;
+  object-fit: contain;
+  opacity: 0.72;
+}
+
+/* ── Cuerpo ── */
+.founderBody {
+  padding: 16px 28px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.founderName {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--arka-brown-dark);
+  line-height: 1.2;
+}
+
+.founderRole {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--arka-brown-mid);
+}
+
+.founderBio {
+  margin: 10px 0 0;
+  font-size: 14px;
+  line-height: 1.72;
+  color: var(--arka-text-soft);
+  flex: 1;
+}
+
+/* ─── RESPONSIVE ─────────────────────────────────────────── */
+
+@media (max-width: 680px) {
+  .foundersGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .pullQuote {
+    padding-left: 20px;
+  }
+
+  .visionCard {
+    padding: 28px 24px;
+  }
+
+  .founderHeader {
+    padding: 0 20px;
+  }
+
+  .founderBody {
+    padding: 16px 20px 24px;
+  }
+}
+
+@media (max-width: 420px) {
+  .heroTitleLine {
+    font-size: 32px;
+  }
+}
+
+/* ─── ACCESIBILIDAD ──────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .revealFade,
+  .revealUp,
+  .revealScale {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
