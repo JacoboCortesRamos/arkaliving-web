@@ -205,6 +205,36 @@ export function Hero() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // ✅ Scroll por stages (wheel)
+  useEffect(() => {
+    let isScrolling = false;
+
+    const onWheel = (e: WheelEvent) => {
+      if (!heroRef.current) return;
+
+      // Solo intercepta mientras el hero está en viewport
+      const rect = heroRef.current.getBoundingClientRect();
+      const inHero = rect.top <= 0 && rect.bottom >= 0;
+      if (!inHero) return;
+
+      e.preventDefault();
+      if (isScrolling) return;
+
+      isScrolling = true;
+      const direction = e.deltaY > 0 ? 1 : -1;
+      const next = clamp(navStageRef.current + direction, 0, 9);
+      scrollToStage(next);
+
+      setTimeout(() => {
+        isScrolling = false;
+      }, 900);
+    };
+
+    window.addEventListener("wheel", onWheel, { passive: false });
+    return () => window.removeEventListener("wheel", onWheel);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const showScrollIndicator = stage < 9;
 
   const onScrollIndicatorClick = () => {
