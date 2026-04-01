@@ -4,7 +4,7 @@
 
 .hero {
   position: relative;
-  min-height: 1000vh;
+  min-height: 800vh;
   overflow: hidden;
 }
 
@@ -72,7 +72,7 @@
   text-align: center;
   padding: 0 16px;
 
-  opacity: 0.28;
+  opacity: 1;
   filter: saturate(0);
   transition:
     opacity 320ms ease,
@@ -288,8 +288,8 @@
 }
 
 /* Ocultar scroll indicator en último stage */
-html[data-hero-stage="9"] .scrollIndicator,
-html[data-hero-stage="9"] .scrollCircle {
+html[data-hero-stage="7"] .scrollIndicator,
+html[data-hero-stage="7"] .scrollCircle {
   display: none;
 }
 

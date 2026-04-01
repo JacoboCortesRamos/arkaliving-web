@@ -27,11 +27,10 @@ async function fileToBase64DataUri(file: File) {
 }
 
 function formatPhoneFolder(phoneE164: string) {
-  // Esperado: +573158254384 -> 57-3158254384  (sin +)
   const s = String(phoneE164 || "").trim();
   const m = s.match(/^(\+?)(\d{1,4})(\d+)$/);
   if (!m) return "unknown-phone";
-  const cc = m[2]; // sin +
+  const cc = m[2];
   const rest = m[3];
   return `${cc}-${rest}`;
 }
@@ -45,7 +44,6 @@ async function uploadToCloudinary(
   const apiSecret = requireEnv("CLOUDINARY_API_SECRET");
   const timestamp = Math.floor(Date.now() / 1000);
 
-  // params firmables (orden alfabético)
   const paramsToSign = [
     `folder=${opts.folder}`,
     `overwrite=${opts.overwrite ? "true" : "false"}`,
@@ -54,7 +52,6 @@ async function uploadToCloudinary(
   ];
 
   const signature = sha1(paramsToSign.join("&") + apiSecret);
-
   const fileData = await fileToBase64DataUri(file);
 
   const body = new URLSearchParams();
@@ -94,7 +91,7 @@ export async function POST(req: Request) {
   if (!payloadStr) return json("Falta payload.");
   if (!submissionId) return json("Falta submissionId.");
 
-  // 1) verify token
+  // 1) Verificar token
   const [b64, sig] = verifiedToken.split(".");
   if (!b64 || !sig) return json("verifiedToken inválido.");
 
@@ -109,7 +106,7 @@ export async function POST(req: Request) {
 
   const payload = JSON.parse(payloadStr);
 
-  // 2) photos validation (✅ min 2 / max 5)
+  // 2) Validar fotos (min 2 / max 5)
   const photos = form.getAll("photos") as File[];
   const MIN_FILES = 2;
   const MAX_FILES = 5;
@@ -130,12 +127,11 @@ export async function POST(req: Request) {
       return json(`Cada foto debe pesar máximo ${MAX_MB}MB.`);
   }
 
-  // DEV toggle (solo se respeta en dev)
   const disableIdempotency =
     process.env.NODE_ENV !== "production" &&
     process.env.POSTULA_DISABLE_IDEMPOTENCY === "1";
 
-  // 3) upload cloudinary (✅ folder YYYY/MM/+57-315...)
+  // 3) Upload Cloudinary
   let photoUrls: string[] = [];
   try {
     requireEnv("CLOUDINARY_CLOUD_NAME");
@@ -183,7 +179,7 @@ export async function POST(req: Request) {
     );
   }
 
-  // 4) Resend emails
+  // 4) Emails vía Resend
   const resendKey = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM;
   const internalTo = process.env.POSTULA_INTERNAL_TO;
@@ -202,7 +198,7 @@ Celular: ${payload.owner.phone}
 
 UBICACIÓN
 Ciudad: ${p.city}
-Localidad Bogotá: ${p.bogotaLocalidad || "N/A"}
+// TODO (multi-ciudad): Localidad Bogotá: ${p.bogotaLocalidad || "N/A"}
 Sector SM: ${p.sectorGroup || "N/A"}
 Subsector SM: ${p.sectorSub || "N/A"}
 Descripción libre: ${p.sectorFreeText || "N/A"}

@@ -63,13 +63,16 @@ components/home/FloatingCTA.module.css
 components/home/FloatingCTA.tsx
 components/home/Hero.module.css
 components/home/Hero.tsx
-components/home/SectionPropertiesPreview.tsx
-components/home/SectionSteps.tsx
-components/home/SectionValue.tsx
 components/MenuOverlay.module.css
 components/MenuOverlay.tsx
+components/nosotros/Nosotros.module.css
+components/nosotros/NosotrosPage.tsx
 components/OwnerLoginModal.tsx
+components/properties/PropertiesGrid.tsx
+components/properties/PropertyCard.module.css
+components/properties/PropertyCard.tsx
 eslint.config.mjs
+lib/properties.ts
 next.config.ts
 package.json
 postcss.config.mjs
@@ -93,6 +96,442 @@ tsconfig.json
 
 <files>
 This section contains the contents of the repository's files.
+
+<file path="components/properties/PropertiesGrid.tsx">
+import { getActiveProperties } from "../../lib/properties";
+import { PropertyCard } from "./PropertyCard";
+
+// Server Component — sin "use client", se puede pre-renderizar
+// Cuando haya fetch a MongoDB: hacer este componente async y await los datos
+
+export function PropertiesGrid() {
+  const properties = getActiveProperties();
+
+  if (properties.length === 0) {
+    return (
+      <p
+        style={{
+          textAlign: "center",
+          color: "var(--arka-text-soft)",
+          padding: "60px 0",
+          fontSize: "17px",
+        }}
+      >
+        Próximamente más propiedades disponibles.
+      </p>
+    );
+  }
+
+  return (
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
+        gap: "28px",
+      }}
+    >
+      {properties.map((property) => (
+        <PropertyCard key={property.id} property={property} />
+      ))}
+    </div>
+  );
+}
+</file>
+
+<file path="components/properties/PropertyCard.module.css">
+/* ============================================================
+   PropertyCard.module.css
+   Sistema de diseño coherente con Nosotros.module.css
+   ============================================================ */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  background: var(--arka-white);
+  border: 1px solid rgba(167, 126, 77, 0.18);
+  border-radius: 20px;
+  overflow: hidden;
+  transition:
+    transform 340ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 340ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 48px rgba(74, 52, 36, 0.12);
+}
+
+/* ── Imagen ───────────────────────────────────────────────── */
+
+.imageWrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: rgba(167, 126, 77, 0.08);
+  overflow: hidden;
+}
+
+.image {
+  object-fit: cover;
+  transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.card:hover .image {
+  transform: scale(1.04);
+}
+
+/* Placeholder cuando no hay imagen */
+.imagePlaceholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    rgba(167, 126, 77, 0.1) 0%,
+    rgba(200, 166, 122, 0.15) 100%
+  );
+}
+
+.placeholderIcon {
+  width: 48px;
+  height: 48px;
+  color: var(--arka-brown-light);
+  opacity: 0.6;
+}
+
+/* Badge ciudad */
+.badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  padding: 4px 12px;
+  background: rgba(253, 252, 249, 0.92);
+  backdrop-filter: blur(8px);
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--arka-brown-mid);
+}
+
+/* ── Cuerpo ───────────────────────────────────────────────── */
+
+.body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 24px 24px 28px;
+  gap: 16px;
+}
+
+/* Sector */
+.sector {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--arka-brown-mid);
+}
+
+/* Nombre */
+.name {
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(20px, 2.4vw, 26px);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--arka-brown-dark);
+  margin: 0;
+}
+
+/* Descripción */
+.description {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--arka-text-soft);
+  margin: 0;
+}
+
+/* Meta (habitaciones, baños) */
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.metaRow {
+  display: flex;
+  gap: 20px;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--arka-text-soft);
+}
+
+.metaIcon {
+  width: 15px;
+  height: 15px;
+  color: var(--arka-brown-mid);
+  flex-shrink: 0;
+}
+
+/* Features */
+.features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.feature {
+  padding: 4px 12px;
+  background: rgba(167, 126, 77, 0.07);
+  border: 1px solid rgba(167, 126, 77, 0.15);
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--arka-brown-dark);
+}
+
+/* Divisor */
+.divider {
+  height: 1px;
+  background: rgba(167, 126, 77, 0.15);
+  margin: 0;
+}
+
+/* CTA */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  background: var(--arka-brown-dark);
+  color: var(--arka-white);
+  border-radius: 100px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  align-self: flex-start;
+  transition:
+    background 260ms ease,
+    transform 260ms ease;
+}
+
+.cta:hover {
+  background: var(--arka-brown-mid);
+  transform: translateX(3px);
+}
+
+.ctaIcon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  transition: transform 260ms ease;
+}
+
+.cta:hover .ctaIcon {
+  transform: translateX(3px);
+}
+</file>
+
+<file path="components/properties/PropertyCard.tsx">
+import Image from "next/image";
+import { BedDouble, Bath, Users, ArrowRight, Home } from "lucide-react";
+import type { IProperty } from "@/lib/properties";
+import styles from "./PropertyCard.module.css";
+
+interface Props {
+  property: IProperty;
+}
+
+export function PropertyCard({ property }: Props) {
+  const {
+    name,
+    city,
+    sector,
+    type,
+    bedrooms,
+    bathrooms,
+    beds,
+    guests,
+    coverImage,
+    shortDescription,
+    features,
+    airbnbUrl,
+    bookingUrl,
+  } = property;
+
+  const ctaUrl = airbnbUrl && airbnbUrl !== "#" ? airbnbUrl : bookingUrl;
+  const hasRealImage = coverImage && coverImage !== "";
+  const hasRealCta = ctaUrl && ctaUrl !== "#";
+
+  return (
+    <article className={styles.card}>
+      {/* ── Imagen ── */}
+      <div className={styles.imageWrap}>
+        {hasRealImage ? (
+          <Image
+            src={coverImage}
+            alt={`${name} — ${city}`}
+            fill
+            className={styles.image}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
+        ) : (
+          <div className={styles.imagePlaceholder}>
+            <Home className={styles.placeholderIcon} strokeWidth={1.2} />
+          </div>
+        )}
+        <span className={styles.badge}>{city}</span>
+      </div>
+
+      {/* ── Cuerpo ── */}
+      <div className={styles.body}>
+        <p className={styles.sector}>{sector}</p>
+
+        <h3 className={styles.name}>{name}</h3>
+
+        <p className={styles.description}>{shortDescription}</p>
+
+        {/* Meta */}
+        <div className={styles.meta}>
+          <div className={styles.metaRow}>
+            <span className={styles.metaItem}>
+              <BedDouble className={styles.metaIcon} strokeWidth={1.6} />
+              {bedrooms} {bedrooms === 1 ? "habitación" : "habitaciones"}
+            </span>
+            <span className={styles.metaItem}>
+              <Bath className={styles.metaIcon} strokeWidth={1.6} />
+              {bathrooms} {bathrooms === 1 ? "baño" : "baños"}
+            </span>
+          </div>
+          <div className={styles.metaRow}>
+            <span className={styles.metaItem}>
+              <Users className={styles.metaIcon} strokeWidth={1.6} />
+              {beds} {beds === 1 ? "cama" : "camas"} · {guests}{" "}
+              {guests === 1 ? "huésped" : "huéspedes"}
+            </span>
+          </div>
+        </div>
+
+        {/* Features */}
+        {features.length > 0 && (
+          <ul className={styles.features} aria-label="Características">
+            {features.slice(0, 5).map((f) => (
+              <li key={f} className={styles.feature}>
+                {f}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <hr className={styles.divider} />
+
+        {/* CTA */}
+        {hasRealCta ? (
+          <a
+            href={ctaUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.cta}
+            aria-label={`Ver ${name} en ${airbnbUrl && airbnbUrl !== "#" ? "Airbnb" : "Booking"}`}
+          >
+            Ver en {airbnbUrl && airbnbUrl !== "#" ? "Airbnb" : "Booking"}
+            <ArrowRight className={styles.ctaIcon} strokeWidth={2} />
+          </a>
+        ) : (
+          <a
+            href={`https://wa.me/573158254384?text=Hola%20ARKA%2C%20me%20interesa%20${encodeURIComponent(name)}%20en%20${encodeURIComponent(city)}.`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.cta}
+            aria-label={`Consultar disponibilidad de ${name} por WhatsApp`}
+          >
+            Consultar disponibilidad
+            <ArrowRight className={styles.ctaIcon} strokeWidth={2} />
+          </a>
+        )}
+      </div>
+    </article>
+  );
+}
+</file>
+
+<file path="lib/properties.ts">
+// ============================================================
+// lib/properties.ts
+// Source of truth de propiedades para el MVP.
+// TODO: reemplazar `PROPERTIES` por fetch a /api/properties
+//       cuando MongoDB esté conectado (Paso 4 del roadmap).
+// ============================================================
+
+export interface IProperty {
+  id: string;
+  slug: string;
+  name: string;
+  city: "Santa Marta";
+  sector: string;
+  type: "Estudio" | "Apartamento" | "Casa";
+  bedrooms: number;
+  bathrooms: number;
+  beds: number;
+  guests: number;
+  coverImage: string;
+  images: string[];
+  shortDescription: string;
+  features: string[];
+  airbnbUrl?: string;
+  bookingUrl?: string;
+  active: boolean;
+}
+
+export const PROPERTIES: IProperty[] = [
+  {
+    id: "terraz-santa-marta",
+    slug: "apartamento-terraz-santa-marta",
+    name: "Apartamento Terraz",
+    city: "Santa Marta",
+    sector: "Bello Horizonte",
+    type: "Apartamento",
+    bedrooms: 1,
+    bathrooms: 1,
+    beds: 2,
+    guests: 4,
+    // TODO: reemplazar con URL Cloudinary cuando estén disponibles
+    coverImage: "",
+    images: [],
+    shortDescription:
+      "Apartamento moderno con vista al mar en el exclusivo sector de Bello Horizonte. Diseñado y operado bajo los estándares ARKA.",
+    features: [
+      "Vista al mar",
+      "Aire acondicionado",
+      "WiFi de alta velocidad",
+      "Piscina",
+      "Parqueadero",
+      "Cocina equipada",
+    ],
+    // TODO: reemplazar con URL real de Airbnb/Booking
+    airbnbUrl: "#",
+    active: true,
+  },
+];
+
+/** Devuelve solo propiedades activas */
+export function getActiveProperties(): IProperty[] {
+  return PROPERTIES.filter((p) => p.active);
+}
+</file>
 
 <file path=".gitignore">
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
@@ -149,24 +588,210 @@ export default function ContactoPage() {
 }
 </file>
 
-<file path="app/(site)/nosotros/page.tsx">
-export default function NosotrosPage() {
+<file path="app/(site)/propiedades/page.tsx">
+import type { Metadata } from "next";
+import { PropertiesGrid } from "@/components/properties/PropertiesGrid";
+import { getActiveProperties } from "@/lib/properties";
+
+// ── Metadata SEO ──────────────────────────────────────────────
+export const metadata: Metadata = {
+  title: "Propiedades ARKA | Alojamientos de renta corta en Santa Marta",
+  description:
+    "Descubre las propiedades gestionadas por ARKA Living en Santa Marta. Apartamentos y casas diseñados y operados con estándares profesionales para rentas cortas.",
+  openGraph: {
+    title: "Propiedades ARKA | Alojamientos en Santa Marta",
+    description:
+      "Apartamentos y casas en Santa Marta operados por ARKA Living. Calidad, cuidado y rigor en cada detalle.",
+    url: "https://arkaliving.co/propiedades",
+    siteName: "ARKA Living",
+    locale: "es_CO",
+    type: "website",
+  },
+  alternates: {
+    canonical: "https://arkaliving.co/propiedades",
+  },
+};
+
+// ── JSON-LD ───────────────────────────────────────────────────
+function JsonLd() {
+  const properties = getActiveProperties();
+
+  const itemList = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Propiedades ARKA Living en Santa Marta",
+    url: "https://arkaliving.co/propiedades",
+    numberOfItems: properties.length,
+    itemListElement: properties.map((p, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: p.name,
+      description: p.shortDescription,
+      url:
+        p.airbnbUrl && p.airbnbUrl !== "#"
+          ? p.airbnbUrl
+          : "https://arkaliving.co/propiedades",
+    })),
+  };
+
   return (
-    <section className="page">
-      <h1>Nosotros</h1>
-      <p>Placeholder.</p>
-    </section>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(itemList) }}
+    />
   );
 }
-</file>
 
-<file path="app/(site)/propiedades/page.tsx">
+// ── Page ──────────────────────────────────────────────────────
 export default function PropiedadesPage() {
   return (
-    <section className="page">
-      <h1>Propiedades ARKA</h1>
-      <p>Placeholder (MVP: previsualización + links a Airbnb).</p>
-    </section>
+    <>
+      <JsonLd />
+
+      <main
+        style={{
+          paddingTop: "calc(var(--header-h) + 48px)",
+          paddingBottom: 120,
+          background: "var(--arka-white)",
+          minHeight: "100vh",
+        }}
+      >
+        {/* ── Header de sección ── */}
+        <section
+          style={{
+            maxWidth: 900,
+            margin: "0 auto",
+            padding: "0 var(--edge-space) 64px",
+          }}
+        >
+          <p
+            style={{
+              fontSize: 12,
+              fontWeight: 700,
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              color: "var(--arka-brown-mid)",
+              marginBottom: 16,
+            }}
+          >
+            Santa Marta, Colombia
+          </p>
+
+          <h1
+            style={{
+              fontFamily: "var(--font-display, Georgia, serif)",
+              fontSize: "clamp(38px, 6vw, 72px)",
+              fontWeight: 700,
+              lineHeight: 1.05,
+              letterSpacing: "-0.02em",
+              color: "var(--arka-brown-dark)",
+              margin: "0 0 24px",
+            }}
+          >
+            Propiedades ARKA
+          </h1>
+
+          <p
+            style={{
+              fontSize: "clamp(17px, 2vw, 20px)",
+              lineHeight: 1.65,
+              color: "var(--arka-text-soft)",
+              maxWidth: 560,
+              margin: 0,
+            }}
+          >
+            Espacios diseñados, operados y cuidados bajo el{" "}
+            <strong
+              style={{ color: "var(--arka-brown-dark)", fontWeight: 600 }}
+            >
+              Sistema ARKA
+            </strong>
+            . Cada propiedad refleja nuestro estándar de rigor y detalle.
+          </p>
+
+          {/* Divisor de marca */}
+          <div
+            style={{
+              marginTop: 36,
+              height: 2,
+              width: 72,
+              background: "var(--arka-brown-light)",
+              borderRadius: 2,
+            }}
+          />
+        </section>
+
+        {/* ── Grid ── */}
+        <section
+          style={{
+            maxWidth: 1200,
+            margin: "0 auto",
+            padding: "0 var(--edge-space)",
+          }}
+        >
+          <PropertiesGrid />
+        </section>
+
+        {/* ── CTA propietario ── */}
+        <section
+          style={{
+            maxWidth: 720,
+            margin: "80px auto 0",
+            padding: "0 var(--edge-space)",
+            textAlign: "center",
+          }}
+        >
+          <div
+            style={{
+              padding: "40px 36px",
+              background: "rgba(167, 126, 77, 0.07)",
+              border: "1px solid rgba(167, 126, 77, 0.18)",
+              borderRadius: 20,
+            }}
+          >
+            <p
+              style={{
+                fontSize: "clamp(18px, 2vw, 22px)",
+                fontWeight: 600,
+                color: "var(--arka-brown-dark)",
+                margin: "0 0 8px",
+              }}
+            >
+              ¿Tienes una propiedad en Santa Marta?
+            </p>
+            <p
+              style={{
+                fontSize: 15,
+                color: "var(--arka-text-soft)",
+                margin: "0 0 24px",
+                lineHeight: 1.6,
+              }}
+            >
+              Postúlala y te mostramos cómo puede rendir más bajo nuestra
+              gestión.
+            </p>
+            <a
+              href="/postula-tu-propiedad"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                padding: "13px 28px",
+                background: "var(--arka-brown-dark)",
+                color: "var(--arka-white)",
+                borderRadius: 100,
+                fontSize: 14,
+                fontWeight: 600,
+                letterSpacing: "0.03em",
+                textDecoration: "none",
+              }}
+            >
+              Postula tu propiedad
+            </a>
+          </div>
+        </section>
+      </main>
+    </>
   );
 }
 </file>
@@ -290,61 +915,839 @@ export async function POST(req: Request) {
 }
 </file>
 
-<file path="components/home/SectionPropertiesPreview.tsx">
-import Link from "next/link";
+<file path="components/nosotros/Nosotros.module.css">
+/* ============================================================
+   nosotros.module.css
+   Página "Nosotros" — ARKA Living
+   Sistema: scroll-reveal con IntersectionObserver
+   ============================================================ */
 
-const preview = [
-  { name: "Apartamento Terraz", city: "Santa Marta" },
-  { name: "Apartamento Vitra", city: "Bogotá" },
-  { name: "Habitaciones (Casa)", city: "Bogotá" },
-];
+/* ─── BASE DE PÁGINA ─────────────────────────────────────── */
 
-export function SectionPropertiesPreview() {
-  return (
-    <section id="s3" className="section">
-      <h2 className="section__h2">Propiedades ARKA</h2>
-      <p className="section__p">
-        Previsualización del portafolio. (Fotos y links finales pendientes)
-      </p>
+.page {
+  padding-top: calc(var(--header-h) + 48px);
+  padding-bottom: 120px;
+  background: var(--arka-white);
+  color: var(--arka-brown-dark);
+  overflow-x: hidden;
+}
 
-      <div className="grid">
-        {preview.map((p) => (
-          <div key={p.name} className="card">
-            <div className="card__img" aria-hidden="true" />
-            <div className="card__body">
-              <h3 className="card__h3">{p.name}</h3>
-              <p className="card__p">{p.city}</p>
-            </div>
-          </div>
-        ))}
-      </div>
+/* ─── SISTEMA DE REVEAL (estados base: invisible) ────────── */
+/*
+  Cada elemento que debe animarse lleva una de estas clases
+  Y TAMBIÉN [data-reveal="stay"|"toggle"] en el HTML.
+  El JS añade .revealed cuando entra al viewport.
+*/
 
-      <div className="section__cta">
-        <Link className="btn btn--ghost" href="/propiedades">
-          Ver todas las propiedades
-        </Link>
-      </div>
-    </section>
-  );
+.revealFade {
+  opacity: 0;
+  transition: opacity 700ms ease;
+}
+
+.revealUp {
+  opacity: 0;
+  transform: translateY(44px);
+  transition:
+    opacity 700ms ease,
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  /* delay controlado por --delay CSS variable */
+  transition-delay: var(--delay, 0ms);
+}
+
+.revealScale {
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition:
+    opacity 900ms ease,
+    transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Estado VISIBLE — añadido por el JS */
+.revealed {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* ─── SECCIÓN HERO TITLE ─────────────────────────────────── */
+
+.heroSection {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 var(--edge-space) 80px;
+}
+
+.heroTitle {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.heroTitleLine {
+  display: block;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(38px, 6vw, 80px);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--arka-brown-dark);
+}
+
+.heroTitleSoft {
+  color: var(--arka-brown-mid);
+  font-weight: 400;
+  font-style: italic;
+}
+
+.heroDivider {
+  margin-top: 36px;
+  height: 2px;
+  width: 72px;
+  background: var(--arka-brown-light);
+  border-radius: 2px;
+}
+
+/* ─── MANIFIESTO ─────────────────────────────────────────── */
+
+.manifesto {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 var(--edge-space) 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.bodyLarge {
+  font-size: clamp(20px, 2.4vw, 26px);
+  line-height: 1.45;
+  font-weight: 400;
+  color: var(--arka-brown-dark);
+}
+
+.body {
+  font-size: clamp(16px, 1.8vw, 19px);
+  line-height: 1.75;
+  color: var(--arka-text-soft);
+}
+
+/* Pull quote grande */
+.pullQuote {
+  margin: 0;
+  padding: 28px 0 28px 28px;
+  border-left: 3px solid var(--arka-brown-light);
+
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(26px, 3.4vw, 42px);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--arka-brown-dark);
+  font-style: normal;
+}
+
+/* Pull quote secundario */
+.pullQuoteSmall {
+  margin: 0;
+  padding: 20px 0 20px 24px;
+  border-left: 2px solid var(--arka-brown-light);
+
+  font-size: clamp(18px, 2vw, 24px);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--arka-brown-mid);
+  font-style: italic;
+}
+
+/* Insight card */
+.insight {
+  padding: 28px 32px;
+  background: rgba(167, 126, 77, 0.07);
+  border: 1px solid rgba(167, 126, 77, 0.18);
+  border-radius: 16px;
+}
+
+.insightLabel {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--arka-brown-mid);
+  margin-bottom: 10px;
+}
+
+.insightText {
+  margin: 0;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(22px, 2.8vw, 34px);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--arka-brown-dark);
+}
+
+/* ─── CREENCIAS ──────────────────────────────────────────── */
+
+.beliefsSection {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 var(--edge-space) 100px;
+}
+
+.beliefsTitle {
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(24px, 3vw, 36px);
+  font-weight: 700;
+  color: var(--arka-brown-dark);
+  margin: 0 0 28px;
+}
+
+/* Texto resaltado inline */
+.highlight {
+  background: rgba(167, 126, 77, 0.13);
+  border-bottom: 2px solid var(--arka-brown-light);
+  padding: 0 3px 1px;
+  border-radius: 3px;
+  font-style: normal;
+  color: var(--arka-brown-dark);
+}
+
+/* Recuadro "ARKA nace para resolver eso" — visual hermano del insight */
+.arkaCallout {
+  padding: 24px 32px;
+  border: 2px solid var(--arka-brown-mid);
+  border-radius: 16px;
+  background: transparent;
+}
+
+.arkaCalloutText {
+  margin: 0;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(20px, 2.4vw, 28px);
+  font-weight: 700;
+  color: var(--arka-brown-mid);
+  line-height: 1.2;
+}
+
+/* Recuadro propietario — "stay", tono oscuro */
+.ownerCallout {
+  margin-top: 40px;
+  padding: 28px 32px;
+  background: rgba(74, 52, 36, 0.06);
+  border-left: 3px solid var(--arka-brown-mid);
+  border-radius: 0 14px 14px 0;
+}
+
+.ownerCalloutText {
+  margin: 0;
+  font-size: clamp(16px, 1.8vw, 20px);
+  line-height: 1.65;
+  color: var(--arka-brown-dark);
+}
+
+.ownerCalloutText strong {
+  font-weight: 700;
+  color: var(--arka-brown-mid);
+}
+
+/* Spacer físico entre "No creemos" y "Creemos" */
+.beliefsSpacer {
+  height: 35vh;
+}
+
+.beliefsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 28px; /* más separación entre items */
+}
+
+.beliefItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  font-size: clamp(16px, 1.8vw, 19px);
+  line-height: 1.55;
+  color: var(--arka-text-soft);
+  transition-delay: var(--delay, 0ms) !important;
+}
+
+/* Versión lenta con más espacio vertical */
+.beliefItemSlow {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  font-size: clamp(16px, 1.8vw, 19px);
+  line-height: 1.55;
+  color: var(--arka-text-soft);
+  transition-delay: var(--delay, 0ms) !important;
+  /* animación más lenta */
+  transition-duration: 900ms !important;
+}
+
+.beliefCross {
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(167, 126, 77, 0.5);
+  margin-top: 3px;
+}
+
+.beliefCheck {
+  flex-shrink: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--arka-brown-mid);
+  margin-top: 2px;
+}
+
+/* ─── VISIÓN ─────────────────────────────────────────────── */
+
+.visionSection {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 var(--edge-space) 48px;
+}
+
+.visionCard {
+  padding: 40px 44px;
+  background: var(--arka-brown-dark);
+  border-radius: 20px; /* bordes completos, separado de las cards */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.visionText {
+  margin: 0;
+  font-size: clamp(17px, 1.9vw, 21px);
+  line-height: 1.7;
+  color: rgba(253, 252, 249, 0.88);
+}
+
+.visionClosure {
+  margin: 0;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(22px, 2.6vw, 30px);
+  font-weight: 700;
+  color: var(--arka-white);
+  font-style: italic;
+}
+
+/* ─── FUNDADORES ─────────────────────────────────────────── */
+
+.foundersSection {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 var(--edge-space) 80px;
+}
+
+.foundersGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  padding-top: 52px; /* espacio para que el círculo sobresalga sin clippearse */
+}
+
+/* ── Card ── */
+.founderCard {
+  position: relative;
+  border: 1px solid rgba(167, 126, 77, 0.2);
+  border-radius: 20px;
+  background: var(--arka-white);
+  display: flex;
+  flex-direction: column;
+  overflow: visible; /* permite que el círculo sobresalga */
+  transition:
+    box-shadow 260ms ease,
+    transform 260ms ease;
+}
+
+.founderCard:hover {
+  box-shadow: 0 12px 40px rgba(74, 52, 36, 0.1);
+  transform: translateY(-3px);
+}
+
+/* ── Cabecera: círculo + firma ── */
+.founderHeader {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0 28px;
+  /* el círculo sobresale por arriba: margin-top negativo = radio del círculo */
+  margin-top: -44px; /* mitad del círculo de 88px */
+  min-height: 88px;
+}
+
+/* Círculo de foto — sobresale del borde superior de la card */
+.founderCircle {
+  position: relative;
+  flex-shrink: 0;
+  width: 88px;
+  height: 88px;
+  border-radius: 999px;
+  background: rgba(167, 126, 77, 0.1);
+  border: 3px solid var(--arka-white);
+  box-shadow: 0 4px 16px rgba(74, 52, 36, 0.12);
+  display: grid;
+  place-items: center;
+  overflow: hidden; /* contiene la foto cuando la agregues */
+}
+
+/*
+  Cuando agregues la foto real, usa esta clase en el <Image>:
+  className={styles.founderCircleImg}
+*/
+.founderCircleImg {
+  object-fit: cover;
+  object-position: center top;
+}
+
+.founderInitial {
+  font-family: var(--font-display, Georgia, serif);
+  font-size: 32px;
+  font-weight: 700;
+  color: rgba(167, 126, 77, 0.4);
+  line-height: 1;
+  user-select: none;
+}
+
+/* Área de firma — a la derecha del círculo */
+.founderSignaturePlaceholder {
+  flex: 1;
+  height: 40px;
+  border-bottom: 1.5px solid rgba(167, 126, 77, 0.28);
+  border-radius: 0;
+}
+
+/*
+  Cuando tengas el PNG/SVG de la firma, usa:
+  className={styles.founderSignature}
+*/
+.founderSignature {
+  flex-shrink: 0;
+  height: 44px;
+  width: auto;
+  max-width: 160px;
+  object-fit: contain;
+  opacity: 0.72;
+}
+
+/* ── Cuerpo ── */
+.founderBody {
+  padding: 16px 28px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.founderName {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--arka-brown-dark);
+  line-height: 1.2;
+}
+
+.founderRole {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--arka-brown-mid);
+}
+
+.founderBio {
+  margin: 10px 0 0;
+  font-size: 14px;
+  line-height: 1.72;
+  color: var(--arka-text-soft);
+  flex: 1;
+}
+
+/* ─── RESPONSIVE ─────────────────────────────────────────── */
+
+@media (max-width: 680px) {
+  .foundersGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .pullQuote {
+    padding-left: 20px;
+  }
+
+  .visionCard {
+    padding: 28px 24px;
+  }
+
+  .founderHeader {
+    padding: 0 20px;
+  }
+
+  .founderBody {
+    padding: 16px 20px 24px;
+  }
+}
+
+@media (max-width: 420px) {
+  .heroTitleLine {
+    font-size: 32px;
+  }
+}
+
+/* ─── ACCESIBILIDAD ──────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .revealFade,
+  .revealUp,
+  .revealScale {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
 }
 </file>
 
-<file path="components/home/SectionValue.tsx">
-export function SectionValue() {
-  return (
-    <section id="s1" className="section">
-      <h2 className="section__h2">Creamos tu alojamiento para rentas cortas</h2>
-      <p className="section__p">
-        Diseñamos, optimizamos y operamos tu inmueble para maximizar ocupación y
-        rentabilidad. (Copy detallado pendiente)
-      </p>
+<file path="components/nosotros/NosotrosPage.tsx">
+"use client";
 
-      <ul className="bullets">
-        <li>Optimización del anuncio y contenido</li>
-        <li>Operación y atención al huésped</li>
-        <li>Control y visibilidad del calendario (pronto portal propietario)</li>
-      </ul>
-    </section>
+import { useEffect, useRef } from "react";
+import styles from "./Nosotros.module.css";
+
+function useScrollReveal() {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const targets = el.querySelectorAll<HTMLElement>("[data-reveal]");
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const target = entry.target as HTMLElement;
+          const mode = target.dataset.reveal; // "stay" | "toggle"
+
+          if (entry.isIntersecting) {
+            target.classList.add(styles.revealed);
+            if (mode === "stay") {
+              observer.unobserve(target);
+            }
+          } else {
+            if (mode === "toggle") {
+              target.classList.remove(styles.revealed);
+            }
+          }
+        });
+      },
+      {
+        threshold: 0.15,
+        rootMargin: "0px 0px -60px 0px",
+      },
+    );
+
+    targets.forEach((t) => observer.observe(t));
+
+    return () => observer.disconnect();
+  }, []);
+
+  return ref;
+}
+
+export function NosotrosPage() {
+  const containerRef = useScrollReveal();
+
+  return (
+    <main className={styles.page} ref={containerRef}>
+      {/* ─── HERO TITLE ─────────────────────────────────────────── */}
+      <section className={styles.heroSection}>
+        <div
+          className={`${styles.heroTitle} ${styles.revealUp}`}
+          data-reveal="stay"
+        >
+          <span className={styles.heroTitleLine}>Construyendo estructura</span>
+          <span className={styles.heroTitleLine}>en casa.</span>
+          <span className={`${styles.heroTitleLine} ${styles.heroTitleSoft}`}>
+            Operando con cuidado.
+          </span>
+        </div>
+
+        <div
+          className={`${styles.heroDivider} ${styles.revealScale}`}
+          data-reveal="stay"
+        />
+      </section>
+
+      {/* ─── MANIFIESTO ─────────────────────────────────────────── */}
+      <section className={styles.manifesto}>
+        <p
+          className={`${styles.bodyLarge} ${styles.revealFade}`}
+          data-reveal="toggle"
+        >
+          Decidimos volver a Colombia en un momento en el que la decisión más
+          cómoda era quedarnos afuera.
+        </p>
+
+        <p
+          className={`${styles.body} ${styles.revealFade}`}
+          data-reveal="toggle"
+        >
+          Habíamos migrado, estudiado, homologado títulos, proyectado maestrías
+          y evaluado escenarios con la frialdad de quien entiende que el tiempo
+          y el dinero son recursos finitos. Podríamos haber buscado un camino
+          más predecible, pero elegimos algo distinto:{" "}
+          <mark className={styles.highlight}>construir empresa en casa.</mark>
+        </p>
+
+        <blockquote
+          className={`${styles.pullQuote} ${styles.revealUp}`}
+          data-reveal="stay"
+        >
+          No volvimos por improvisación.
+          <br />
+          Volvimos por decisión.
+        </blockquote>
+
+        <p
+          className={`${styles.body} ${styles.revealFade}`}
+          data-reveal="toggle"
+        >
+          Durante años hemos trabajado en entornos donde el margen de error es
+          mínimo. Coordinando proyectos arquitectónicos de gran escala que
+          exigen precisión milimétrica y toma de decisiones bajo presión.
+          Cuidando pacientes en unidades críticas donde la serenidad no es
+          opcional y el detalle puede cambiar de manera crítica un resultado.
+        </p>
+
+        <blockquote
+          className={`${styles.pullQuoteSmall} ${styles.revealUp}`}
+          data-reveal="stay"
+        >
+          Aprendimos algo fundamental: la improvisación siempre termina costando
+          más.
+        </blockquote>
+
+        <p
+          className={`${styles.body} ${styles.revealFade}`}
+          data-reveal="toggle"
+        >
+          En Santa Marta encontramos inmuebles con enorme potencial, pero
+          gestionados sin estándares. Espacios que podrían ser excelentes
+          hospedajes, arruinados por fallas básicas de mantenimiento y limpieza.
+          Experiencias que no fracasan por falta de lujo, sino por falta de
+          rigor.
+        </p>
+
+        <div
+          className={`${styles.insight} ${styles.revealUp}`}
+          data-reveal="stay"
+        >
+          <span className={styles.insightLabel}>El diagnóstico</span>
+          <p className={styles.insightText}>
+            Entendimos que el problema no es el inmueble.
+            <br />
+            Es el sistema que lo opera.
+          </p>
+        </div>
+
+        <div
+          className={`${styles.arkaCallout} ${styles.revealUp}`}
+          data-reveal="stay"
+        >
+          <span className={styles.insightLabel}>La solución</span>
+          <p className={styles.arkaCalloutText}>ARKA nace para resolver eso.</p>
+        </div>
+      </section>
+
+      {/* ─── CREENCIAS ──────────────────────────────────────────── */}
+      <section className={styles.beliefsSection}>
+        {/* No creemos — toggle: desaparecen al salir del viewport */}
+        <ul className={styles.beliefsList}>
+          {[
+            "No creemos en crecer desmedidamente si el proceso no está listo para sostenerlo.",
+            "No creemos en maximizar ingresos sacrificando calidad.",
+            "No creemos en sobreprometer para captar propiedades.",
+          ].map((text, i) => (
+            <li
+              key={i}
+              className={`${styles.beliefItemSlow} ${styles.revealUp}`}
+              data-reveal="toggle"
+              style={{ "--delay": `${i * 220}ms` } as React.CSSProperties}
+            >
+              <span className={styles.beliefCross} aria-hidden="true">
+                ✕
+              </span>
+              <span>{text}</span>
+            </li>
+          ))}
+        </ul>
+
+        {/* Spacer: scroll vacío entre los dos grupos */}
+        <div className={styles.beliefsSpacer} aria-hidden="true" />
+
+        {/* Sí creemos — check ✓, toggle, con separación visual grande */}
+        <ul className={styles.beliefsList}>
+          {[
+            "Creemos en construir un sistema que permita crecer con control.",
+            "Creemos en generar empleo de calidad y profesionalizar un sector que todavía opera en la informalidad.",
+          ].map((text, i) => (
+            <li
+              key={i}
+              className={`${styles.beliefItemSlow} ${styles.revealUp}`}
+              data-reveal="toggle"
+              style={{ "--delay": `${i * 220}ms` } as React.CSSProperties}
+            >
+              <span className={styles.beliefCheck} aria-hidden="true">
+                ✓
+              </span>
+              <span>{text}</span>
+            </li>
+          ))}
+        </ul>
+
+        {/* Recuadro propietario — stay, aparece con los "Creemos" aún visibles */}
+        <div
+          className={`${styles.ownerCallout} ${styles.revealUp}`}
+          data-reveal="stay"
+        >
+          <p className={styles.ownerCalloutText}>
+            Queremos que cada propietario se sienta tranquilo, respaldado por el{" "}
+            <strong>Sistema ARKA</strong> que opera con criterio. No libre de
+            riesgo, pero acompañado por quienes saben lo que hacen.
+          </p>
+        </div>
+      </section>
+
+      {/* ─── VISIÓN ─────────────────────────────────────────────── */}
+      <section className={styles.visionSection}>
+        <div
+          className={`${styles.visionCard} ${styles.revealUp}`}
+          data-reveal="stay"
+        >
+          <p className={styles.visionText}>
+            Hoy empezamos con una estructura pensada para escalar. Nuestra visión es
+            clara: construir un sistema capaz de operar cientos de propiedades
+            con el mismo rigor con el que empezamos la primera.
+          </p>
+          <p className={styles.visionClosure}>
+            Si vamos a hacerlo, lo haremos bien.
+          </p>
+        </div>
+      </section>
+
+      {/* ─── FUNDADORES (sin título, pegados al card café) ───────── */}
+      <section className={styles.foundersSection}>
+        <div className={styles.foundersGrid}>
+          {/* ── Jacobo ── */}
+          <article
+            className={`${styles.founderCard} ${styles.revealUp}`}
+            data-reveal="stay"
+            style={{ "--delay": "0ms" } as React.CSSProperties}
+          >
+            {/* Cabecera: círculo foto (sobresale) + firma a la derecha */}
+            <div className={styles.founderHeader}>
+              {/*
+                FOTO: cuando tengas el archivo, reemplaza founderCirclePlaceholder por:
+                <Image
+                  src="/founders/jacobo.jpg"
+                  alt="Jacobo Cortés Ramos"
+                  fill
+                  className={styles.founderCircleImg}
+                />
+              */}
+              <div className={styles.founderCircle} aria-hidden="true">
+                <span className={styles.founderInitial}>J</span>
+              </div>
+
+              {/*
+                FIRMA: cuando tengas el PNG/SVG, reemplaza founderSignaturePlaceholder por:
+                <Image
+                  src="/founders/firma-jacobo.png"
+                  alt="Firma Jacobo"
+                  width={130} height={44}
+                  className={styles.founderSignature}
+                />
+              */}
+              <div
+                className={styles.founderSignaturePlaceholder}
+                aria-hidden="true"
+              />
+            </div>
+
+            <div className={styles.founderBody}>
+              <h3 className={styles.founderName}>Jacobo Cortés Ramos</h3>
+              <p className={styles.founderRole}>
+                Co-fundador · Operaciones & Crecimiento
+              </p>
+              <p className={styles.founderBio}>
+                Arquitecto de la Universidad de los Andes con más de 10 años de
+                experiencia en el desarrollo y coordinación de proyectos de gran
+                escala que exigen precisión y control. Como viajero empedernido
+                es capaz de ver el potencial de Santa Marta como destino
+                turístico mundial. Su papel en ARKA es liderar la estructura
+                operativa y el crecimiento controlado del sistema.
+              </p>
+            </div>
+          </article>
+
+          {/* ── Brenda ── */}
+          <article
+            className={`${styles.founderCard} ${styles.revealUp}`}
+            data-reveal="stay"
+            style={{ "--delay": "160ms" } as React.CSSProperties}
+          >
+            <div className={styles.founderHeader}>
+              {/*
+                FOTO: mismo patrón que Jacobo.
+                <Image
+                  src="/founders/brenda.jpg"
+                  alt="Brenda Montaño Estrada"
+                  fill
+                  className={styles.founderCircleImg}
+                />
+              */}
+              <div className={styles.founderCircle} aria-hidden="true">
+                <span className={styles.founderInitial}>B</span>
+              </div>
+
+              {/*
+                FIRMA: mismo patrón que Jacobo.
+                <Image
+                  src="/founders/firma-brenda.png"
+                  alt="Firma Brenda"
+                  width={130} height={44}
+                  className={styles.founderSignature}
+                />
+              */}
+              <div
+                className={styles.founderSignaturePlaceholder}
+                aria-hidden="true"
+              />
+            </div>
+
+            <div className={styles.founderBody}>
+              <h3 className={styles.founderName}>Brenda Montaño Estrada</h3>
+              <p className={styles.founderRole}>
+                Co-fundadora · Experiencia & Estándares
+              </p>
+              <p className={styles.founderBio}>
+                Enfermera con maestría en Cuidados Paliativos de la Pontificia
+                Universidad Javeriana y experiencia internacional en el Hospital
+                St. George de Leipzig, Alemania. Ha trabajado en entornos de
+                alta exigencia donde el cuidado y el criterio no son
+                negociables. Orgullosamente samaria, con su vocación de cuidado
+                y conexión con la ciudad, lidera en ARKA la experiencia del
+                huésped y los estándares de servicio.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
   );
 }
 </file>
@@ -570,6 +1973,20 @@ export default config;
     "**/*.mts"
   ],
   "exclude": ["node_modules"]
+}
+</file>
+
+<file path="app/(site)/nosotros/page.tsx">
+import { NosotrosPage } from "../../../components/nosotros/NosotrosPage";
+
+export const metadata = {
+  title: "Nosotros | ARKA Living",
+  description:
+    "Conoce la historia y el equipo detrás de ARKA Living, gestora de rentas cortas en Santa Marta y Bogotá.",
+};
+
+export default function Page() {
+  return <NosotrosPage />;
 }
 </file>
 
@@ -1829,7 +3246,7 @@ export function PropertyApplicationForm() {
 }
 
 /* Ocultar CTA flotante en stage 9 */
-html[data-hero-stage="9"] .wrap {
+html[data-hero-stage="7"] .wrap {
   opacity: 0;
   pointer-events: none;
 }
@@ -1847,87 +3264,6 @@ export function FloatingCTA() {
         </span>
       </a>
     </div>
-  );
-}
-</file>
-
-<file path="components/home/SectionSteps.tsx">
-import Link from "next/link";
-import { Gem, Handshake, HousePlus } from "lucide-react";
-
-export function SectionSteps() {
-  return (
-    <section id="s2" className="section">
-      <h2 className="section__h2">Tu progreso en tres simples pasos</h2>
-
-      <ol className="steps mt-10 flex flex-col gap-6">
-        {/* Step 1 */}
-        <li className="steps__item flex items-start gap-4">
-          <div className="steps__iconWrap flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[rgba(167,126,77,0.14)]">
-            <HousePlus
-              className="steps__icon h-6 w-6 text-[var(--arka-brown-mid)]"
-              strokeWidth={1.6}
-              aria-hidden="true"
-            />
-          </div>
-
-          <div className="steps__content">
-            <h3 className="steps__h3 m-0 text-[18px] leading-tight">
-              Postula tu propiedad
-            </h3>
-            <p className="steps__p mt-2 mb-0 text-[14px] leading-snug text-[var(--arka-text-soft)]">
-              Completa el formulario con la información básica.
-            </p>
-          </div>
-        </li>
-
-        {/* Step 2 */}
-        <li className="steps__item flex items-start gap-4">
-          <div className="steps__iconWrap flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[rgba(167,126,77,0.14)]">
-            <Gem
-              className="steps__icon h-6 w-6 text-[var(--arka-brown-mid)]"
-              strokeWidth={1.6}
-              aria-hidden="true"
-            />
-          </div>
-
-          <div className="steps__content">
-            <h3 className="steps__h3 m-0 text-[18px] leading-tight">
-              Estudia nuestra oferta
-            </h3>
-            <p className="steps__p mt-2 mb-0 text-[14px] leading-snug text-[var(--arka-text-soft)]">
-              Te enviamos una propuesta clara y sin letras pequeñas.
-            </p>
-          </div>
-        </li>
-
-        {/* Step 3 */}
-        <li className="steps__item flex items-start gap-4">
-          <div className="steps__iconWrap flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[rgba(167,126,77,0.14)]">
-            <Handshake
-              className="steps__icon h-6 w-6 text-[var(--arka-brown-mid)]"
-              strokeWidth={1.6}
-              aria-hidden="true"
-            />
-          </div>
-
-          <div className="steps__content">
-            <h3 className="steps__h3 m-0 text-[18px] leading-tight">
-              Firmemos el contrato
-            </h3>
-            <p className="steps__p mt-2 mb-0 text-[14px] leading-snug text-[var(--arka-text-soft)]">
-              Arrancamos operación y preparación del inmueble.
-            </p>
-          </div>
-        </li>
-      </ol>
-
-      <div className="section__cta mt-10">
-        <Link className="btn" href="/postula-tu-propiedad">
-          Postula tu propiedad aquí
-        </Link>
-      </div>
-    </section>
   );
 }
 </file>
@@ -3343,7 +4679,7 @@ export function Footer() {
   }, []);
 
   const takeoverActive = useMemo(() => {
-    return isHome && heroStage === "9";
+    return isHome && heroStage === "7";
   }, [isHome, heroStage]);
 
   return (
@@ -3476,7 +4812,7 @@ export function Footer() {
 
 .hero {
   position: relative;
-  min-height: 1000vh;
+  min-height: 800vh;
   overflow: hidden;
 }
 
@@ -3544,7 +4880,7 @@ export function Footer() {
   text-align: center;
   padding: 0 16px;
 
-  opacity: 0.28;
+  opacity: 1;
   filter: saturate(0);
   transition:
     opacity 320ms ease,
@@ -3760,8 +5096,8 @@ export function Footer() {
 }
 
 /* Ocultar scroll indicator en último stage */
-html[data-hero-stage="9"] .scrollIndicator,
-html[data-hero-stage="9"] .scrollCircle {
+html[data-hero-stage="7"] .scrollIndicator,
+html[data-hero-stage="7"] .scrollCircle {
   display: none;
 }
 
@@ -3792,24 +5128,43 @@ function easeOutCubic(t: number) {
   return 1 - Math.pow(1 - t, 3);
 }
 
+// Mapea un valor dentro de un rango [start, end] → [0, 1], clampeado
+function rangeFraction(t: number, start: number, end: number) {
+  return clamp((t - start) / (end - start), 0, 1);
+}
+
+/**
+ * STAGES (0..7) — 8 stages totales
+ *
+ * 0 → Video full-screen. Sin brand.
+ * 1 → Aparece logo + slogan.
+ * 2 → Aparece H1.
+ * 3 → Transición encadenada:
+ *       0.00–0.30 → H1 hace fade-out hacia arriba
+ *       0.30–0.60 → logo + slogan hacen fade-out
+ *       0.60–1.00 → H3 entra desde abajo
+ * 4 → Aparece Paso 1.
+ * 5 → Aparece Paso 2.
+ * 6 → Aparece Paso 3.
+ * 7 → Footer takeover. Burger blanco.
+ */
+
+const STAGES = 8;
+
 export function Hero() {
   const heroRef = useRef<HTMLElement | null>(null);
   const rafRef = useRef<number | null>(null);
   const [progress, setProgress] = useState(0);
-
-  // stage de navegación por clicks
   const navStageRef = useRef(0);
 
+  // ── Leer scroll ──────────────────────────────────────────────
   useEffect(() => {
     const read = () => {
       if (!heroRef.current) return;
-
       const rect = heroRef.current.getBoundingClientRect();
       const height = heroRef.current.offsetHeight;
-
       const scrolled = clamp(-rect.top, 0, height);
       const p = height > 0 ? clamp(scrolled / height, 0, 1) : 0;
-
       setProgress(p);
     };
 
@@ -3830,125 +5185,118 @@ export function Hero() {
     };
   }, []);
 
-  /**
-   * STAGES (0..9) -> S1..S10
-   */
-  const STAGES = 10;
+  // ── Calcular stage ───────────────────────────────────────────
   const raw = progress * STAGES;
   const stage = clamp(Math.floor(raw), 0, STAGES - 1);
-  const stageProgress = clamp(raw - stage, 0, 1);
+  const sp = clamp(raw - stage, 0, 1); // stageProgress dentro del stage actual
 
   useEffect(() => {
     document.documentElement.dataset.heroStage = String(stage);
     navStageRef.current = stage;
-
     return () => {
       delete document.documentElement.dataset.heroStage;
     };
   }, [stage]);
 
-  // Overlay progresivo
+  // ── Overlay ──────────────────────────────────────────────────
   const overlayT = clamp(progress * 1.9, 0, 1);
   const overlayOpacity = 0.62 * easeOutCubic(overlayT);
 
-  // Guion
-  const showH1 = stage === 2;
-  const showH3 = stage >= 5;
-  const stepCount = stage >= 8 ? 3 : stage >= 7 ? 2 : stage >= 6 ? 1 : 0;
-  const brandCompact = stage >= 1;
-
-  /**
-   * BRAND (ajustado para tus S1..S10):
-   * S1 (stage 0): limpio -> brand 0
-   * S2 (stage 1): brand visible
-   * S3 (stage 2): brand + H1 (brand full)
-   * S4 (stage 3): brand visible y aquí SE DESVANECE hacia el final
-   * S5 (stage 4): limpio -> brand 0
-   * S6+ (stage >=5): apagado -> brand 0
-   */
-  const baseBrandOpacity =
-    stage === 0 ? 0 : stage === 2 ? 1 : brandCompact ? 0.92 : 0.28;
-
-  // Fade-out ocurre en stage 3 (S4)
-  const brandFade = stage === 3 ? 1 - stageProgress : stage >= 4 ? 0 : 1;
-  const brandOpacity = baseBrandOpacity * brandFade;
-
-  // Stage 2 timings (H1)
-  const h1InEnd = 0.18;
-  const h1HoldEnd = 0.7;
-  const h1OutStart = h1HoldEnd;
-
-  const h1Enter = clamp(stageProgress / h1InEnd, 0, 1);
-
-  const h1ExitT = clamp((stageProgress - h1OutStart) / (1 - h1OutStart), 0, 1);
-  const h1Exit = easeOutCubic(h1ExitT);
-
-  const h1Opacity = stageProgress < h1OutStart ? h1Enter : 1 - h1Exit;
-
-  const yHold = -70;
-  const yOutEnd = -170;
-  const yStartH1 = 180;
-
-  let h1Y: number;
-
-  if (stageProgress < h1InEnd) {
-    const tIn = easeOutCubic(clamp(stageProgress / h1InEnd, 0, 1));
-    h1Y = lerp(yStartH1, yHold, tIn);
-  } else if (stageProgress < h1OutStart) {
-    h1Y = yHold;
+  // ── BRAND (logo + slogan) ────────────────────────────────────
+  // Stage 0: invisible
+  // Stage 1: fade-in (0.28 → 1, respetando la opacidad tenue inicial del CSS)
+  // Stage 2: opacidad plena
+  // Stage 3 (0.40–0.65): fade-out más lento
+  // Stage 4+: invisible
+  let brandOpacity: number;
+  if (stage === 0) {
+    // En stage 0 empieza invisible; la opacidad tenue del CSS (0.28)
+    // la manejamos aquí: al arrancar queremos 0, no 0.28
+    brandOpacity = 0;
+  } else if (stage === 1) {
+    // Fade-in de 0 a 1 (el CSS .brandInner ya no tiene opacity base)
+    brandOpacity = easeOutCubic(sp);
+  } else if (stage === 2) {
+    brandOpacity = 1;
+  } else if (stage === 3) {
+    const fadeOut = easeOutCubic(rangeFraction(sp, 0.4, 0.65));
+    brandOpacity = 1 - fadeOut;
   } else {
-    h1Y = lerp(yHold, yOutEnd, h1Exit);
+    brandOpacity = 0;
   }
 
-  /**
-   * H3 + Steps: entrada desde abajo con delay interno
-   */
+  // brandCompact: logo se achica desde stage 1 en adelante
+  const brandCompact = stage >= 1;
+
+  // ── H1 ───────────────────────────────────────────────────────
+  // Visible en stage 2 (entra) y stage 3 (sale 0.00–0.30 más lento → 0.00–0.50)
+  const showH1 = stage === 2 || stage === 3;
+
+  const H1_IN_END = 0.25;
+  const h1EnterT = easeOutCubic(rangeFraction(sp, 0, H1_IN_END));
+
+  // Stage 3: sale durante 0.00–0.50 (más lento)
+  const h1ExitT = easeOutCubic(rangeFraction(sp, 0, 0.5));
+
+  let h1Opacity: number;
+  let h1Y: number;
+
+  if (stage === 2) {
+    h1Opacity = h1EnterT;
+    // ✅ Hold position más arriba en desktop: -60px en lugar de -20px
+    h1Y = lerp(160, -60, h1EnterT);
+  } else if (stage === 3) {
+    h1Opacity = 1 - h1ExitT;
+    h1Y = lerp(-60, -180, h1ExitT);
+  } else {
+    h1Opacity = 0;
+    h1Y = 0;
+  }
+
+  // ── H3 + pasos ───────────────────────────────────────────────
+  // H3: entra durante stage 3 (sp 0.75–1.00 — espera a que logo termine)
+  const showH3 = stage >= 3;
+  const stepCount = stage >= 6 ? 3 : stage >= 5 ? 2 : stage >= 4 ? 1 : 0;
+
+  const h3T =
+    stage === 3
+      ? easeOutCubic(rangeFraction(sp, 0.75, 1.0))
+      : stage > 3
+        ? 1
+        : 0;
+
+  const h3Style = {
+    opacity: h3T,
+    transform: `translateY(${lerp(80, -20, h3T)}px)`,
+  } as const;
+
+  // Pasos: misma lógica de enterStyle pero referenciando nuevo stage
   const enterStyle = (itemStage: number) => {
-    if (stage < itemStage) return null;
-
-    const t = stage === itemStage ? stageProgress : 1;
-
-    const delayStart = 0.35;
-    const duration = 0.65;
-
-    const normalized =
-      t < delayStart ? 0 : clamp((t - delayStart) / duration, 0, 1);
-
-    const eased = easeOutCubic(normalized);
-
-    const yStart = 160;
-    const yEnd = -20;
-
+    if (stage < itemStage) return { opacity: 0, transform: "translateY(80px)" };
+    const t =
+      stage === itemStage ? easeOutCubic(rangeFraction(sp, 0.2, 0.9)) : 1;
     return {
-      opacity: eased,
-      transform: `translateY(${lerp(yStart, yEnd, eased)}px)`,
+      opacity: t,
+      transform: `translateY(${lerp(80, -20, t)}px)`,
     } as const;
   };
 
-  /**
-   * Ajuste para snap/hold al navegar por click
-   */
+  // ── scrollToStage ────────────────────────────────────────────
   const stageInner = (targetStage: number) => {
-    // S3: caer en el HOLD del H1
-    if (targetStage === 2) return 0.45;
-
-    // S6..S9 (stages 5..8): forzar estado final de cada texto
-    if (targetStage >= 5 && targetStage <= 8) return 0.95;
-
+    if (targetStage === 2) return 0.5; // mitad del H1 para verlo bien
+    if (targetStage === 3) return 0.85; // casi al final: H3 ya visible
+    if (targetStage >= 4 && targetStage <= 6) return 0.9;
     return 0.55;
   };
 
   const scrollToStage = (targetStage: number) => {
     if (!heroRef.current) return;
-
     const rect = heroRef.current.getBoundingClientRect();
     const heroTop = window.scrollY + rect.top;
     const heroHeight = heroRef.current.offsetHeight;
+    const next = clamp(targetStage, 0, 7);
 
-    const next = clamp(targetStage, 0, 9);
-
-    // Último stage: salir del hero para ver Footer (S10)
-    if (next >= 9) {
+    if (next >= 7) {
       const padding = Math.max(24, window.innerHeight * 0.15);
       window.scrollTo({
         top: heroTop + heroHeight + padding,
@@ -3957,7 +5305,6 @@ export function Hero() {
       return;
     }
 
-    // Stage 0 = inicio real del hero
     if (next === 0) {
       window.scrollTo({ top: heroTop, behavior: "smooth" });
       return;
@@ -3965,14 +5312,13 @@ export function Hero() {
 
     const inner = stageInner(next);
     const targetProgress = (next + inner) / STAGES;
-
     window.scrollTo({
       top: heroTop + heroHeight * targetProgress,
       behavior: "smooth",
     });
   };
 
-  // ✅ Listener: el Header puede disparar este evento para volver al stage 0
+  // Listener: Header/Logo → volver a stage 0
   useEffect(() => {
     const onGoStage0 = () => scrollToStage(0);
     window.addEventListener("arka:hero:stage0", onGoStage0);
@@ -3980,7 +5326,7 @@ export function Hero() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ✅ Scroll por stages (wheel + touch)
+  // Scroll por wheel + touch
   useEffect(() => {
     let isScrolling = false;
     let touchStartY = 0;
@@ -3994,11 +5340,18 @@ export function Hero() {
     const goToStage = (direction: number) => {
       if (isScrolling) return;
       isScrolling = true;
-      const next = clamp(navStageRef.current + direction, 0, 9);
+      // ✅ Calcular next DESDE el stage actual leído del DOM, no del ref stale
+      const currentStage = parseInt(
+        document.documentElement.dataset.heroStage ?? "0",
+        10,
+      );
+      const next = clamp(currentStage + direction, 0, 7);
+      navStageRef.current = next; // actualizar inmediatamente
       scrollToStage(next);
+      // Liberar después del smooth scroll (~600ms es suficiente)
       setTimeout(() => {
         isScrolling = false;
-      }, 1000);
+      }, 700);
     };
 
     const onWheel = (e: WheelEvent) => {
@@ -4010,12 +5363,10 @@ export function Hero() {
     const onTouchStart = (e: TouchEvent) => {
       touchStartY = e.touches[0].clientY;
     };
-
     const onTouchMove = (e: TouchEvent) => {
       if (!inHero()) return;
-      e.preventDefault(); // ← bloquea el scroll nativo del navegador
+      e.preventDefault();
     };
-
     const onTouchEnd = (e: TouchEvent) => {
       if (!inHero()) return;
       const diff = touchStartY - e.changedTouches[0].clientY;
@@ -4037,29 +5388,32 @@ export function Hero() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const showScrollIndicator = stage < 9;
+  const showScrollIndicator = stage < 7;
 
   const onScrollIndicatorClick = () => {
-    const currentNav = navStageRef.current;
-    const next = clamp(currentNav + 1, 0, 9);
+    const next = clamp(navStageRef.current + 1, 0, 7);
     navStageRef.current = next;
     scrollToStage(next);
   };
 
+  // ── JSX ──────────────────────────────────────────────────────
   return (
     <section ref={heroRef} className={styles.hero} aria-label="ARKA Landing">
+      {/* Video */}
       <div className={styles.media} aria-hidden="true">
         <video autoPlay muted loop playsInline className={styles.mediaVideo}>
           <source src="/hero-video.mp4" type="video/mp4" />
         </video>
       </div>
+
+      {/* Overlay oscuro progresivo */}
       <div
         className={styles.overlay}
         style={{ opacity: overlayOpacity }}
         aria-hidden="true"
       />
 
-      {/* Brand */}
+      {/* Brand: logo + slogan */}
       <div
         className={`${styles.brand} ${brandCompact ? styles.brandCompact : ""}`}
       >
@@ -4083,13 +5437,9 @@ export function Hero() {
         <div className={styles.h1Wrap}>
           <h1
             className={styles.h1}
-            style={{
-              opacity: h1Opacity,
-              transform: `translateY(${h1Y}px)`,
-            }}
+            style={{ opacity: h1Opacity, transform: `translateY(${h1Y}px)` }}
           >
-            Administramos tu propiedad para rentas cortas en Santa Marta y
-            Bogotá
+            Administramos tu propiedad para rentas cortas en Santa Marta
           </h1>
         </div>
       )}
@@ -4097,13 +5447,13 @@ export function Hero() {
       {/* H3 + pasos */}
       {showH3 && (
         <div className={styles.stepsWrap}>
-          <h3 className={styles.h3} style={enterStyle(5) ?? undefined}>
+          <h3 className={styles.h3} style={h3Style}>
             Rentabiliza tu propiedad en 3 simples pasos:
           </h3>
 
           <ol className={styles.steps}>
             {stepCount >= 1 && (
-              <li className={styles.step} style={enterStyle(6) ?? undefined}>
+              <li className={styles.step} style={enterStyle(4)}>
                 <span className={styles.stepIconWrap} aria-hidden="true">
                   <HousePlus className={styles.stepIcon} strokeWidth={1.6} />
                 </span>
@@ -4112,9 +5462,8 @@ export function Hero() {
                 </span>
               </li>
             )}
-
             {stepCount >= 2 && (
-              <li className={styles.step} style={enterStyle(7) ?? undefined}>
+              <li className={styles.step} style={enterStyle(5)}>
                 <span className={styles.stepIconWrap} aria-hidden="true">
                   <Gem className={styles.stepIcon} strokeWidth={1.6} />
                 </span>
@@ -4123,9 +5472,8 @@ export function Hero() {
                 </span>
               </li>
             )}
-
             {stepCount >= 3 && (
-              <li className={styles.step} style={enterStyle(8) ?? undefined}>
+              <li className={styles.step} style={enterStyle(6)}>
                 <span className={styles.stepIconWrap} aria-hidden="true">
                   <Handshake className={styles.stepIcon} strokeWidth={1.6} />
                 </span>
@@ -4211,24 +5559,24 @@ body.menu-open {
   }
 }
 
-/* ✅ Stage 9 => burger blanco (solo si NO está el menú abierto) */
-html[data-hero-stage="9"]:not([data-menu-open="true"]) {
+/* Stage 7 => burger blanco (solo si NO está el menú abierto) */
+html[data-hero-stage="7"]:not([data-menu-open="true"]) {
   --burger-color: var(--arka-white);
 }
 
-/* ✅ Menú abierto => burger/X vuelve a café */
+/* Menú abierto => burger/X vuelve a café */
 html[data-menu-open="true"] {
   --burger-color: var(--arka-brown-mid);
 }
 
-/* CTA float: oculto cuando footer real está en view (no en stage 9) */
-html[data-footer-in-view="true"]:not([data-hero-stage="9"]) [data-cta="float"] {
+/* CTA float: oculto cuando footer real está en view (no en stage 7) */
+html[data-footer-in-view="true"]:not([data-hero-stage="7"]) [data-cta="float"] {
   opacity: 0;
   pointer-events: none;
   transform: translateY(10px);
 }
 
-html[data-footer-in-view="true"]:not([data-hero-stage="9"]) [data-cta-btn] {
+html[data-footer-in-view="true"]:not([data-hero-stage="7"]) [data-cta-btn] {
   animation: none;
 }
 </file>

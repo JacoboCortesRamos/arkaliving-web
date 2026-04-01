@@ -4,30 +4,33 @@ import { useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import "./PropertyApplicationForm.css";
 
-type City = "Bogotá" | "Santa Marta";
+// TODO (multi-ciudad): cuando se reactive Bogotá, descomentar este tipo
+// type City = "Bogotá" | "Santa Marta";
+type City = "Santa Marta";
 
-const BOGOTA_LOCALIDADES = [
-  "Usaquén",
-  "Chapinero",
-  "Santa Fe",
-  "San Cristóbal",
-  "Usme",
-  "Tunjuelito",
-  "Bosa",
-  "Kennedy",
-  "Fontibón",
-  "Engativá",
-  "Suba",
-  "Barrios Unidos",
-  "Teusaquillo",
-  "Los Mártires",
-  "Antonio Nariño",
-  "Puente Aranda",
-  "La Candelaria",
-  "Rafael Uribe Uribe",
-  "Ciudad Bolívar",
-  "Sumapaz",
-];
+// TODO (multi-ciudad): descomentar cuando se active Bogotá
+// const BOGOTA_LOCALIDADES = [
+//   "Usaquén",
+//   "Chapinero",
+//   "Santa Fe",
+//   "San Cristóbal",
+//   "Usme",
+//   "Tunjuelito",
+//   "Bosa",
+//   "Kennedy",
+//   "Fontibón",
+//   "Engativá",
+//   "Suba",
+//   "Barrios Unidos",
+//   "Teusaquillo",
+//   "Los Mártires",
+//   "Antonio Nariño",
+//   "Puente Aranda",
+//   "La Candelaria",
+//   "Rafael Uribe Uribe",
+//   "Ciudad Bolívar",
+//   "Sumapaz",
+// ];
 
 const SM_SECTORES: Array<{
   group: string;
@@ -93,7 +96,6 @@ function normalizeCountryCode(raw: string) {
   const s = raw.trim();
   if (!s) return "";
   const withPlus = s.startsWith("+") ? s : `+${s}`;
-  // deja + y dígitos únicamente
   return "+" + onlyDigits(withPlus);
 }
 
@@ -130,7 +132,8 @@ export function PropertyApplicationForm() {
 
   // page 2
   const [city, setCity] = useState<City | "">("");
-  const [bogotaLocalidad, setBogotaLocalidad] = useState("");
+  // TODO (multi-ciudad): descomentar cuando se active Bogotá
+  // const [bogotaLocalidad, setBogotaLocalidad] = useState("");
   const [smSectorGroup, setSmSectorGroup] = useState("");
   const [smSectorSub, setSmSectorSub] = useState("");
   const [smSectorFreeText, setSmSectorFreeText] = useState("");
@@ -208,8 +211,9 @@ export function PropertyApplicationForm() {
     if (current === 2) {
       if (!city) return (alert("Selecciona la ciudad."), false);
 
-      if (city === "Bogotá" && !bogotaLocalidad)
-        return (alert("Selecciona la localidad."), false);
+      // TODO (multi-ciudad): descomentar cuando se active Bogotá
+      // if (city === "Bogotá" && !bogotaLocalidad)
+      //   return (alert("Selecciona la localidad."), false);
 
       if (city === "Santa Marta") {
         if (!smSectorGroup) return (alert("Selecciona el sector."), false);
@@ -390,10 +394,11 @@ export function PropertyApplicationForm() {
       owner: { fullName, email, phone: phoneE164 },
       property: {
         city,
-        bogotaLocalidad: city === "Bogotá" ? bogotaLocalidad : null,
-        sectorGroup: city === "Santa Marta" ? smSectorGroup : null,
-        sectorSub: city === "Santa Marta" ? smSectorSub : null,
-        sectorFreeText: city === "Santa Marta" ? smSectorFreeText : null,
+        // TODO (multi-ciudad): descomentar cuando se active Bogotá
+        // bogotaLocalidad: city === "Bogotá" ? bogotaLocalidad : null,
+        sectorGroup: smSectorGroup || null,
+        sectorSub: smSectorSub || null,
+        sectorFreeText: smSectorFreeText || null,
         type: propertyType,
         rooms: needsRoomsBaths ? rooms : null,
         baths: needsRoomsBaths ? baths : null,
@@ -534,14 +539,16 @@ export function PropertyApplicationForm() {
               <label>Ciudad</label>
               <select
                 value={city}
-                onChange={(e) => setCity(e.target.value as any)}
+                onChange={(e) => setCity(e.target.value as City)}
               >
                 <option value="">Selecciona</option>
-                <option value="Bogotá">Bogotá</option>
+                {/* TODO (multi-ciudad): descomentar cuando se active Bogotá */}
+                {/* <option value="Bogotá">Bogotá</option> */}
                 <option value="Santa Marta">Santa Marta</option>
               </select>
 
-              {city === "Bogotá" && (
+              {/* TODO (multi-ciudad): descomentar cuando se active Bogotá */}
+              {/* {city === "Bogotá" && (
                 <>
                   <label>Localidad</label>
                   <select
@@ -556,7 +563,7 @@ export function PropertyApplicationForm() {
                     ))}
                   </select>
                 </>
-              )}
+              )} */}
 
               {city === "Santa Marta" && (
                 <>
@@ -838,7 +845,7 @@ export function PropertyApplicationForm() {
           className="modalOverlay"
           role="dialog"
           aria-modal="true"
-          onClick={closeSuccessAndGoHome} // ✅ click fuera también redirige
+          onClick={closeSuccessAndGoHome}
         >
           <div className="modalCard" onClick={(e) => e.stopPropagation()}>
             <button

@@ -3,7 +3,7 @@ import { PropertyApplicationForm } from "../../../components/forms/PropertyAppli
 export const metadata = {
   title: "Postula tu propiedad | ARKA Living",
   description:
-    "Postula tu propiedad para gestión de rentas cortas en Santa Marta y Bogotá. Te contactamos en máximo 48 horas.",
+    "Postula tu propiedad en Santa Marta para gestión de rentas cortas. Te contactamos en máximo 48 horas.",
 };
 
 export default function PostulaTuPropiedadPage() {

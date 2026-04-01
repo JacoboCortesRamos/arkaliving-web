@@ -17,24 +17,43 @@ function easeOutCubic(t: number) {
   return 1 - Math.pow(1 - t, 3);
 }
 
+// Mapea un valor dentro de un rango [start, end] → [0, 1], clampeado
+function rangeFraction(t: number, start: number, end: number) {
+  return clamp((t - start) / (end - start), 0, 1);
+}
+
+/**
+ * STAGES (0..7) — 8 stages totales
+ *
+ * 0 → Video full-screen. Sin brand.
+ * 1 → Aparece logo + slogan.
+ * 2 → Aparece H1.
+ * 3 → Transición encadenada:
+ *       0.00–0.30 → H1 hace fade-out hacia arriba
+ *       0.30–0.60 → logo + slogan hacen fade-out
+ *       0.60–1.00 → H3 entra desde abajo
+ * 4 → Aparece Paso 1.
+ * 5 → Aparece Paso 2.
+ * 6 → Aparece Paso 3.
+ * 7 → Footer takeover. Burger blanco.
+ */
+
+const STAGES = 8;
+
 export function Hero() {
   const heroRef = useRef<HTMLElement | null>(null);
   const rafRef = useRef<number | null>(null);
   const [progress, setProgress] = useState(0);
-
-  // stage de navegación por clicks
   const navStageRef = useRef(0);
 
+  // ── Leer scroll ──────────────────────────────────────────────
   useEffect(() => {
     const read = () => {
       if (!heroRef.current) return;
-
       const rect = heroRef.current.getBoundingClientRect();
       const height = heroRef.current.offsetHeight;
-
       const scrolled = clamp(-rect.top, 0, height);
       const p = height > 0 ? clamp(scrolled / height, 0, 1) : 0;
-
       setProgress(p);
     };
 
@@ -55,125 +74,118 @@ export function Hero() {
     };
   }, []);
 
-  /**
-   * STAGES (0..9) -> S1..S10
-   */
-  const STAGES = 10;
+  // ── Calcular stage ───────────────────────────────────────────
   const raw = progress * STAGES;
   const stage = clamp(Math.floor(raw), 0, STAGES - 1);
-  const stageProgress = clamp(raw - stage, 0, 1);
+  const sp = clamp(raw - stage, 0, 1); // stageProgress dentro del stage actual
 
   useEffect(() => {
     document.documentElement.dataset.heroStage = String(stage);
     navStageRef.current = stage;
-
     return () => {
       delete document.documentElement.dataset.heroStage;
     };
   }, [stage]);
 
-  // Overlay progresivo
+  // ── Overlay ──────────────────────────────────────────────────
   const overlayT = clamp(progress * 1.9, 0, 1);
   const overlayOpacity = 0.62 * easeOutCubic(overlayT);
 
-  // Guion
-  const showH1 = stage === 2;
-  const showH3 = stage >= 5;
-  const stepCount = stage >= 8 ? 3 : stage >= 7 ? 2 : stage >= 6 ? 1 : 0;
-  const brandCompact = stage >= 1;
-
-  /**
-   * BRAND (ajustado para tus S1..S10):
-   * S1 (stage 0): limpio -> brand 0
-   * S2 (stage 1): brand visible
-   * S3 (stage 2): brand + H1 (brand full)
-   * S4 (stage 3): brand visible y aquí SE DESVANECE hacia el final
-   * S5 (stage 4): limpio -> brand 0
-   * S6+ (stage >=5): apagado -> brand 0
-   */
-  const baseBrandOpacity =
-    stage === 0 ? 0 : stage === 2 ? 1 : brandCompact ? 0.92 : 0.28;
-
-  // Fade-out ocurre en stage 3 (S4)
-  const brandFade = stage === 3 ? 1 - stageProgress : stage >= 4 ? 0 : 1;
-  const brandOpacity = baseBrandOpacity * brandFade;
-
-  // Stage 2 timings (H1)
-  const h1InEnd = 0.18;
-  const h1HoldEnd = 0.7;
-  const h1OutStart = h1HoldEnd;
-
-  const h1Enter = clamp(stageProgress / h1InEnd, 0, 1);
-
-  const h1ExitT = clamp((stageProgress - h1OutStart) / (1 - h1OutStart), 0, 1);
-  const h1Exit = easeOutCubic(h1ExitT);
-
-  const h1Opacity = stageProgress < h1OutStart ? h1Enter : 1 - h1Exit;
-
-  const yHold = -70;
-  const yOutEnd = -170;
-  const yStartH1 = 180;
-
-  let h1Y: number;
-
-  if (stageProgress < h1InEnd) {
-    const tIn = easeOutCubic(clamp(stageProgress / h1InEnd, 0, 1));
-    h1Y = lerp(yStartH1, yHold, tIn);
-  } else if (stageProgress < h1OutStart) {
-    h1Y = yHold;
+  // ── BRAND (logo + slogan) ────────────────────────────────────
+  // Stage 0: invisible
+  // Stage 1: fade-in (0.28 → 1, respetando la opacidad tenue inicial del CSS)
+  // Stage 2: opacidad plena
+  // Stage 3 (0.40–0.65): fade-out más lento
+  // Stage 4+: invisible
+  let brandOpacity: number;
+  if (stage === 0) {
+    // En stage 0 empieza invisible; la opacidad tenue del CSS (0.28)
+    // la manejamos aquí: al arrancar queremos 0, no 0.28
+    brandOpacity = 0;
+  } else if (stage === 1) {
+    // Fade-in de 0 a 1 (el CSS .brandInner ya no tiene opacity base)
+    brandOpacity = easeOutCubic(sp);
+  } else if (stage === 2) {
+    brandOpacity = 1;
+  } else if (stage === 3) {
+    const fadeOut = easeOutCubic(rangeFraction(sp, 0.4, 0.65));
+    brandOpacity = 1 - fadeOut;
   } else {
-    h1Y = lerp(yHold, yOutEnd, h1Exit);
+    brandOpacity = 0;
   }
 
-  /**
-   * H3 + Steps: entrada desde abajo con delay interno
-   */
+  // brandCompact: logo se achica desde stage 1 en adelante
+  const brandCompact = stage >= 1;
+
+  // ── H1 ───────────────────────────────────────────────────────
+  // Visible en stage 2 (entra) y stage 3 (sale 0.00–0.30 más lento → 0.00–0.50)
+  const showH1 = stage === 2 || stage === 3;
+
+  const H1_IN_END = 0.25;
+  const h1EnterT = easeOutCubic(rangeFraction(sp, 0, H1_IN_END));
+
+  // Stage 3: sale durante 0.00–0.50 (más lento)
+  const h1ExitT = easeOutCubic(rangeFraction(sp, 0, 0.5));
+
+  let h1Opacity: number;
+  let h1Y: number;
+
+  if (stage === 2) {
+    h1Opacity = h1EnterT;
+    // ✅ Hold position más arriba en desktop: -60px en lugar de -20px
+    h1Y = lerp(160, -60, h1EnterT);
+  } else if (stage === 3) {
+    h1Opacity = 1 - h1ExitT;
+    h1Y = lerp(-60, -180, h1ExitT);
+  } else {
+    h1Opacity = 0;
+    h1Y = 0;
+  }
+
+  // ── H3 + pasos ───────────────────────────────────────────────
+  // H3: entra durante stage 3 (sp 0.75–1.00 — espera a que logo termine)
+  const showH3 = stage >= 3;
+  const stepCount = stage >= 6 ? 3 : stage >= 5 ? 2 : stage >= 4 ? 1 : 0;
+
+  const h3T =
+    stage === 3
+      ? easeOutCubic(rangeFraction(sp, 0.75, 1.0))
+      : stage > 3
+        ? 1
+        : 0;
+
+  const h3Style = {
+    opacity: h3T,
+    transform: `translateY(${lerp(80, -20, h3T)}px)`,
+  } as const;
+
+  // Pasos: misma lógica de enterStyle pero referenciando nuevo stage
   const enterStyle = (itemStage: number) => {
-    if (stage < itemStage) return null;
-
-    const t = stage === itemStage ? stageProgress : 1;
-
-    const delayStart = 0.35;
-    const duration = 0.65;
-
-    const normalized =
-      t < delayStart ? 0 : clamp((t - delayStart) / duration, 0, 1);
-
-    const eased = easeOutCubic(normalized);
-
-    const yStart = 160;
-    const yEnd = -20;
-
+    if (stage < itemStage) return { opacity: 0, transform: "translateY(80px)" };
+    const t =
+      stage === itemStage ? easeOutCubic(rangeFraction(sp, 0.2, 0.9)) : 1;
     return {
-      opacity: eased,
-      transform: `translateY(${lerp(yStart, yEnd, eased)}px)`,
+      opacity: t,
+      transform: `translateY(${lerp(80, -20, t)}px)`,
     } as const;
   };
 
-  /**
-   * Ajuste para snap/hold al navegar por click
-   */
+  // ── scrollToStage ────────────────────────────────────────────
   const stageInner = (targetStage: number) => {
-    // S3: caer en el HOLD del H1
-    if (targetStage === 2) return 0.45;
-
-    // S6..S9 (stages 5..8): forzar estado final de cada texto
-    if (targetStage >= 5 && targetStage <= 8) return 0.95;
-
+    if (targetStage === 2) return 0.5; // mitad del H1 para verlo bien
+    if (targetStage === 3) return 0.85; // casi al final: H3 ya visible
+    if (targetStage >= 4 && targetStage <= 6) return 0.9;
     return 0.55;
   };
 
   const scrollToStage = (targetStage: number) => {
     if (!heroRef.current) return;
-
     const rect = heroRef.current.getBoundingClientRect();
     const heroTop = window.scrollY + rect.top;
     const heroHeight = heroRef.current.offsetHeight;
+    const next = clamp(targetStage, 0, 7);
 
-    const next = clamp(targetStage, 0, 9);
-
-    // Último stage: salir del hero para ver Footer (S10)
-    if (next >= 9) {
+    if (next >= 7) {
       const padding = Math.max(24, window.innerHeight * 0.15);
       window.scrollTo({
         top: heroTop + heroHeight + padding,
@@ -182,7 +194,6 @@ export function Hero() {
       return;
     }
 
-    // Stage 0 = inicio real del hero
     if (next === 0) {
       window.scrollTo({ top: heroTop, behavior: "smooth" });
       return;
@@ -190,14 +201,13 @@ export function Hero() {
 
     const inner = stageInner(next);
     const targetProgress = (next + inner) / STAGES;
-
     window.scrollTo({
       top: heroTop + heroHeight * targetProgress,
       behavior: "smooth",
     });
   };
 
-  // ✅ Listener: el Header puede disparar este evento para volver al stage 0
+  // Listener: Header/Logo → volver a stage 0
   useEffect(() => {
     const onGoStage0 = () => scrollToStage(0);
     window.addEventListener("arka:hero:stage0", onGoStage0);
@@ -205,7 +215,7 @@ export function Hero() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ✅ Scroll por stages (wheel + touch)
+  // Scroll por wheel + touch
   useEffect(() => {
     let isScrolling = false;
     let touchStartY = 0;
@@ -219,11 +229,18 @@ export function Hero() {
     const goToStage = (direction: number) => {
       if (isScrolling) return;
       isScrolling = true;
-      const next = clamp(navStageRef.current + direction, 0, 9);
+      // ✅ Calcular next DESDE el stage actual leído del DOM, no del ref stale
+      const currentStage = parseInt(
+        document.documentElement.dataset.heroStage ?? "0",
+        10,
+      );
+      const next = clamp(currentStage + direction, 0, 7);
+      navStageRef.current = next; // actualizar inmediatamente
       scrollToStage(next);
+      // Liberar después del smooth scroll (~600ms es suficiente)
       setTimeout(() => {
         isScrolling = false;
-      }, 1000);
+      }, 700);
     };
 
     const onWheel = (e: WheelEvent) => {
@@ -235,12 +252,10 @@ export function Hero() {
     const onTouchStart = (e: TouchEvent) => {
       touchStartY = e.touches[0].clientY;
     };
-
     const onTouchMove = (e: TouchEvent) => {
       if (!inHero()) return;
-      e.preventDefault(); // ← bloquea el scroll nativo del navegador
+      e.preventDefault();
     };
-
     const onTouchEnd = (e: TouchEvent) => {
       if (!inHero()) return;
       const diff = touchStartY - e.changedTouches[0].clientY;
@@ -262,29 +277,32 @@ export function Hero() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const showScrollIndicator = stage < 9;
+  const showScrollIndicator = stage < 7;
 
   const onScrollIndicatorClick = () => {
-    const currentNav = navStageRef.current;
-    const next = clamp(currentNav + 1, 0, 9);
+    const next = clamp(navStageRef.current + 1, 0, 7);
     navStageRef.current = next;
     scrollToStage(next);
   };
 
+  // ── JSX ──────────────────────────────────────────────────────
   return (
     <section ref={heroRef} className={styles.hero} aria-label="ARKA Landing">
+      {/* Video */}
       <div className={styles.media} aria-hidden="true">
         <video autoPlay muted loop playsInline className={styles.mediaVideo}>
           <source src="/hero-video.mp4" type="video/mp4" />
         </video>
       </div>
+
+      {/* Overlay oscuro progresivo */}
       <div
         className={styles.overlay}
         style={{ opacity: overlayOpacity }}
         aria-hidden="true"
       />
 
-      {/* Brand */}
+      {/* Brand: logo + slogan */}
       <div
         className={`${styles.brand} ${brandCompact ? styles.brandCompact : ""}`}
       >
@@ -308,13 +326,9 @@ export function Hero() {
         <div className={styles.h1Wrap}>
           <h1
             className={styles.h1}
-            style={{
-              opacity: h1Opacity,
-              transform: `translateY(${h1Y}px)`,
-            }}
+            style={{ opacity: h1Opacity, transform: `translateY(${h1Y}px)` }}
           >
-            Administramos tu propiedad para rentas cortas en Santa Marta y
-            Bogotá
+            Administramos tu propiedad para rentas cortas en Santa Marta
           </h1>
         </div>
       )}
@@ -322,13 +336,13 @@ export function Hero() {
       {/* H3 + pasos */}
       {showH3 && (
         <div className={styles.stepsWrap}>
-          <h3 className={styles.h3} style={enterStyle(5) ?? undefined}>
+          <h3 className={styles.h3} style={h3Style}>
             Rentabiliza tu propiedad en 3 simples pasos:
           </h3>
 
           <ol className={styles.steps}>
             {stepCount >= 1 && (
-              <li className={styles.step} style={enterStyle(6) ?? undefined}>
+              <li className={styles.step} style={enterStyle(4)}>
                 <span className={styles.stepIconWrap} aria-hidden="true">
                   <HousePlus className={styles.stepIcon} strokeWidth={1.6} />
                 </span>
@@ -337,9 +351,8 @@ export function Hero() {
                 </span>
               </li>
             )}
-
             {stepCount >= 2 && (
-              <li className={styles.step} style={enterStyle(7) ?? undefined}>
+              <li className={styles.step} style={enterStyle(5)}>
                 <span className={styles.stepIconWrap} aria-hidden="true">
                   <Gem className={styles.stepIcon} strokeWidth={1.6} />
                 </span>
@@ -348,9 +361,8 @@ export function Hero() {
                 </span>
               </li>
             )}
-
             {stepCount >= 3 && (
-              <li className={styles.step} style={enterStyle(8) ?? undefined}>
+              <li className={styles.step} style={enterStyle(6)}>
                 <span className={styles.stepIconWrap} aria-hidden="true">
                   <Handshake className={styles.stepIcon} strokeWidth={1.6} />
                 </span>

@@ -52,23 +52,23 @@ body.menu-open {
   }
 }
 
-/* ✅ Stage 9 => burger blanco (solo si NO está el menú abierto) */
-html[data-hero-stage="9"]:not([data-menu-open="true"]) {
+/* Stage 7 => burger blanco (solo si NO está el menú abierto) */
+html[data-hero-stage="7"]:not([data-menu-open="true"]) {
   --burger-color: var(--arka-white);
 }
 
-/* ✅ Menú abierto => burger/X vuelve a café */
+/* Menú abierto => burger/X vuelve a café */
 html[data-menu-open="true"] {
   --burger-color: var(--arka-brown-mid);
 }
 
-/* CTA float: oculto cuando footer real está en view (no en stage 9) */
-html[data-footer-in-view="true"]:not([data-hero-stage="9"]) [data-cta="float"] {
+/* CTA float: oculto cuando footer real está en view (no en stage 7) */
+html[data-footer-in-view="true"]:not([data-hero-stage="7"]) [data-cta="float"] {
   opacity: 0;
   pointer-events: none;
   transform: translateY(10px);
 }
 
-html[data-footer-in-view="true"]:not([data-hero-stage="9"]) [data-cta-btn] {
+html[data-footer-in-view="true"]:not([data-hero-stage="7"]) [data-cta-btn] {
   animation: none;
 }

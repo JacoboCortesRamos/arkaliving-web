@@ -13,7 +13,6 @@ export function Footer() {
 
   const [heroStage, setHeroStage] = useState<string | null>(null);
 
-  // ✅ Stage sync robusto: observa cambios en <html data-hero-stage="...">
   useEffect(() => {
     const el = document.documentElement;
 
@@ -26,7 +25,6 @@ export function Footer() {
     const obs = new MutationObserver(readStage);
     obs.observe(el, { attributes: true, attributeFilter: ["data-hero-stage"] });
 
-    // Fallback (por si algún flujo dispara eventos custom)
     window.addEventListener("arka:hero:stage0", readStage);
 
     return () => {
@@ -36,12 +34,11 @@ export function Footer() {
   }, []);
 
   const takeoverActive = useMemo(() => {
-    return isHome && heroStage === "9";
+    return isHome && heroStage === "7";
   }, [isHome, heroStage]);
 
   return (
     <>
-      {/* ✅ HOME: solo takeover (montado siempre en home; activo solo en stage 9) */}
       {isHome && (
         <section
           className={`${styles.takeover} ${
@@ -50,9 +47,8 @@ export function Footer() {
           aria-label="ARKA Footer Takeover"
         >
           <div className={styles.takeoverInner}>
-            {/* Centro (contenedores 1 y 2) */}
             <div className={styles.takeoverMain}>
-              {/* Contenedor 1: Logo + slogan */}
+              {/* Logo + slogan */}
               <div className={styles.takeoverBrand}>
                 <img
                   src="/logo.png"
@@ -64,24 +60,23 @@ export function Footer() {
                 </p>
               </div>
 
-              {/* Contenedor 2: CTA + Operamos */}
+              {/* CTA + ciudad */}
               <div className={styles.takeoverActions}>
                 <Link
                   href="/postula-tu-propiedad"
                   className={`${styles.takeoverCTAWrapper} ${ctaStyles.btn}`}
-                  // Si creaste noPulse, descomenta:
-                  // className={`${styles.takeoverCTAWrapper} ${ctaStyles.btn} ${ctaStyles.noPulse}`}
                 >
                   POSTULA TU PROPIEDAD
                 </Link>
 
                 <p className={styles.takeoverOp}>
-                  Operamos en Santa Marta y Bogotá
+                  Operamos en Santa Marta
+                  {/* TODO (multi-ciudad): cambiar a "Operamos en Santa Marta y Bogotá" cuando se active */}
                 </p>
               </div>
             </div>
 
-            {/* Contenedor 3: iconos + términos + copyright (anclado abajo) */}
+            {/* Iconos + términos + copyright */}
             <div className={styles.takeoverLegal}>
               <div className={styles.takeoverLegalSocial}>
                 <a
@@ -120,7 +115,6 @@ export function Footer() {
         </section>
       )}
 
-      {/* ✅ NO HOME: footer slim */}
       {!isHome && (
         <footer className={styles.footerSlim} aria-label="ARKA Footer">
           <div className={styles.footerSlimInner}>
