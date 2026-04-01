@@ -1,6 +1,6 @@
 "use client";
 
-import { Instagram, MessageCircleMore } from "lucide-react";
+import { Instagram, MessageCircleMore, Mail } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
@@ -48,7 +48,6 @@ export function Footer() {
         >
           <div className={styles.takeoverInner}>
             <div className={styles.takeoverMain}>
-              {/* Logo + slogan */}
               <div className={styles.takeoverBrand}>
                 <img
                   src="/logo.png"
@@ -60,7 +59,6 @@ export function Footer() {
                 </p>
               </div>
 
-              {/* CTA + ciudad */}
               <div className={styles.takeoverActions}>
                 <Link
                   href="/postula-tu-propiedad"
@@ -68,15 +66,10 @@ export function Footer() {
                 >
                   POSTULA TU PROPIEDAD
                 </Link>
-
-                <p className={styles.takeoverOp}>
-                  Operamos en Santa Marta
-                  {/* TODO (multi-ciudad): cambiar a "Operamos en Santa Marta y Bogotá" cuando se active */}
-                </p>
+                <p className={styles.takeoverOp}>Operamos en Santa Marta</p>
               </div>
             </div>
 
-            {/* Iconos + términos + copyright */}
             <div className={styles.takeoverLegal}>
               <div className={styles.takeoverLegalSocial}>
                 <a
@@ -88,7 +81,6 @@ export function Footer() {
                 >
                   <Instagram className={styles.takeoverSocialIcon} />
                 </a>
-
                 <a
                   href="https://wa.me/573158254384?text=Hola%20ARKA%2C%20quiero%20recibir%20informaci%C3%B3n."
                   target="_blank"
@@ -98,14 +90,32 @@ export function Footer() {
                 >
                   <MessageCircleMore className={styles.takeoverSocialIcon} />
                 </a>
+                <a
+                  href="mailto:jacobocortes90@hotmail.com"
+                  className={styles.takeoverSocialLink}
+                  aria-label="Email"
+                >
+                  <Mail className={styles.takeoverSocialIcon} />
+                </a>
               </div>
 
-              <a
-                href="/terminos-y-condiciones"
-                className={styles.takeoverTerms}
-              >
-                Términos y condiciones
-              </a>
+              <div className={styles.takeoverLegalLinks}>
+                <a
+                  href="/terminos-y-condiciones"
+                  className={styles.takeoverTerms}
+                >
+                  Términos y condiciones
+                </a>
+                <span className={styles.takeoverLegalDot} aria-hidden="true">
+                  ·
+                </span>
+                <a
+                  href="/politica-de-privacidad"
+                  className={styles.takeoverTerms}
+                >
+                  Política de Privacidad
+                </a>
+              </div>
 
               <p className={styles.takeoverCopyright}>
                 © 2026 Sitio web creado por JCR-Code
@@ -127,7 +137,6 @@ export function Footer() {
               >
                 <Instagram className={styles.footerSlimIcon} />
               </a>
-
               <a
                 href="https://wa.me/573158254384?text=Hola%20ARKA%2C%20quiero%20recibir%20informaci%C3%B3n."
                 target="_blank"
@@ -136,14 +145,28 @@ export function Footer() {
               >
                 <MessageCircleMore className={styles.footerSlimIcon} />
               </a>
+              <a href="mailto:jacobocortes90@hotmail.com" aria-label="Email">
+                <Mail className={styles.footerSlimIcon} />
+              </a>
             </div>
 
-            <a
-              href="/terminos-y-condiciones"
-              className={styles.footerSlimTerms}
-            >
-              Términos y condiciones
-            </a>
+            <div className={styles.footerSlimLegalLinks}>
+              <a
+                href="/terminos-y-condiciones"
+                className={styles.footerSlimTerms}
+              >
+                Términos y condiciones
+              </a>
+              <span className={styles.footerSlimLegalDot} aria-hidden="true">
+                ·
+              </span>
+              <a
+                href="/politica-de-privacidad"
+                className={styles.footerSlimTerms}
+              >
+                Política de Privacidad
+              </a>
+            </div>
 
             <p className={styles.footerSlimCopy}>
               © 2026 Sitio web creado por JCR-Code

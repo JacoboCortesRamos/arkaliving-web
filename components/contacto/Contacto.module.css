@@ -1,0 +1,379 @@
+/* ============================================================
+   Contacto.module.css — ARKA Living
+   Tres bloques: Postula / Formulario contacto / Redes sociales
+   ============================================================ */
+
+/* ─── PÁGINA BASE ────────────────────────────────────────── */
+
+.page {
+  padding-top: calc(var(--header-h) + 60px);
+  padding-bottom: 0;
+  background: var(--arka-white);
+  color: var(--arka-brown-dark);
+  overflow-x: hidden;
+}
+
+/* ─── BLOQUE COMPARTIDO ──────────────────────────────────── */
+
+.block {
+  width: 100%;
+  padding: 80px var(--edge-space);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.blockInner {
+  width: 100%;
+  max-width: 640px;
+}
+
+/* ─── BLOQUE 1: POSTULA ──────────────────────────────────── */
+
+.postula {
+  background: var(--arka-white);
+  border-bottom: 1px solid rgba(167, 126, 77, 0.15);
+}
+
+.postulaLabel {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--arka-brown-mid);
+  margin-bottom: 20px;
+}
+
+.postulaTitle {
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(28px, 4.5vw, 46px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--arka-brown-dark);
+  margin: 0 0 16px;
+}
+
+.postulaBody {
+  font-size: clamp(15px, 1.8vw, 17px);
+  line-height: 1.7;
+  color: var(--arka-text-soft);
+  margin: 0 0 36px;
+}
+
+.postulaBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 36px;
+  background: var(--arka-brown-dark);
+  color: var(--arka-white);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 100px;
+  text-decoration: none;
+  transition:
+    background 220ms ease,
+    transform 220ms ease,
+    box-shadow 220ms ease;
+}
+
+.postulaBtn:hover {
+  background: var(--arka-brown-mid);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(74, 52, 36, 0.18);
+}
+
+.postulaBtn svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 220ms ease;
+}
+
+.postulaBtn:hover svg {
+  transform: translateX(3px);
+}
+
+/* ─── BLOQUE 2: FORMULARIO CONTACTO ─────────────────────── */
+
+.contact {
+  background: linear-gradient(
+    180deg,
+    rgba(200, 166, 122, 0.06) 0%,
+    rgba(253, 252, 249, 1) 100%
+  );
+  border-bottom: 1px solid rgba(167, 126, 77, 0.15);
+}
+
+.contactLabel {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--arka-brown-mid);
+  margin-bottom: 20px;
+}
+
+.contactTitle {
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(26px, 4vw, 40px);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--arka-brown-dark);
+  margin: 0 0 10px;
+}
+
+.contactSubtitle {
+  font-size: clamp(15px, 1.7vw, 17px);
+  line-height: 1.6;
+  color: var(--arka-text-soft);
+  margin: 0 0 40px;
+}
+
+/* ─── FORM ───────────────────────────────────────────────── */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: left;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--arka-brown-mid);
+}
+
+.input,
+.textarea {
+  width: 100%;
+  padding: 14px 18px;
+  background: #fff;
+  border: 1.5px solid rgba(167, 126, 77, 0.3);
+  border-radius: 10px;
+  font-size: 15px;
+  color: var(--arka-brown-dark);
+  font-family: var(--font-body, system-ui, sans-serif);
+  outline: none;
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+  box-sizing: border-box;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: rgba(111, 91, 75, 0.45);
+}
+
+.input:focus,
+.textarea:focus {
+  border-color: var(--arka-brown-mid);
+  box-shadow: 0 0 0 3px rgba(167, 126, 77, 0.12);
+}
+
+.input:disabled,
+.textarea:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 130px;
+  line-height: 1.6;
+}
+
+.fieldError {
+  font-size: 12px;
+  color: #b94a3a;
+  margin: 0;
+}
+
+/* ─── SUBMIT BTN ─────────────────────────────────────────── */
+
+.submitBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 16px 24px;
+  background: var(--arka-brown-dark);
+  color: var(--arka-white);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition:
+    background 220ms ease,
+    transform 220ms ease,
+    box-shadow 220ms ease;
+  margin-top: 8px;
+}
+
+.submitBtn:hover:not(:disabled) {
+  background: var(--arka-brown-mid);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(74, 52, 36, 0.16);
+}
+
+.submitBtn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.submitBtn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ─── ESTADOS: ÉXITO / ERROR ─────────────────────────────── */
+
+.statusSuccess {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 20px 22px;
+  background: rgba(74, 52, 36, 0.05);
+  border: 1.5px solid rgba(167, 126, 77, 0.35);
+  border-radius: 12px;
+  text-align: left;
+}
+
+.statusSuccess svg {
+  width: 22px;
+  height: 22px;
+  color: var(--arka-brown-mid);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.statusSuccessText strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--arka-brown-dark);
+  margin-bottom: 4px;
+}
+
+.statusSuccessText span {
+  font-size: 14px;
+  color: var(--arka-text-soft);
+  line-height: 1.5;
+}
+
+.statusError {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  background: rgba(185, 74, 58, 0.06);
+  border: 1.5px solid rgba(185, 74, 58, 0.25);
+  border-radius: 10px;
+  font-size: 14px;
+  color: #b94a3a;
+  text-align: left;
+}
+
+.statusError svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* ─── BLOQUE 3: REDES ────────────────────────────────────── */
+
+.social {
+  background: var(--arka-white);
+  padding: 60px var(--edge-space);
+}
+
+.socialTitle {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--arka-brown-mid);
+  margin-bottom: 28px;
+}
+
+.socialLinks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.socialLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  background: var(--arka-white);
+  border: 1.5px solid rgba(167, 126, 77, 0.28);
+  border-radius: 14px;
+  color: var(--arka-brown-mid);
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease,
+    border-color 200ms ease;
+}
+
+.socialLink:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(167, 126, 77, 0.22);
+  border-color: var(--arka-brown-mid);
+}
+
+.socialLink svg {
+  width: 24px;
+  height: 24px;
+  stroke-width: 1.7;
+}
+
+/* ─── RESPONSIVE ─────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  .block {
+    padding: 60px var(--edge-space);
+  }
+
+  .social {
+    padding: 48px var(--edge-space);
+  }
+
+  .postulaBtn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Reducción de movimiento */
+@media (prefers-reduced-motion: reduce) {
+  .postulaBtn,
+  .submitBtn,
+  .socialLink {
+    transition: none;
+  }
+}

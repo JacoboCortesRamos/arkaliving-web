@@ -1,0 +1,134 @@
+/* ============================================================
+   OwnerLoginModal.module.css — ARKA Living
+   Modal temporal "Muy pronto"
+   ============================================================ */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10004;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px var(--edge-space);
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(74, 52, 36, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.panel {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 440px;
+
+  background: var(--arka-white);
+  border-radius: 16px;
+  padding: 48px 40px 44px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── Botón cerrar ───────────────────────────────────────── */
+
+.close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+
+  color: var(--arka-brown-mid);
+  opacity: 0.7;
+  transition:
+    opacity 160ms ease,
+    background 160ms ease;
+}
+
+.close:hover {
+  opacity: 1;
+  background: rgba(167, 126, 77, 0.1);
+}
+
+.closeIcon {
+  width: 18px;
+  height: 18px;
+  stroke-width: 1.8;
+}
+
+/* ─── Contenido ──────────────────────────────────────────── */
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--arka-brown-mid);
+}
+
+.title {
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--arka-brown-dark);
+  margin: 0;
+}
+
+.body {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--arka-text-soft);
+  margin: 0;
+}
+
+/* ─── Badge "Muy pronto" ─────────────────────────────────── */
+
+.badge {
+  display: inline-flex;
+  align-self: flex-start;
+  margin-top: 8px;
+
+  padding: 6px 16px;
+  background: rgba(167, 126, 77, 0.1);
+  border: 1px solid rgba(167, 126, 77, 0.3);
+  border-radius: 100px;
+
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--arka-brown-mid);
+}
+
+/* ─── Mobile ─────────────────────────────────────────────── */
+
+@media (max-width: 480px) {
+  .panel {
+    padding: 40px 28px 36px;
+  }
+}

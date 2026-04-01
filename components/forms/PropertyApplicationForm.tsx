@@ -121,6 +121,7 @@ export function PropertyApplicationForm() {
   // page 1
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
 
   // phone with country code
   const [countryCode, setCountryCode] = useState<string>("+57");
@@ -298,6 +299,10 @@ export function PropertyApplicationForm() {
       return alert("El número parece demasiado corto.");
 
     const phoneE164 = `${cc}${phoneDigits}`;
+
+    if (!privacyAccepted) {
+      return alert("Debes aceptar la Política de Privacidad para continuar.");
+    }
 
     const res = await fetch("/api/postula/start", {
       method: "POST",
@@ -499,6 +504,55 @@ export function PropertyApplicationForm() {
                   />
                 </>
               )}
+
+              {/* Checkbox política de privacidad */}
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: 10,
+                  margin: "18px 0 4px",
+                }}
+              >
+                <input
+                  type="checkbox"
+                  id="privacy-accept"
+                  checked={privacyAccepted}
+                  onChange={(e) => setPrivacyAccepted(e.target.checked)}
+                  style={{
+                    marginTop: 3,
+                    accentColor: "var(--arka-brown-mid)",
+                    flexShrink: 0,
+                    width: 16,
+                    height: 16,
+                  }}
+                />
+                <label
+                  htmlFor="privacy-accept"
+                  style={{
+                    fontWeight: 400,
+                    fontSize: 14,
+                    lineHeight: 1.5,
+                    color: "var(--arka-text-soft)",
+                    margin: 0,
+                    cursor: "pointer",
+                  }}
+                >
+                  Acepto la{" "}
+                  <a
+                    href="/politica-de-privacidad"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      color: "var(--arka-brown-mid)",
+                      textDecoration: "underline",
+                    }}
+                  >
+                    Política de Privacidad
+                  </a>{" "}
+                  y el tratamiento de mis datos personales.
+                </label>
+              </div>
 
               <button onClick={startEmailVerification}>Continuar</button>
             </div>
