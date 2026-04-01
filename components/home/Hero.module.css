@@ -298,3 +298,42 @@ html[data-hero-stage="7"] .scrollCircle {
     animation: none !important;
   }
 }
+
+/* ============================= */
+/* Video loader bar              */
+/* ============================= */
+
+.videoLoader {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 20;
+  background: #9e8672;
+  pointer-events: none;
+}
+
+.videoLoaderBar {
+  height: 100%;
+  width: 100%;
+  background: #fdfcf9;
+  transform-origin: left center;
+  transform: scaleX(0);
+  animation: loaderSweep 4.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes loaderSweep {
+  0% {
+    transform: scaleX(0);
+  }
+  40% {
+    transform: scaleX(0.6);
+  }
+  80% {
+    transform: scaleX(0.88);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}

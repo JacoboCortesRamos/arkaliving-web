@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./Hero.module.css";
 import { Gem, Handshake, HousePlus } from "lucide-react";
 
@@ -17,34 +17,48 @@ function easeOutCubic(t: number) {
   return 1 - Math.pow(1 - t, 3);
 }
 
-// Mapea un valor dentro de un rango [start, end] → [0, 1], clampeado
 function rangeFraction(t: number, start: number, end: number) {
   return clamp((t - start) / (end - start), 0, 1);
 }
-
-/**
- * STAGES (0..7) — 8 stages totales
- *
- * 0 → Video full-screen. Sin brand.
- * 1 → Aparece logo + slogan.
- * 2 → Aparece H1.
- * 3 → Transición encadenada:
- *       0.00–0.30 → H1 hace fade-out hacia arriba
- *       0.30–0.60 → logo + slogan hacen fade-out
- *       0.60–1.00 → H3 entra desde abajo
- * 4 → Aparece Paso 1.
- * 5 → Aparece Paso 2.
- * 6 → Aparece Paso 3.
- * 7 → Footer takeover. Burger blanco.
- */
 
 const STAGES = 8;
 
 export function Hero() {
   const heroRef = useRef<HTMLElement | null>(null);
   const rafRef = useRef<number | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const [progress, setProgress] = useState(0);
   const navStageRef = useRef(0);
+
+  // ── Video loader bar ─────────────────────────────────────────
+  const [barVisible, setBarVisible] = useState(true);
+  const barStartRef = useRef<number>(Date.now());
+  const barTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const hideBar = useCallback(() => {
+    setBarVisible(false);
+    if (barTimerRef.current) clearTimeout(barTimerRef.current);
+    videoRef.current?.play().catch(() => {});
+  }, []);
+
+  const onVideoReady = useCallback(() => {
+    const elapsed = Date.now() - barStartRef.current;
+    const remaining = Math.max(0, 2000 - elapsed);
+    setTimeout(hideBar, remaining);
+  }, [hideBar]);
+
+  const onVideoError = useCallback(() => {
+    // Video no encontrado o roto: ocultar barra, el poster queda visible
+    setBarVisible(false);
+    if (barTimerRef.current) clearTimeout(barTimerRef.current);
+  }, []);
+
+  useEffect(() => {
+    barTimerRef.current = setTimeout(hideBar, 5000);
+    return () => {
+      if (barTimerRef.current) clearTimeout(barTimerRef.current);
+    };
+  }, [hideBar]);
 
   // ── Leer scroll ──────────────────────────────────────────────
   useEffect(() => {
@@ -77,7 +91,7 @@ export function Hero() {
   // ── Calcular stage ───────────────────────────────────────────
   const raw = progress * STAGES;
   const stage = clamp(Math.floor(raw), 0, STAGES - 1);
-  const sp = clamp(raw - stage, 0, 1); // stageProgress dentro del stage actual
+  const sp = clamp(raw - stage, 0, 1);
 
   useEffect(() => {
     document.documentElement.dataset.heroStage = String(stage);
@@ -92,18 +106,10 @@ export function Hero() {
   const overlayOpacity = 0.62 * easeOutCubic(overlayT);
 
   // ── BRAND (logo + slogan) ────────────────────────────────────
-  // Stage 0: invisible
-  // Stage 1: fade-in (0.28 → 1, respetando la opacidad tenue inicial del CSS)
-  // Stage 2: opacidad plena
-  // Stage 3 (0.40–0.65): fade-out más lento
-  // Stage 4+: invisible
   let brandOpacity: number;
   if (stage === 0) {
-    // En stage 0 empieza invisible; la opacidad tenue del CSS (0.28)
-    // la manejamos aquí: al arrancar queremos 0, no 0.28
     brandOpacity = 0;
   } else if (stage === 1) {
-    // Fade-in de 0 a 1 (el CSS .brandInner ya no tiene opacity base)
     brandOpacity = easeOutCubic(sp);
   } else if (stage === 2) {
     brandOpacity = 1;
@@ -114,17 +120,12 @@ export function Hero() {
     brandOpacity = 0;
   }
 
-  // brandCompact: logo se achica desde stage 1 en adelante
   const brandCompact = stage >= 1;
 
   // ── H1 ───────────────────────────────────────────────────────
-  // Visible en stage 2 (entra) y stage 3 (sale 0.00–0.30 más lento → 0.00–0.50)
   const showH1 = stage === 2 || stage === 3;
-
   const H1_IN_END = 0.25;
   const h1EnterT = easeOutCubic(rangeFraction(sp, 0, H1_IN_END));
-
-  // Stage 3: sale durante 0.00–0.50 (más lento)
   const h1ExitT = easeOutCubic(rangeFraction(sp, 0, 0.5));
 
   let h1Opacity: number;
@@ -132,7 +133,6 @@ export function Hero() {
 
   if (stage === 2) {
     h1Opacity = h1EnterT;
-    // ✅ Hold position más arriba en desktop: -60px en lugar de -20px
     h1Y = lerp(160, -60, h1EnterT);
   } else if (stage === 3) {
     h1Opacity = 1 - h1ExitT;
@@ -143,7 +143,6 @@ export function Hero() {
   }
 
   // ── H3 + pasos ───────────────────────────────────────────────
-  // H3: entra durante stage 3 (sp 0.75–1.00 — espera a que logo termine)
   const showH3 = stage >= 3;
   const stepCount = stage >= 6 ? 3 : stage >= 5 ? 2 : stage >= 4 ? 1 : 0;
 
@@ -159,7 +158,6 @@ export function Hero() {
     transform: `translateY(${lerp(80, -20, h3T)}px)`,
   } as const;
 
-  // Pasos: misma lógica de enterStyle pero referenciando nuevo stage
   const enterStyle = (itemStage: number) => {
     if (stage < itemStage) return { opacity: 0, transform: "translateY(80px)" };
     const t =
@@ -172,8 +170,8 @@ export function Hero() {
 
   // ── scrollToStage ────────────────────────────────────────────
   const stageInner = (targetStage: number) => {
-    if (targetStage === 2) return 0.5; // mitad del H1 para verlo bien
-    if (targetStage === 3) return 0.85; // casi al final: H3 ya visible
+    if (targetStage === 2) return 0.5;
+    if (targetStage === 3) return 0.85;
     if (targetStage >= 4 && targetStage <= 6) return 0.9;
     return 0.55;
   };
@@ -207,7 +205,6 @@ export function Hero() {
     });
   };
 
-  // Listener: Header/Logo → volver a stage 0
   useEffect(() => {
     const onGoStage0 = () => scrollToStage(0);
     window.addEventListener("arka:hero:stage0", onGoStage0);
@@ -215,7 +212,6 @@ export function Hero() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Scroll por wheel + touch
   useEffect(() => {
     let isScrolling = false;
     let touchStartY = 0;
@@ -229,15 +225,13 @@ export function Hero() {
     const goToStage = (direction: number) => {
       if (isScrolling) return;
       isScrolling = true;
-      // ✅ Calcular next DESDE el stage actual leído del DOM, no del ref stale
       const currentStage = parseInt(
         document.documentElement.dataset.heroStage ?? "0",
         10,
       );
       const next = clamp(currentStage + direction, 0, 7);
-      navStageRef.current = next; // actualizar inmediatamente
+      navStageRef.current = next;
       scrollToStage(next);
-      // Liberar después del smooth scroll (~600ms es suficiente)
       setTimeout(() => {
         isScrolling = false;
       }, 700);
@@ -288,10 +282,29 @@ export function Hero() {
   // ── JSX ──────────────────────────────────────────────────────
   return (
     <section ref={heroRef} className={styles.hero} aria-label="ARKA Landing">
+      {/* Video loader bar */}
+      {barVisible && (
+        <div className={styles.videoLoader} aria-hidden="true">
+          <div className={styles.videoLoaderBar} />
+        </div>
+      )}
+
       {/* Video */}
       <div className={styles.media} aria-hidden="true">
-        <video autoPlay muted loop playsInline className={styles.mediaVideo}>
-          <source src="/hero-video.mp4" type="video/mp4" />
+        <video
+          ref={videoRef}
+          muted
+          loop
+          playsInline
+          className={styles.mediaVideo}
+          onCanPlayThrough={onVideoReady}
+          poster="/hero-poster.webp"
+        >
+          <source
+            src="/hero-video.mp4"
+            type="video/mp4"
+            onError={onVideoError}
+          />
         </video>
       </div>
 
