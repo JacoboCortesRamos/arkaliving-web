@@ -89,17 +89,9 @@ export function MenuOverlay({
             HOME
           </button>
 
-          <Link className={styles.link} href="/nosotros" onClick={onClose}>
-            NOSOTROS
-          </Link>
-
           <Link className={styles.link} href="/propiedades" onClick={onClose}>
             PROPIEDADES ARKA
           </Link>
-
-          <button className={styles.linkBtn} onClick={onOwnerClick}>
-            SOY PROPIETARIO
-          </button>
 
           <Link
             className={styles.link}
@@ -108,6 +100,14 @@ export function MenuOverlay({
           >
             POSTULA TU PROPIEDAD
           </Link>
+
+          <Link className={styles.link} href="/nosotros" onClick={onClose}>
+            NOSOTROS
+          </Link>
+
+          <button className={styles.linkBtn} onClick={onOwnerClick}>
+            SOY PROPIETARIO
+          </button>
 
           <Link className={styles.link} href="/contacto" onClick={onClose}>
             CONTACTO

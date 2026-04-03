@@ -106,7 +106,8 @@ export function NosotrosPage() {
           mínimo. Coordinando proyectos arquitectónicos de gran escala que
           exigen precisión milimétrica y toma de decisiones bajo presión.
           Cuidando pacientes en unidades críticas donde la serenidad no es
-          opcional y el detalle puede cambiar de manera crítica un resultado.
+          opcional y cualquier detalle puede cambiar de manera drásticamente el
+          resultado.
         </p>
 
         <blockquote
@@ -215,9 +216,9 @@ export function NosotrosPage() {
           data-reveal="stay"
         >
           <p className={styles.visionText}>
-            Hoy empezamos con una estructura pensada para escalar. Nuestra visión es
-            clara: construir un sistema capaz de operar cientos de propiedades
-            con el mismo rigor con el que empezamos la primera.
+            Hoy empezamos con una estructura pensada para escalar. Nuestra
+            visión es clara: construir un sistema capaz de operar cientos de
+            propiedades con el mismo rigor con el que empezamos la primera.
           </p>
           <p className={styles.visionClosure}>
             Si vamos a hacerlo, lo haremos bien.
@@ -322,12 +323,12 @@ export function NosotrosPage() {
               </p>
               <p className={styles.founderBio}>
                 Enfermera con maestría en Cuidados Paliativos de la Pontificia
-                Universidad Javeriana y experiencia internacional en el Hospital
-                St. George de Leipzig, Alemania. Ha trabajado en entornos de
-                alta exigencia donde el cuidado y el criterio no son
-                negociables. Orgullosamente samaria, con su vocación de cuidado
-                y conexión con la ciudad, lidera en ARKA la experiencia del
-                huésped y los estándares de servicio.
+                Universidad Javeriana y experiencia internacional en hospitales
+                de primer nivel y unidades de atención geriátrica de Alemania.
+                Ha trabajado en entornos de alta exigencia donde el cuidado y el
+                criterio no son negociables. Orgullosamente samaria, con su
+                vocación de cuidado y conexión con la ciudad, lidera en ARKA la
+                experiencia del huésped y los estándares de servicio.
               </p>
             </div>
           </article>
