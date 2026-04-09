@@ -30,6 +30,17 @@ export function Hero() {
   const [progress, setProgress] = useState(0);
   const navStageRef = useRef(0);
 
+  // ── Mobile detection ─────────────────────────────────────────
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 768px)");
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
   // ── Video loader bar ─────────────────────────────────────────
   const [barVisible, setBarVisible] = useState(true);
   const barStartRef = useRef<number>(Date.now());
@@ -42,15 +53,32 @@ export function Hero() {
   }, []);
 
   const onVideoReady = useCallback(() => {
+    if (videoRef.current && isMobile) {
+      videoRef.current.playbackRate = 0.9;
+    }
     const elapsed = Date.now() - barStartRef.current;
     const remaining = Math.max(0, 2000 - elapsed);
     setTimeout(hideBar, remaining);
-  }, [hideBar]);
+  }, [hideBar, isMobile]);
 
   const onVideoError = useCallback(() => {
-    // Video no encontrado o roto: ocultar barra, el poster queda visible
     setBarVisible(false);
     if (barTimerRef.current) clearTimeout(barTimerRef.current);
+  }, []);
+
+  const onTimeUpdate = useCallback(() => {
+    if (!videoRef.current) return;
+    const video = videoRef.current;
+    const endAt = video.duration - 1;
+    if (video.currentTime >= endAt) {
+      video.pause();
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.currentTime = 1;
+          videoRef.current.play().catch(() => {});
+        }
+      }, 300);
+    }
   }, []);
 
   useEffect(() => {
@@ -292,18 +320,19 @@ export function Hero() {
       {/* Video */}
       <div className={styles.media} aria-hidden="true">
         <video
+          key={isMobile ? "mobile" : "desktop"}
           ref={videoRef}
           muted
-          loop
           playsInline
           className={styles.mediaVideo}
           onCanPlayThrough={onVideoReady}
+          onError={onVideoError}
+          onTimeUpdate={onTimeUpdate}
           poster="/hero-poster.webp"
         >
           <source
-            src="/hero-video.mp4"
+            src={isMobile ? "/hero-video-mobile.mp4" : "/hero-video.mp4"}
             type="video/mp4"
-            onError={onVideoError}
           />
         </video>
       </div>
