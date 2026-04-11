@@ -46,8 +46,9 @@
   margin-bottom: 20px;
 }
 
+/* Título → Inter */
 .postulaTitle {
-  font-family: var(--font-display, Georgia, serif);
+  font-family: var(--font-body, system-ui, sans-serif);
   font-size: clamp(28px, 4.5vw, 46px);
   font-weight: 700;
   line-height: 1.1;
@@ -119,8 +120,9 @@
   margin-bottom: 20px;
 }
 
+/* Título → Inter */
 .contactTitle {
-  font-family: var(--font-display, Georgia, serif);
+  font-family: var(--font-body, system-ui, sans-serif);
   font-size: clamp(26px, 4vw, 40px);
   font-weight: 700;
   line-height: 1.12;
@@ -369,7 +371,6 @@
   }
 }
 
-/* Reducción de movimiento */
 @media (prefers-reduced-motion: reduce) {
   .postulaBtn,
   .submitBtn,

@@ -1,0 +1,306 @@
+/* ============================================================
+   SectionCasoExito — Bloque 4
+   Fondo: arka-white | Tipografía: arka-brown-mid / arka-brown-dark
+   ============================================================ */
+
+.section {
+  background: var(--arka-white);
+  padding: clamp(64px, 10vw, 120px) 0 clamp(120px, 20vw, 220px);
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding-bottom: 180px;
+  }
+}
+
+.inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 6vw, 80px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(32px, 5vw, 56px);
+}
+
+/* Título de sección → Inter */
+.tituloSeccion {
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: clamp(22px, 3.5vw, 44px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--arka-brown-mid);
+  margin: 0;
+  text-transform: uppercase;
+}
+
+/* ─── Carrusel ─────────────────────────────────────────────── */
+
+.carrusel {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--arka-brown-light);
+}
+
+.carruselTrack {
+  position: absolute;
+  inset: 0;
+}
+
+.carruselImg {
+  object-fit: cover;
+  object-position: center;
+  transition: opacity 280ms ease;
+}
+
+/* Botones de navegación */
+.navBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(253, 252, 249, 0.82);
+  backdrop-filter: blur(4px);
+  color: var(--arka-brown-dark);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition:
+    background 160ms ease,
+    transform 160ms ease;
+}
+
+.navBtn:hover {
+  background: var(--arka-white);
+  transform: translateY(-50%) scale(1.07);
+}
+
+.navPrev {
+  left: 14px;
+}
+
+.navNext {
+  right: 14px;
+}
+
+/* Dots */
+.dots {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 2;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(253, 252, 249, 0.45);
+  cursor: pointer;
+  padding: 0;
+  transition:
+    background 180ms ease,
+    transform 180ms ease;
+}
+
+.dotActive {
+  background: var(--arka-white);
+  transform: scale(1.25);
+}
+
+/* ─── Info del caso ─────────────────────────────────────────── */
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.infoHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Nombre de propiedad → Inter */
+.propNombre {
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: clamp(18px, 2.2vw, 26px);
+  font-weight: 600;
+  color: var(--arka-brown-dark);
+  margin: 0;
+}
+
+.propDesc {
+  font-size: clamp(14px, 1.3vw, 16px);
+  line-height: 1.65;
+  color: var(--arka-text-soft);
+  margin: 0;
+  max-width: 520px;
+}
+
+/* Stats */
+.stats {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Valor numérico → Inter (dato funcional) */
+.statValor {
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: clamp(22px, 3vw, 36px);
+  font-weight: 700;
+  color: var(--arka-brown-dark);
+  line-height: 1;
+}
+
+.statLabel {
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--arka-text-soft);
+}
+
+.statDivider {
+  width: 1px;
+  height: 40px;
+  background: var(--arka-brown-light);
+  flex-shrink: 0;
+}
+
+/* Plataformas */
+.plataformasLabel {
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--arka-text-soft);
+  margin: 0;
+}
+
+.plataformas {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.plataformaBadge {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1.5px solid var(--badge-color, var(--arka-brown-mid));
+  color: var(--badge-color, var(--arka-brown-mid));
+  background: transparent;
+  letter-spacing: 0.02em;
+}
+
+/* ─── Divisor ───────────────────────────────────────────────── */
+
+.divisor {
+  width: 100%;
+  height: 3px;
+  background: var(--arka-brown-dark);
+  border-radius: 2px;
+}
+
+/* ─── CTA final ─────────────────────────────────────────────── */
+
+.ctaWrap {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(20px, 3vw, 32px);
+  align-items: center;
+  text-align: center;
+}
+
+/* Título CTA → Inter */
+.ctaTitulo {
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: clamp(22px, 3.5vw, 44px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--arka-brown-mid);
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.ctaCard {
+  background: var(--arka-brown-mid);
+  border-radius: 16px;
+  padding: clamp(28px, 5vw, 52px) clamp(24px, 6vw, 72px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  width: 100%;
+  max-width: 620px;
+}
+
+/* Texto de la card → Inter */
+.ctaTexto {
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: clamp(15px, 1.6vw, 19px);
+  line-height: 1.6;
+  color: var(--arka-white);
+  margin: 0;
+  text-align: center;
+}
+
+.ctaTexto strong {
+  font-weight: 700;
+}
+
+.ctaBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 24px;
+  border-radius: 999px;
+  background: var(--arka-white);
+  color: var(--arka-brown-dark);
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition:
+    background 180ms ease,
+    color 180ms ease,
+    transform 180ms ease,
+    box-shadow 180ms ease;
+  white-space: nowrap;
+}
+
+.ctaBtn:hover {
+  background: var(--arka-brown-dark);
+  color: var(--arka-white);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(74, 52, 36, 0.3);
+}
+
+@media (max-width: 600px) {
+  .ctaBtn {
+    width: 100%;
+    text-align: center;
+  }
+}

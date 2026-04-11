@@ -1,6 +1,5 @@
 /* ============================================================
    PropertyCard.module.css
-   Sistema de diseño coherente con Nosotros.module.css
    ============================================================ */
 
 .card {
@@ -39,12 +38,10 @@
   transform: scale(1.04);
 }
 
-/* Imagen clickable para abrir lightbox */
 .imageWrapClickable {
   cursor: zoom-in;
 }
 
-/* Badge con contador de fotos */
 .galleryBadge {
   position: absolute;
   bottom: 14px;
@@ -63,7 +60,6 @@
   pointer-events: none;
 }
 
-/* Placeholder cuando no hay imagen */
 .imagePlaceholder {
   position: absolute;
   inset: 0;
@@ -84,7 +80,6 @@
   opacity: 0.6;
 }
 
-/* Badge ciudad */
 .badge {
   position: absolute;
   top: 14px;
@@ -110,7 +105,6 @@
   gap: 16px;
 }
 
-/* Sector */
 .sector {
   font-size: 12px;
   font-weight: 600;
@@ -119,9 +113,9 @@
   color: var(--arka-brown-mid);
 }
 
-/* Nombre */
+/* Nombre de propiedad → Inter (dato funcional) */
 .name {
-  font-family: var(--font-display, Georgia, serif);
+  font-family: var(--font-body, system-ui, sans-serif);
   font-size: clamp(20px, 2.4vw, 26px);
   font-weight: 700;
   line-height: 1.15;
@@ -129,7 +123,6 @@
   margin: 0;
 }
 
-/* Descripción */
 .description {
   font-size: 15px;
   line-height: 1.65;
@@ -137,7 +130,6 @@
   margin: 0;
 }
 
-/* Meta (habitaciones, baños) */
 .meta {
   display: flex;
   flex-direction: column;
@@ -165,7 +157,6 @@
   flex-shrink: 0;
 }
 
-/* Features */
 .features {
   display: flex;
   flex-wrap: wrap;
@@ -185,14 +176,12 @@
   color: var(--arka-brown-dark);
 }
 
-/* Divisor */
 .divider {
   height: 1px;
   background: rgba(167, 126, 77, 0.15);
   margin: 0;
 }
 
-/* CTA */
 .cta {
   display: inline-flex;
   align-items: center;

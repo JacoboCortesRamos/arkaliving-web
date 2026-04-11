@@ -1,0 +1,109 @@
+/* ============================================================
+   SectionPasos — Bloque 3
+   Fondo: arka-brown-mid | Tipografía: arka-white
+   ============================================================ */
+
+.section {
+  background: var(--arka-brown-mid);
+  padding: clamp(64px, 10vw, 120px) 0;
+}
+
+.inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 6vw, 80px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(48px, 7vw, 80px);
+}
+
+/* Título → Inter */
+.titulo {
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: clamp(22px, 3.5vw, 44px);
+  font-weight: 600;
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  color: var(--arka-white);
+  margin: 0;
+  max-width: 680px;
+  text-transform: uppercase;
+}
+
+/* "fácil" en Playfair — mismo tamaño que en SectionFrase */
+.tituloFacil {
+  font-family: var(--font-display, Georgia, serif);
+  font-style: normal;
+  font-weight: 600;
+  font-size: clamp(40px, 8vw, 108px);
+  text-transform: none;
+  letter-spacing: 0;
+  line-height: 1;
+  display: inline-block;
+  vertical-align: bottom;
+}
+
+/* Lista de pasos */
+.pasos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(28px, 4vw, 44px);
+}
+
+.paso {
+  display: grid;
+  grid-template-columns: 56px 40px 1fr;
+  align-items: center;
+  gap: clamp(12px, 2vw, 24px);
+}
+
+.pasoIconWrap {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(253, 252, 249, 0.35);
+  display: grid;
+  place-items: center;
+  color: var(--arka-white);
+  flex-shrink: 0;
+}
+
+/* Número del paso → Inter */
+.pasoNum {
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: clamp(32px, 4vw, 56px);
+  font-weight: 300;
+  color: rgba(253, 252, 249, 0.3);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Texto del paso → Inter */
+.pasoTexto {
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: clamp(18px, 2.2vw, 28px);
+  font-weight: 400;
+  color: var(--arka-white);
+  line-height: 1.3;
+}
+
+/* Divisor entre pasos */
+.paso + .paso {
+  padding-top: clamp(28px, 4vw, 44px);
+  border-top: 1px solid rgba(253, 252, 249, 0.15);
+}
+
+@media (max-width: 600px) {
+  .paso {
+    grid-template-columns: 44px 32px 1fr;
+    gap: 10px;
+  }
+
+  .pasoIconWrap {
+    width: 44px;
+    height: 44px;
+  }
+}

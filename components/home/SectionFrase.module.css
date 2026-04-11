@@ -1,0 +1,62 @@
+/* ============================================================
+   SectionFrase — Bloque 2
+   Fondo: arka-white | Tipografía: arka-brown-mid
+   ============================================================ */
+
+.section {
+  background: var(--arka-white);
+  padding: clamp(80px, 12vw, 160px) 0;
+}
+
+.inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 6vw, 80px);
+}
+
+.frase {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+}
+
+/* Las tres líneas quedan en Playfair — momento de marca */
+.linea1,
+.linea2,
+.linea3 {
+  font-family: var(--font-display, Georgia, serif);
+  font-weight: 400;
+  color: var(--arka-brown-mid);
+  line-height: 1.1;
+  display: block;
+}
+
+.linea1 {
+  font-size: clamp(28px, 5.5vw, 72px);
+}
+
+.linea2 {
+  font-size: clamp(28px, 5.5vw, 72px);
+  padding-left: clamp(16px, 4vw, 80px);
+}
+
+.linea3 {
+  font-size: clamp(40px, 8vw, 108px);
+  font-weight: 600;
+  color: var(--arka-brown-dark);
+  padding-left: clamp(32px, 8vw, 160px);
+}
+
+.coma {
+  color: var(--arka-brown-mid);
+}
+
+@media (max-width: 600px) {
+  .linea2 {
+    padding-left: 12px;
+  }
+  .linea3 {
+    padding-left: 24px;
+  }
+}

@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./Hero.module.css";
-import { Gem, Handshake, HousePlus } from "lucide-react";
 
 function clamp(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, n));
@@ -21,12 +20,14 @@ function rangeFraction(t: number, start: number, end: number) {
   return clamp((t - start) / (end - start), 0, 1);
 }
 
-const STAGES = 8;
+// Solo 4 stages activos: 0 (video puro), 1 (logo fade in), 2 (logo+H1), 3 (H1 fade out → libera scroll)
+const STAGES = 4;
 
 export function Hero() {
   const heroRef = useRef<HTMLElement | null>(null);
   const rafRef = useRef<number | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
+
   const [progress, setProgress] = useState(0);
   const navStageRef = useRef(0);
 
@@ -94,8 +95,9 @@ export function Hero() {
       if (!heroRef.current) return;
       const rect = heroRef.current.getBoundingClientRect();
       const height = heroRef.current.offsetHeight;
-      const scrolled = clamp(-rect.top, 0, height);
-      const p = height > 0 ? clamp(scrolled / height, 0, 1) : 0;
+      const scrollable = height - window.innerHeight;
+      const scrolled = clamp(-rect.top, 0, scrollable);
+      const p = scrollable > 0 ? clamp(scrolled / scrollable, 0, 1) : 0;
       setProgress(p);
     };
 
@@ -129,8 +131,52 @@ export function Hero() {
     };
   }, [stage]);
 
+  // ── Hero done — se activa cuando el usuario ya salió del hero ──
+  useEffect(() => {
+    const check = () => {
+      if (!heroRef.current) return;
+      const bottom = heroRef.current.getBoundingClientRect().bottom;
+      if (bottom <= 0) {
+        document.documentElement.dataset.heroDone = "true";
+        delete document.documentElement.dataset.heroExiting;
+      } else {
+        delete document.documentElement.dataset.heroDone;
+      }
+    };
+    window.addEventListener("scroll", check, { passive: true });
+    check();
+    return () => {
+      window.removeEventListener("scroll", check);
+      delete document.documentElement.dataset.heroDone;
+      delete document.documentElement.dataset.heroExiting;
+    };
+  }, []);
+
+  // ── exitHero ─────────────────────────────────────────────────
+  // Escribe data-hero-exiting ANTES de hacer scroll para que el
+  // CSS inicie el fade-out mientras el scroll está en curso.
+  // No espera: el fade visual y el movimiento de scroll arrancan juntos.
+  const exitHero = useCallback(() => {
+    if (!heroRef.current) return;
+    const rect = heroRef.current.getBoundingClientRect();
+    const heroTop = window.scrollY + rect.top;
+    const heroHeight = heroRef.current.offsetHeight;
+
+    // Fade-out visual inmediato (CSS transition vía data attribute)
+    document.documentElement.dataset.heroExiting = "true";
+
+    // En el siguiente frame empezar el scroll suave para que el
+    // navegador ya haya pintado el estado fade-out antes de mover
+    requestAnimationFrame(() => {
+      window.scrollTo({
+        top: heroTop + heroHeight + 8,
+        behavior: "smooth",
+      });
+    });
+  }, []);
+
   // ── Overlay ──────────────────────────────────────────────────
-  const overlayT = clamp(progress * 1.9, 0, 1);
+  const overlayT = clamp(progress * 2.5, 0, 1);
   const overlayOpacity = 0.62 * easeOutCubic(overlayT);
 
   // ── BRAND (logo + slogan) ────────────────────────────────────
@@ -142,7 +188,7 @@ export function Hero() {
   } else if (stage === 2) {
     brandOpacity = 1;
   } else if (stage === 3) {
-    const fadeOut = easeOutCubic(rangeFraction(sp, 0.4, 0.65));
+    const fadeOut = easeOutCubic(rangeFraction(sp, 0.4, 0.7));
     brandOpacity = 1 - fadeOut;
   } else {
     brandOpacity = 0;
@@ -152,8 +198,8 @@ export function Hero() {
 
   // ── H1 ───────────────────────────────────────────────────────
   const showH1 = stage === 2 || stage === 3;
-  const H1_IN_END = 0.25;
-  const h1EnterT = easeOutCubic(rangeFraction(sp, 0, H1_IN_END));
+
+  const h1EnterT = easeOutCubic(rangeFraction(sp, 0, 0.25));
   const h1ExitT = easeOutCubic(rangeFraction(sp, 0, 0.5));
 
   let h1Opacity: number;
@@ -170,37 +216,10 @@ export function Hero() {
     h1Y = 0;
   }
 
-  // ── H3 + pasos ───────────────────────────────────────────────
-  const showH3 = stage >= 3;
-  const stepCount = stage >= 6 ? 3 : stage >= 5 ? 2 : stage >= 4 ? 1 : 0;
-
-  const h3T =
-    stage === 3
-      ? easeOutCubic(rangeFraction(sp, 0.75, 1.0))
-      : stage > 3
-        ? 1
-        : 0;
-
-  const h3Style = {
-    opacity: h3T,
-    transform: `translateY(${lerp(80, -20, h3T)}px)`,
-  } as const;
-
-  const enterStyle = (itemStage: number) => {
-    if (stage < itemStage) return { opacity: 0, transform: "translateY(80px)" };
-    const t =
-      stage === itemStage ? easeOutCubic(rangeFraction(sp, 0.2, 0.9)) : 1;
-    return {
-      opacity: t,
-      transform: `translateY(${lerp(80, -20, t)}px)`,
-    } as const;
-  };
-
   // ── scrollToStage ────────────────────────────────────────────
   const stageInner = (targetStage: number) => {
     if (targetStage === 2) return 0.5;
     if (targetStage === 3) return 0.85;
-    if (targetStage >= 4 && targetStage <= 6) return 0.9;
     return 0.55;
   };
 
@@ -209,9 +228,11 @@ export function Hero() {
     const rect = heroRef.current.getBoundingClientRect();
     const heroTop = window.scrollY + rect.top;
     const heroHeight = heroRef.current.offsetHeight;
-    const next = clamp(targetStage, 0, 7);
+    const scrollable = heroHeight - window.innerHeight;
+    const next = clamp(targetStage, 0, STAGES - 1);
 
-    if (next >= 7) {
+    // Stage 3 completo → salir del hero al primer bloque
+    if (next >= STAGES - 1 && sp > 0.6) {
       const padding = Math.max(24, window.innerHeight * 0.15);
       window.scrollTo({
         top: heroTop + heroHeight + padding,
@@ -228,7 +249,7 @@ export function Hero() {
     const inner = stageInner(next);
     const targetProgress = (next + inner) / STAGES;
     window.scrollTo({
-      top: heroTop + heroHeight * targetProgress,
+      top: heroTop + scrollable * targetProgress,
       behavior: "smooth",
     });
   };
@@ -240,6 +261,7 @@ export function Hero() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // ── Wheel / touch snap ───────────────────────────────────────
   useEffect(() => {
     let isScrolling = false;
     let touchStartY = 0;
@@ -252,12 +274,21 @@ export function Hero() {
 
     const goToStage = (direction: number) => {
       if (isScrolling) return;
-      isScrolling = true;
       const currentStage = parseInt(
         document.documentElement.dataset.heroStage ?? "0",
         10,
       );
-      const next = clamp(currentStage + direction, 0, 7);
+      // Si estamos en el último stage y scrolleamos hacia abajo → salir del hero
+      if (direction > 0 && currentStage >= STAGES - 1) {
+        isScrolling = true;
+        exitHero();
+        setTimeout(() => {
+          isScrolling = false;
+        }, 900);
+        return;
+      }
+      isScrolling = true;
+      const next = clamp(currentStage + direction, 0, STAGES - 1);
       navStageRef.current = next;
       scrollToStage(next);
       setTimeout(() => {
@@ -297,12 +328,20 @@ export function Hero() {
       window.removeEventListener("touchend", onTouchEnd);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [exitHero]);
 
-  const showScrollIndicator = stage < 7;
+  // ── Scroll indicator ─────────────────────────────────────────
+  // Visible en stages 0, 1 y 2. En el tercer click (current === 2) sale del hero.
+  const showScrollIndicator = stage < STAGES - 1;
 
   const onScrollIndicatorClick = () => {
-    const next = clamp(navStageRef.current + 1, 0, 7);
+    const current = navStageRef.current;
+    // Tercer click: current llega a 2 (STAGES - 2) → salir del hero directamente
+    if (current >= STAGES - 2) {
+      exitHero();
+      return;
+    }
+    const next = clamp(current + 1, 0, STAGES - 1);
     navStageRef.current = next;
     scrollToStage(next);
   };
@@ -375,58 +414,15 @@ export function Hero() {
         </div>
       )}
 
-      {/* H3 + pasos */}
-      {showH3 && (
-        <div className={styles.stepsWrap}>
-          <h3 className={styles.h3} style={h3Style}>
-            Rentabiliza tu propiedad en 3 simples pasos:
-          </h3>
-
-          <ol className={styles.steps}>
-            {stepCount >= 1 && (
-              <li className={styles.step} style={enterStyle(4)}>
-                <span className={styles.stepIconWrap} aria-hidden="true">
-                  <HousePlus className={styles.stepIcon} strokeWidth={1.6} />
-                </span>
-                <span className={styles.stepText}>
-                  1. Postula tu propiedad.
-                </span>
-              </li>
-            )}
-            {stepCount >= 2 && (
-              <li className={styles.step} style={enterStyle(5)}>
-                <span className={styles.stepIconWrap} aria-hidden="true">
-                  <Gem className={styles.stepIcon} strokeWidth={1.6} />
-                </span>
-                <span className={styles.stepText}>
-                  2. Te presentamos una oferta clara y transparente.
-                </span>
-              </li>
-            )}
-            {stepCount >= 3 && (
-              <li className={styles.step} style={enterStyle(6)}>
-                <span className={styles.stepIconWrap} aria-hidden="true">
-                  <Handshake className={styles.stepIcon} strokeWidth={1.6} />
-                </span>
-                <span className={styles.stepText}>
-                  3. Firmamos y nos encargamos de todo.
-                </span>
-              </li>
-            )}
-          </ol>
-        </div>
-      )}
-
       {/* Scroll indicator */}
       {showScrollIndicator && (
         <button
-          type="button"
           className={styles.scrollIndicator}
           onClick={onScrollIndicatorClick}
-          aria-label="Scroll to next stage"
+          aria-label="Continuar"
         >
-          <span className={styles.scrollCircle} aria-hidden="true">
-            <span className={styles.scrollArrow} aria-hidden="true" />
+          <span className={styles.scrollCircle}>
+            <span className={styles.scrollArrow} />
           </span>
         </button>
       )}

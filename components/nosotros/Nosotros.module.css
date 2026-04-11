@@ -14,12 +14,7 @@
   overflow-x: hidden;
 }
 
-/* ─── SISTEMA DE REVEAL (estados base: invisible) ────────── */
-/*
-  Cada elemento que debe animarse lleva una de estas clases
-  Y TAMBIÉN [data-reveal="stay"|"toggle"] en el HTML.
-  El JS añade .revealed cuando entra al viewport.
-*/
+/* ─── SISTEMA DE REVEAL ──────────────────────────────────── */
 
 .revealFade {
   opacity: 0;
@@ -32,7 +27,6 @@
   transition:
     opacity 700ms ease,
     transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
-  /* delay controlado por --delay CSS variable */
   transition-delay: var(--delay, 0ms);
 }
 
@@ -45,7 +39,6 @@
     transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Estado VISIBLE — añadido por el JS */
 .revealed {
   opacity: 1 !important;
   transform: none !important;
@@ -65,6 +58,7 @@
   gap: 4px;
 }
 
+/* Playfair — apertura editorial de la página */
 .heroTitleLine {
   display: block;
   font-family: var(--font-display, Georgia, serif);
@@ -100,6 +94,7 @@
   gap: 40px;
 }
 
+/* Cuerpo largo → Inter */
 .bodyLarge {
   font-size: clamp(20px, 2.4vw, 26px);
   line-height: 1.45;
@@ -113,12 +108,11 @@
   color: var(--arka-text-soft);
 }
 
-/* Pull quote grande */
+/* Playfair — cita editorial de peso */
 .pullQuote {
   margin: 0;
   padding: 28px 0 28px 28px;
   border-left: 3px solid var(--arka-brown-light);
-
   font-family: var(--font-display, Georgia, serif);
   font-size: clamp(26px, 3.4vw, 42px);
   font-weight: 700;
@@ -127,12 +121,11 @@
   font-style: normal;
 }
 
-/* Pull quote secundario */
+/* Pull quote secundario → Inter (cita de apoyo, no principal) */
 .pullQuoteSmall {
   margin: 0;
   padding: 20px 0 20px 24px;
   border-left: 2px solid var(--arka-brown-light);
-
   font-size: clamp(18px, 2vw, 24px);
   font-weight: 600;
   line-height: 1.3;
@@ -158,9 +151,10 @@
   margin-bottom: 10px;
 }
 
+/* insightText → Inter (texto largo de lectura) */
 .insightText {
   margin: 0;
-  font-family: var(--font-display, Georgia, serif);
+  font-family: var(--font-body, system-ui, sans-serif);
   font-size: clamp(22px, 2.8vw, 34px);
   font-weight: 700;
   line-height: 1.2;
@@ -175,15 +169,15 @@
   padding: 0 var(--edge-space) 100px;
 }
 
+/* beliefsTitle → Inter */
 .beliefsTitle {
-  font-family: var(--font-display, Georgia, serif);
+  font-family: var(--font-body, system-ui, sans-serif);
   font-size: clamp(24px, 3vw, 36px);
   font-weight: 700;
   color: var(--arka-brown-dark);
   margin: 0 0 28px;
 }
 
-/* Texto resaltado inline */
 .highlight {
   background: rgba(167, 126, 77, 0.13);
   border-bottom: 2px solid var(--arka-brown-light);
@@ -193,7 +187,7 @@
   color: var(--arka-brown-dark);
 }
 
-/* Recuadro "ARKA nace para resolver eso" — visual hermano del insight */
+/* Playfair — línea de identidad, una sola frase de marca */
 .arkaCallout {
   padding: 24px 32px;
   border: 2px solid var(--arka-brown-mid);
@@ -210,7 +204,6 @@
   line-height: 1.2;
 }
 
-/* Recuadro propietario — "stay", tono oscuro */
 .ownerCallout {
   margin-top: 40px;
   padding: 28px 32px;
@@ -231,7 +224,6 @@
   color: var(--arka-brown-mid);
 }
 
-/* Spacer físico entre "No creemos" y "Creemos" */
 .beliefsSpacer {
   height: 25vh;
 }
@@ -242,7 +234,7 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 28px; /* más separación entre items */
+  gap: 28px;
 }
 
 .beliefItem {
@@ -255,7 +247,6 @@
   transition-delay: var(--delay, 0ms) !important;
 }
 
-/* Versión lenta con más espacio vertical */
 .beliefItemSlow {
   display: flex;
   align-items: flex-start;
@@ -264,7 +255,6 @@
   line-height: 1.55;
   color: var(--arka-text-soft);
   transition-delay: var(--delay, 0ms) !important;
-  /* animación más lenta */
   transition-duration: 900ms !important;
 }
 
@@ -295,12 +285,13 @@
 .visionCard {
   padding: 40px 44px;
   background: var(--arka-brown-dark);
-  border-radius: 20px; /* bordes completos, separado de las cards */
+  border-radius: 20px;
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
+/* Cuerpo de visión → Inter */
 .visionText {
   margin: 0;
   font-size: clamp(17px, 1.9vw, 21px);
@@ -308,6 +299,7 @@
   color: rgba(253, 252, 249, 0.88);
 }
 
+/* Playfair — cierre poético, una línea, cursiva */
 .visionClosure {
   margin: 0;
   font-family: var(--font-display, Georgia, serif);
@@ -329,10 +321,9 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
-  padding-top: 52px; /* espacio para que el círculo sobresalga sin clippearse */
+  padding-top: 52px;
 }
 
-/* ── Card ── */
 .founderCard {
   position: relative;
   border: 1px solid rgba(167, 126, 77, 0.2);
@@ -340,7 +331,7 @@
   background: var(--arka-white);
   display: flex;
   flex-direction: column;
-  overflow: visible; /* permite que el círculo sobresalga */
+  overflow: visible;
   transition:
     box-shadow 260ms ease,
     transform 260ms ease;
@@ -351,18 +342,15 @@
   transform: translateY(-3px);
 }
 
-/* ── Cabecera: círculo + firma ── */
 .founderHeader {
   display: flex;
   align-items: center;
   gap: 20px;
   padding: 0 28px;
-  /* el círculo sobresale por arriba: margin-top negativo = radio del círculo */
-  margin-top: -44px; /* mitad del círculo de 88px */
+  margin-top: -44px;
   min-height: 88px;
 }
 
-/* Círculo de foto — sobresale del borde superior de la card */
 .founderCircle {
   position: relative;
   flex-shrink: 0;
@@ -374,18 +362,15 @@
   box-shadow: 0 4px 16px rgba(74, 52, 36, 0.12);
   display: grid;
   place-items: center;
-  overflow: hidden; /* contiene la foto cuando la agregues */
+  overflow: hidden;
 }
 
-/*
-  Cuando agregues la foto real, usa esta clase en el <Image>:
-  className={styles.founderCircleImg}
-*/
 .founderCircleImg {
   object-fit: cover;
   object-position: center top;
 }
 
+/* Playfair — detalle tipográfico decorativo en el círculo */
 .founderInitial {
   font-family: var(--font-display, Georgia, serif);
   font-size: 32px;
@@ -395,7 +380,6 @@
   user-select: none;
 }
 
-/* Área de firma — a la derecha del círculo */
 .founderSignaturePlaceholder {
   flex: 1;
   height: 40px;
@@ -403,10 +387,6 @@
   border-radius: 0;
 }
 
-/*
-  Cuando tengas el PNG/SVG de la firma, usa:
-  className={styles.founderSignature}
-*/
 .founderSignature {
   flex-shrink: 0;
   height: 44px;
@@ -416,7 +396,6 @@
   opacity: 0.72;
 }
 
-/* ── Cuerpo ── */
 .founderBody {
   padding: 16px 28px 28px;
   display: flex;
@@ -425,6 +404,7 @@
   flex: 1;
 }
 
+/* Nombre → Inter */
 .founderName {
   margin: 0;
   font-size: 17px;

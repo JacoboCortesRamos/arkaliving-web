@@ -31,12 +31,11 @@ export default function SiteLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es">
+    <html lang="es" className={`${playfair.variable} ${inter.variable}`}>
       <body>
         <div id="app-root">
           <Header />
           <main>{children}</main>
-
           <Footer />
         </div>
       </body>

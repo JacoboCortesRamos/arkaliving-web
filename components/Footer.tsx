@@ -11,31 +11,45 @@ export function Footer() {
   const pathname = usePathname();
   const isHome = pathname === "/";
 
-  const [heroStage, setHeroStage] = useState<string | null>(null);
+  const [takeoverSignal, setTakeoverSignal] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  // Estado visual congelado: no cambia mientras el menú está abierto
+  const [takeoverFrozen, setTakeoverFrozen] = useState(false);
 
   useEffect(() => {
     const el = document.documentElement;
 
-    const readStage = () => {
-      setHeroStage(el.dataset.heroStage ?? null);
+    const read = () => {
+      const isMenuOpen = el.dataset.menuOpen === "true";
+      const isTakeover = el.dataset.takeoverActive === "true";
+      setMenuOpen(isMenuOpen);
+      setTakeoverSignal(isTakeover);
+      // Solo actualizar el estado visual cuando el menú está cerrado
+      if (!isMenuOpen) {
+        setTakeoverFrozen(isTakeover);
+      }
     };
 
-    readStage();
+    read();
 
-    const obs = new MutationObserver(readStage);
-    obs.observe(el, { attributes: true, attributeFilter: ["data-hero-stage"] });
+    const obs = new MutationObserver(read);
+    obs.observe(el, {
+      attributes: true,
+      attributeFilter: ["data-takeover-active", "data-menu-open"],
+    });
 
-    window.addEventListener("arka:hero:stage0", readStage);
+    window.addEventListener("arka:hero:stage0", read);
 
     return () => {
       obs.disconnect();
-      window.removeEventListener("arka:hero:stage0", readStage);
+      window.removeEventListener("arka:hero:stage0", read);
     };
   }, []);
 
+  // El estado visual usa takeoverFrozen — congelado mientras el menú está abierto
   const takeoverActive = useMemo(() => {
-    return isHome && heroStage === "7";
-  }, [isHome, heroStage]);
+    return isHome && takeoverFrozen;
+  }, [isHome, takeoverFrozen]);
 
   return (
     <>
@@ -125,55 +139,53 @@ export function Footer() {
         </section>
       )}
 
-      {!isHome && (
-        <footer className={styles.footerSlim} aria-label="ARKA Footer">
-          <div className={styles.footerSlimInner}>
-            <div className={styles.footerSlimSocial}>
-              <a
-                href="https://instagram.com/arka_living.co"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-              >
-                <Instagram className={styles.footerSlimIcon} />
-              </a>
-              <a
-                href="https://wa.me/573158254384?text=Hola%20ARKA%2C%20quiero%20recibir%20informaci%C3%B3n."
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="WhatsApp"
-              >
-                <MessageCircleMore className={styles.footerSlimIcon} />
-              </a>
-              <a href="mailto:jacobocortes90@hotmail.com" aria-label="Email">
-                <Mail className={styles.footerSlimIcon} />
-              </a>
-            </div>
-
-            <div className={styles.footerSlimLegalLinks}>
-              <a
-                href="/terminos-y-condiciones"
-                className={styles.footerSlimTerms}
-              >
-                Términos y condiciones
-              </a>
-              <span className={styles.footerSlimLegalDot} aria-hidden="true">
-                ·
-              </span>
-              <a
-                href="/politica-de-privacidad"
-                className={styles.footerSlimTerms}
-              >
-                Política de Privacidad
-              </a>
-            </div>
-
-            <p className={styles.footerSlimCopy}>
-              © 2026 Sitio web creado por JCR-Code
-            </p>
+      <footer className={styles.footerSlim}>
+        <div className={styles.footerSlimInner}>
+          <div className={styles.footerSlimSocial}>
+            <a
+              href="https://instagram.com/arka_living.co"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+            >
+              <Instagram className={styles.footerSlimIcon} />
+            </a>
+            <a
+              href="https://wa.me/573158254384?text=Hola%20ARKA%2C%20quiero%20recibir%20informaci%C3%B3n."
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="WhatsApp"
+            >
+              <MessageCircleMore className={styles.footerSlimIcon} />
+            </a>
+            <a href="mailto:jacobocortes90@hotmail.com" aria-label="Email">
+              <Mail className={styles.footerSlimIcon} />
+            </a>
           </div>
-        </footer>
-      )}
+
+          <div className={styles.footerSlimLegalLinks}>
+            <a
+              href="/terminos-y-condiciones"
+              className={styles.footerSlimTerms}
+            >
+              Términos y condiciones
+            </a>
+            <span className={styles.footerSlimLegalDot} aria-hidden="true">
+              ·
+            </span>
+            <a
+              href="/politica-de-privacidad"
+              className={styles.footerSlimTerms}
+            >
+              Política de Privacidad
+            </a>
+          </div>
+
+          <p className={styles.footerSlimCopy}>
+            © 2026 Sitio web creado por JCR-Code
+          </p>
+        </div>
+      </footer>
     </>
   );
 }
