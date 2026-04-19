@@ -1,5 +1,6 @@
 import "../globals.css";
 import type { Metadata } from "next";
+import { OrientationLock } from "@/components/OrientationLock";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Playfair_Display, Inter } from "next/font/google";
@@ -16,7 +17,7 @@ const inter = Inter({
   variable: "--font-body",
 });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "ARKA Living",
   description: "Gestión inteligente de rentas cortas",
   robots: {
@@ -34,6 +35,7 @@ export default function SiteLayout({
     <html lang="es" className={`${playfair.variable} ${inter.variable}`}>
       <body>
         <div id="app-root">
+          <OrientationLock />
           <Header />
           <main>{children}</main>
           <Footer />
