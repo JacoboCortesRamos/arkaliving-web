@@ -59,6 +59,7 @@ components/contacto/Contacto.module.css
 components/contacto/ContactoPage.tsx
 components/Footer.module.css
 components/Footer.tsx
+components/forms/custom.d.ts
 components/forms/PropertyApplicationForm.css
 components/forms/PropertyApplicationForm.tsx
 components/Header.module.css
@@ -119,6 +120,777 @@ tsconfig.json
 <files>
 This section contains the contents of the repository's files.
 
+<file path="components/forms/custom.d.ts">
+declare module "*.css";
+</file>
+
+<file path=".gitignore">
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+</file>
+
+<file path="app/(site)/politica-de-privacidad/page.tsx">
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Política de Privacidad | ARKA Living",
+  description:
+    "Política de privacidad y tratamiento de datos personales de ARKA Living, conforme a la Ley 1581 de 2012.",
+};
+
+export default function PoliticaPrivacidadPage() {
+  return (
+    <main
+      style={{
+        padding: "calc(var(--header-h) + 48px) var(--edge-space) 100px",
+        maxWidth: 780,
+        margin: "0 auto",
+      }}
+    >
+      <h1
+        style={{
+          fontFamily: "var(--font-display, Georgia, serif)",
+          fontSize: "clamp(28px, 4vw, 40px)",
+          fontWeight: 700,
+          color: "var(--arka-brown-dark)",
+          marginBottom: 8,
+        }}
+      >
+        Política de Privacidad
+      </h1>
+      <p
+        style={{
+          fontSize: 13,
+          color: "var(--arka-text-soft)",
+          marginBottom: 48,
+        }}
+      >
+        Última actualización: 2026/04/01
+      </p>
+
+      <Section n="1" title="Responsable del tratamiento">
+        <p>
+          El responsable del tratamiento de los datos personales es ARKA Living
+          (en adelante, "ARKA"), empresa dedicada a la gestión de propiedades
+          para rentas cortas en Colombia.
+        </p>
+        <p>
+          Contacto:
+          <br />
+          Correo electrónico: jacobocortes90@hotmail.com
+          <br />
+          WhatsApp: 3158254384
+        </p>
+        <p>
+          ARKA actúa como responsable del tratamiento respecto de los datos
+          recolectados a través de este sitio web.
+        </p>
+      </Section>
+
+      <Section n="2" title="Datos personales que recolectamos">
+        <p>ARKA podrá recolectar los siguientes datos:</p>
+        <p>
+          <strong>Datos de identificación:</strong>
+        </p>
+        <ul>
+          <li>Nombre completo</li>
+          <li>Correo electrónico</li>
+          <li>Número de teléfono / WhatsApp</li>
+        </ul>
+        <p>
+          <strong>Datos del inmueble:</strong>
+        </p>
+        <ul>
+          <li>Ciudad y ubicación</li>
+          <li>Características de la propiedad</li>
+          <li>Estado de ocupación</li>
+          <li>Fotografías</li>
+        </ul>
+        <p>
+          <strong>Datos técnicos:</strong>
+        </p>
+        <ul>
+          <li>Dirección IP</li>
+          <li>Navegador</li>
+          <li>Dispositivo</li>
+          <li>Cookies y comportamiento en el sitio</li>
+        </ul>
+      </Section>
+
+      <Section n="3" title="Finalidades del tratamiento">
+        <p>Los datos personales serán utilizados para:</p>
+        <ul>
+          <li>Evaluar la postulación de propiedades</li>
+          <li>Contactar al usuario</li>
+          <li>Gestionar relaciones comerciales con propietarios</li>
+          <li>Mejorar el sitio web y la experiencia del usuario</li>
+          <li>Analizar el comportamiento de navegación</li>
+          <li>Cumplir obligaciones legales</li>
+        </ul>
+        <p>ARKA no venderá ni comercializará los datos personales.</p>
+      </Section>
+
+      <Section n="4" title="Base legal del tratamiento">
+        <p>El tratamiento de datos se realiza con base en:</p>
+        <ul>
+          <li>Autorización del titular</li>
+          <li>Ejecución de una relación contractual o precontractual</li>
+          <li>Cumplimiento de obligaciones legales</li>
+        </ul>
+      </Section>
+
+      <Section n="5" title="Derechos del titular">
+        <p>El titular de los datos tiene derecho a:</p>
+        <ul>
+          <li>Conocer, actualizar y rectificar sus datos</li>
+          <li>Solicitar prueba de la autorización</li>
+          <li>Ser informado sobre el uso de sus datos</li>
+          <li>Revocar la autorización</li>
+          <li>Solicitar la eliminación de sus datos (cuando aplique)</li>
+        </ul>
+        <p>
+          Para ejercer estos derechos, el usuario puede contactar a ARKA a
+          través de los canales indicados.
+        </p>
+      </Section>
+
+      <Section n="6" title="Transferencia y uso de terceros">
+        <p>
+          ARKA utiliza servicios de terceros para operar el sitio, entre ellos:
+        </p>
+        <ul>
+          <li>Cloudinary (almacenamiento de imágenes)</li>
+          <li>Resend / servicios de email</li>
+          <li>Google Analytics / GTM / Clarity (analítica)</li>
+          <li>Cloudflare / Vercel (infraestructura)</li>
+        </ul>
+        <p>
+          Estos proveedores pueden procesar datos en servidores fuera de
+          Colombia. ARKA adopta medidas razonables para proteger la información.
+        </p>
+      </Section>
+
+      <Section n="7" title="Uso de cookies">
+        <p>El sitio utiliza cookies para:</p>
+        <ul>
+          <li>Analizar tráfico</li>
+          <li>Recordar preferencias</li>
+          <li>Mejorar la experiencia</li>
+        </ul>
+        <p>El usuario puede configurar su navegador para rechazarlas.</p>
+      </Section>
+
+      <Section n="8" title="Seguridad de la información">
+        <p>
+          ARKA implementa medidas técnicas y organizativas para proteger los
+          datos, incluyendo:
+        </p>
+        <ul>
+          <li>Acceso restringido</li>
+          <li>Uso de proveedores seguros</li>
+          <li>Protección contra accesos no autorizados</li>
+        </ul>
+        <p>Sin embargo, ningún sistema es completamente seguro.</p>
+      </Section>
+
+      <Section n="9" title="Conservación de datos">
+        <p>Los datos serán conservados:</p>
+        <ul>
+          <li>Mientras exista relación con el usuario</li>
+          <li>Durante el tiempo necesario para cumplir obligaciones legales</li>
+          <li>O hasta que el titular solicite su eliminación</li>
+        </ul>
+      </Section>
+
+      <Section n="10" title="Modificaciones">
+        <p>ARKA podrá modificar esta política en cualquier momento.</p>
+      </Section>
+
+      <Section n="11" title="Legislación aplicable">
+        <p>
+          Esta política se rige por la legislación colombiana, en especial la
+          Ley 1581 de 2012 y sus decretos reglamentarios.
+        </p>
+      </Section>
+
+      <Section n="12" title="Contacto">
+        <p>
+          Correo: jacobocortes90@hotmail.com
+          <br />
+          WhatsApp: 3158254384
+        </p>
+      </Section>
+    </main>
+  );
+}
+
+function Section({
+  n,
+  title,
+  children,
+}: {
+  n: string;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section style={{ marginBottom: 40 }}>
+      <h2
+        style={{
+          fontFamily: "var(--font-display, Georgia, serif)",
+          fontSize: "clamp(17px, 2.2vw, 21px)",
+          fontWeight: 700,
+          color: "var(--arka-brown-dark)",
+          marginBottom: 12,
+          paddingBottom: 8,
+          borderBottom: "1px solid rgba(200,166,122,0.3)",
+        }}
+      >
+        {n}. {title}
+      </h2>
+      <div
+        style={{
+          fontSize: 15,
+          lineHeight: 1.75,
+          color: "var(--arka-text-soft)",
+          display: "flex",
+          flexDirection: "column",
+          gap: 12,
+        }}
+      >
+        {children}
+      </div>
+    </section>
+  );
+}
+</file>
+
+<file path="app/api/contact/route.ts">
+import { NextResponse } from "next/server";
+import { contactSchema } from "@/lib/schemas/contact";
+
+// ─── Rate limiting en memoria (MVP) ───────────────────────────────────────────
+// Map: ip → timestamps de envíos recientes
+// Limitación conocida: se resetea en cold start. Cloudflare WAF es la primera línea.
+const rateMap = new Map<string, number[]>();
+const RATE_LIMIT = 3; // máximo 3 envíos
+const RATE_WINDOW = 10 * 60 * 1000; // en 10 minutos
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const timestamps = (rateMap.get(ip) ?? []).filter(
+    (t) => now - t < RATE_WINDOW,
+  );
+
+  if (timestamps.length >= RATE_LIMIT) return true;
+
+  rateMap.set(ip, [...timestamps, now]);
+  return false;
+}
+
+// ─── Handler ──────────────────────────────────────────────────────────────────
+export async function POST(req: Request) {
+  // IP del cliente (Vercel pone la IP real en x-forwarded-for)
+  const ip =
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+
+  if (isRateLimited(ip)) {
+    return NextResponse.json(
+      {
+        message: "Demasiados intentos. Espera unos minutos e intenta de nuevo.",
+      },
+      { status: 429 },
+    );
+  }
+
+  // Parsear body
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ message: "Body inválido." }, { status: 400 });
+  }
+
+  // Validar con Zod (server-side, siempre)
+  const parsed = contactSchema.safeParse(body);
+  if (!parsed.success) {
+    const firstError = parsed.error.issues[0]?.message ?? "Datos inválidos.";
+    return NextResponse.json({ message: firstError }, { status: 422 });
+  }
+
+  const { from, subject, message } = parsed.data;
+
+  const resendKey = process.env.RESEND_API_KEY;
+  const resendFrom = process.env.RESEND_FROM;
+  // Destino temporal hasta tener el correo oficial de ARKA
+  const to = process.env.CONTACT_TO ?? "jacobocortes90@hotmail.com";
+
+  if (!resendKey || !resendFrom) {
+    // DEV fallback — no bloquear en local
+    console.log("[DEV] Contacto recibido:", { from, subject, message });
+    return NextResponse.json({ success: true });
+  }
+
+  const html = `
+    <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; color: #4a3424;">
+      <h2 style="font-size: 22px; margin-bottom: 4px;">Nuevo mensaje de contacto</h2>
+      <p style="color: #a77e4d; margin-top: 0; font-size: 14px;">arkaliving.co — Formulario de contacto</p>
+      <hr style="border: none; border-top: 1px solid #c8a67a; margin: 20px 0;" />
+
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+          <td style="padding: 8px 0; font-size: 13px; color: #6f5b4b; width: 110px; vertical-align: top;">De</td>
+          <td style="padding: 8px 0; font-size: 15px; color: #4a3424; font-weight: 600;">${from}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; font-size: 13px; color: #6f5b4b; vertical-align: top;">Asunto</td>
+          <td style="padding: 8px 0; font-size: 15px; color: #4a3424;">${subject}</td>
+        </tr>
+      </table>
+
+      <hr style="border: none; border-top: 1px solid #c8a67a; margin: 20px 0;" />
+
+      <p style="font-size: 13px; color: #6f5b4b; margin-bottom: 8px;">Mensaje</p>
+      <p style="font-size: 16px; line-height: 1.7; color: #4a3424; white-space: pre-wrap;">${message}</p>
+
+      <hr style="border: none; border-top: 1px solid #c8a67a; margin: 32px 0 20px;" />
+      <p style="font-size: 12px; color: #a77e4d;">ARKA Living · arkaliving.co</p>
+    </div>
+  `;
+
+  const resendRes = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${resendKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from: resendFrom,
+      to,
+      subject: `[ARKA Contacto] ${subject}`,
+      html,
+      reply_to: from.includes("@") ? from : undefined,
+    }),
+  });
+
+  if (!resendRes.ok) {
+    const err = await resendRes.text();
+    console.error("[Resend] Error al enviar contacto:", err);
+    return NextResponse.json(
+      { message: "No se pudo enviar el mensaje. Intenta de nuevo." },
+      { status: 502 },
+    );
+  }
+
+  return NextResponse.json({ success: true });
+}
+</file>
+
+<file path="app/api/postula/start/route.ts">
+import { NextResponse } from "next/server";
+import crypto from "crypto";
+
+function json(message: string, status = 400) {
+  return NextResponse.json({ message }, { status });
+}
+
+function isEmail(v: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+}
+
+function sign(data: string, secret: string) {
+  return crypto.createHmac("sha256", secret).update(data).digest("hex");
+}
+
+export async function POST(req: Request) {
+  const { fullName, email, phone } = await req.json();
+
+  if (!fullName?.trim()) return json("Nombre requerido.");
+  if (!isEmail(email || "")) return json("Correo inválido.");
+  if (!phone?.trim()) return json("Celular/WhatsApp requerido.");
+
+  const secret = process.env.FORM_TOKEN_SECRET;
+  if (!secret) return json("Falta FORM_TOKEN_SECRET en env.", 500);
+
+  const code = String(Math.floor(100000 + Math.random() * 900000)); // 6 dígitos
+  const exp = Date.now() + 10 * 60 * 1000; // 10 min
+
+  const payload = JSON.stringify({
+    email: email.trim().toLowerCase(),
+    exp,
+    codeHash: sign(code, secret),
+  });
+  const token =
+    Buffer.from(payload).toString("base64url") + "." + sign(payload, secret);
+
+  // Email (Resend) — MVP
+  const resendKey = process.env.RESEND_API_KEY;
+  const from = process.env.RESEND_FROM;
+  const to = email.trim().toLowerCase();
+
+  if (resendKey && from) {
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${resendKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from,
+        to,
+        subject: "Tu código de verificación - ARKA Living",
+        html: `<p>Tu código de verificación es:</p><p style="font-size:24px;font-weight:800;letter-spacing:2px">${code}</p><p>Vence en 10 minutos.</p>`,
+      }),
+    });
+  } else {
+    // DEV fallback
+    console.log("[DEV] OTP code:", code, "for", to);
+  }
+
+  return NextResponse.json({ token });
+}
+</file>
+
+<file path="app/api/postula/verify/route.ts">
+import { NextResponse } from "next/server";
+import crypto from "crypto";
+
+function json(message: string, status = 400) {
+  return NextResponse.json({ message }, { status });
+}
+function sign(data: string, secret: string) {
+  return crypto.createHmac("sha256", secret).update(data).digest("hex");
+}
+
+export async function POST(req: Request) {
+  const { token, code } = await req.json();
+  const secret = process.env.FORM_TOKEN_SECRET;
+  if (!secret) return json("Falta FORM_TOKEN_SECRET en env.", 500);
+  if (!token || !code) return json("Token y código requeridos.");
+
+  const [b64, sig] = String(token).split(".");
+  if (!b64 || !sig) return json("Token inválido.");
+
+  const payloadStr = Buffer.from(b64, "base64url").toString("utf8");
+  if (sign(payloadStr, secret) !== sig) return json("Token inválido.");
+
+  const payload = JSON.parse(payloadStr);
+  if (Date.now() > payload.exp) return json("Código expirado.");
+
+  const codeHash = sign(String(code).trim(), secret);
+  if (codeHash !== payload.codeHash) return json("Código incorrecto.");
+
+  const verifiedPayload = JSON.stringify({
+    email: payload.email,
+    verified: true,
+    exp: Date.now() + 60 * 60 * 1000,
+  });
+  const verifiedToken =
+    Buffer.from(verifiedPayload).toString("base64url") +
+    "." +
+    sign(verifiedPayload, secret);
+
+  return NextResponse.json({ verifiedToken });
+}
+</file>
+
+<file path="components/contacto/ContactoPage.tsx">
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  ArrowRight,
+  CheckCircle2,
+  AlertCircle,
+  Loader2,
+  Instagram,
+  Mail,
+  MessageCircleMore,
+} from "lucide-react";
+import { contactSchema, type ContactPayload } from "@/lib/schemas/contact";
+import styles from "./Contacto.module.css";
+
+// ─── Bloque 1 ─────────────────────────────────────────────
+function BloquePostula() {
+  return (
+    <section className={`${styles.block} ${styles.postula}`}>
+      <div className={styles.blockInner}>
+        <span className={styles.postulaLabel}>Propietarios</span>
+        <h2 className={styles.postulaTitle}>
+          ¿Quieres postular
+          <br />
+          tu propiedad?
+        </h2>
+        <p className={styles.postulaBody}>
+          Cuéntanos sobre tu inmueble. Te respondemos en máximo 48 horas con una
+          propuesta clara y sin compromisos.
+        </p>
+        <Link href="/postula-tu-propiedad" className={styles.postulaBtn}>
+          Postúlala aquí
+          <ArrowRight />
+        </Link>
+      </div>
+    </section>
+  );
+}
+
+// ─── Bloque 2 ─────────────────────────────────────────────
+type FormStatus = "idle" | "loading" | "success" | "error";
+
+function BloqueFormulario() {
+  const [status, setStatus] = useState<FormStatus>("idle");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ContactPayload>({
+    resolver: zodResolver(contactSchema),
+  });
+
+  const isLoading = status === "loading";
+
+  async function onSubmit(data: ContactPayload) {
+    setStatus("loading");
+    setErrorMsg("");
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      const json = await res.json();
+
+      if (!res.ok) {
+        setErrorMsg(
+          json?.message ?? "No se pudo enviar el mensaje. Intenta de nuevo.",
+        );
+        setStatus("error");
+        return;
+      }
+
+      setStatus("success");
+      reset();
+    } catch {
+      setErrorMsg(
+        "Ocurrió un error de red. Verifica tu conexión e intenta de nuevo.",
+      );
+      setStatus("error");
+    }
+  }
+
+  return (
+    <section className={`${styles.block} ${styles.contact}`}>
+      <div className={styles.blockInner}>
+        <span className={styles.contactLabel}>Contacto</span>
+        <h2 className={styles.contactTitle}>
+          ¿Tienes dudas?
+          <br />
+          Hablemos.
+        </h2>
+        <p className={styles.contactSubtitle}>
+          Estamos aquí para ti. Escríbenos y te respondemos pronto.
+        </p>
+
+        {/* Estado de éxito */}
+        {status === "success" && (
+          <div className={styles.statusSuccess}>
+            <CheckCircle2 />
+            <div className={styles.statusSuccessText}>
+              <strong>Mensaje recibido.</strong>
+              <span>
+                Te respondemos a la brevedad. Gracias por escribirnos.
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Formulario — oculto tras éxito */}
+        {status !== "success" && (
+          <form
+            className={styles.form}
+            onSubmit={handleSubmit(onSubmit)}
+            noValidate
+          >
+            {/* Campo: De */}
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="contact-from">
+                E-mail o teléfono
+              </label>
+              <input
+                id="contact-from"
+                className={styles.input}
+                placeholder="tu@correo.com o +57 300 000 0000"
+                disabled={isLoading}
+                {...register("from")}
+              />
+              {errors.from && (
+                <p className={styles.fieldError}>{errors.from.message}</p>
+              )}
+            </div>
+
+            {/* Campo: Asunto */}
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="contact-subject">
+                Asunto
+              </label>
+              <input
+                id="contact-subject"
+                className={styles.input}
+                placeholder="¿En qué podemos ayudarte?"
+                disabled={isLoading}
+                {...register("subject")}
+              />
+              {errors.subject && (
+                <p className={styles.fieldError}>{errors.subject.message}</p>
+              )}
+            </div>
+
+            {/* Campo: Mensaje */}
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="contact-message">
+                Mensaje
+              </label>
+              <textarea
+                id="contact-message"
+                className={styles.textarea}
+                placeholder="Escribe tu mensaje aquí..."
+                disabled={isLoading}
+                {...register("message")}
+              />
+              {errors.message && (
+                <p className={styles.fieldError}>{errors.message.message}</p>
+              )}
+            </div>
+
+            {/* Error global */}
+            {status === "error" && (
+              <div className={styles.statusError}>
+                <AlertCircle />
+                {errorMsg}
+              </div>
+            )}
+
+            {/* Submit */}
+            <button
+              type="submit"
+              className={styles.submitBtn}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 style={{ animation: "spin 1s linear infinite" }} />
+                  Enviando…
+                </>
+              ) : (
+                "Enviar mensaje"
+              )}
+            </button>
+          </form>
+        )}
+      </div>
+    </section>
+  );
+}
+
+// ─── Bloque 3 ─────────────────────────────────────────────
+function BloqueRedes() {
+  return (
+    <section className={`${styles.block} ${styles.social}`}>
+      <div className={styles.blockInner}>
+        <p className={styles.socialTitle}>Encuéntranos en</p>
+        <div className={styles.socialLinks}>
+          <a
+            href="https://instagram.com/arka_living.co"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.socialLink}
+            aria-label="Instagram de ARKA Living"
+          >
+            <Instagram />
+          </a>
+
+          <a
+            href="https://wa.me/573158254384?text=Hola%20ARKA%2C%20quiero%20recibir%20informaci%C3%B3n."
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.socialLink}
+            aria-label="WhatsApp de ARKA Living"
+          >
+            <MessageCircleMore />
+          </a>
+
+          <a
+            href="mailto:jacobocortes90@hotmail.com"
+            className={styles.socialLink}
+            aria-label="Correo electrónico de ARKA Living"
+          >
+            <Mail />
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── Export principal ──────────────────────────────────────
+export function ContactoPage() {
+  return (
+    <div className={styles.page}>
+      <BloquePostula />
+      <BloqueFormulario />
+      <BloqueRedes />
+    </div>
+  );
+}
+</file>
+
 <file path="components/home/SectionBeneficios.module.css">
 /* ============================================================
    SectionBeneficios — Bloque 1
@@ -157,12 +929,19 @@ This section contains the contents of the repository's files.
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
+  align-items: start;
 }
 
 @media (max-width: 900px) {
   .cards {
     grid-template-columns: 1fr;
     gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding-top: calc(var(--header-h) + clamp(40px, 8vw, 64px));
   }
 }
 
@@ -173,7 +952,6 @@ This section contains the contents of the repository's files.
   padding: 28px 24px;
   display: flex;
   flex-direction: column;
-  gap: 0;
   transition: box-shadow 220ms ease;
 }
 
@@ -185,32 +963,40 @@ This section contains the contents of the repository's files.
   box-shadow: 0 8px 32px rgba(74, 52, 36, 0.22);
 }
 
-/* Header de la card (icono + título + botón) */
-.cardHeader {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: flex-start;
-  gap: 14px;
+/* Cara visible: texto arriba, icono+botón anclados al fondo */
+.cardFace {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+  min-height: 220px;
 }
 
-.cardIcon {
-  color: var(--arka-brown-mid);
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-/* Título de card → Inter */
+/* Título de card → Inter, empuja icono+botón al fondo */
 .cardTitulo {
   font-family: var(--font-body, system-ui, sans-serif);
   font-size: clamp(15px, 1.4vw, 17px);
   font-weight: 600;
   line-height: 1.35;
   color: var(--arka-brown-dark);
-  margin: 0;
+  margin: 0 0 auto;
+  padding-bottom: 24px;
+  width: 100%;
 }
 
+/* Icono grande centrado */
+.cardIcon {
+  color: var(--arka-brown-mid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.85;
+  margin-bottom: 16px;
+}
+
+/* Botón + / − centrado */
 .cardToggle {
-  flex-shrink: 0;
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -223,7 +1009,7 @@ This section contains the contents of the repository's files.
   transition:
     background 180ms ease,
     color 180ms ease;
-  margin-top: 1px;
+  flex-shrink: 0;
 }
 
 .cardToggle:hover {
@@ -271,6 +1057,7 @@ This section contains the contents of the repository's files.
   color: var(--arka-text-soft);
   padding-left: 16px;
   position: relative;
+  text-align: left;
 }
 
 .detalleItem::before {
@@ -339,10 +1126,14 @@ const BENEFICIOS = [
 ];
 
 export function SectionBeneficios() {
-  const [expanded, setExpanded] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
   const toggle = (id: string) => {
-    setExpanded((prev) => (prev === id ? null : id));
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
   };
 
   return (
@@ -354,17 +1145,20 @@ export function SectionBeneficios() {
 
         <div className={styles.cards}>
           {BENEFICIOS.map(({ id, icon: Icon, titulo, detalle }) => {
-            const isOpen = expanded === id;
+            const isOpen = expanded.has(id);
             return (
               <article
                 key={id}
                 className={`${styles.card} ${isOpen ? styles.cardOpen : ""}`}
               >
-                <div className={styles.cardHeader}>
-                  <span className={styles.cardIcon} aria-hidden="true">
-                    <Icon size={26} strokeWidth={1.6} />
-                  </span>
+                {/* Zona estática: texto → icono → botón, todo centrado */}
+                <div className={styles.cardFace}>
                   <p className={styles.cardTitulo}>{titulo}</p>
+
+                  <span className={styles.cardIcon} aria-hidden="true">
+                    <Icon size={94} strokeWidth={1.2} />
+                  </span>
+
                   <button
                     className={styles.cardToggle}
                     onClick={() => toggle(id)}
@@ -380,6 +1174,7 @@ export function SectionBeneficios() {
                   </button>
                 </div>
 
+                {/* Panel expandible */}
                 <div
                   id={`beneficio-detalle-${id}`}
                   className={styles.cardDetalle}
@@ -412,6 +1207,12 @@ export function SectionBeneficios() {
 .section {
   background: var(--arka-white);
   padding: clamp(64px, 10vw, 120px) 0 clamp(120px, 20vw, 220px);
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding-bottom: 180px;
+  }
 }
 
 .inner {
@@ -993,6 +1794,19 @@ export function SectionFrase() {
   text-transform: uppercase;
 }
 
+/* "fácil" en Playfair — mismo tamaño que en SectionFrase */
+.tituloFacil {
+  font-family: var(--font-display, Georgia, serif);
+  font-style: normal;
+  font-weight: 600;
+  font-size: clamp(40px, 8vw, 108px);
+  text-transform: none;
+  letter-spacing: 0;
+  line-height: 1;
+  display: inline-block;
+  vertical-align: bottom;
+}
+
 /* Lista de pasos */
 .pasos {
   list-style: none;
@@ -1086,7 +1900,8 @@ export function SectionPasos() {
     <section className={styles.section} aria-labelledby="pasos-titulo">
       <div className={styles.inner}>
         <h2 id="pasos-titulo" className={styles.titulo}>
-          ARKA lo hace fácil por ti en tres simples pasos
+          ARKA lo hace <span className={styles.tituloFacil}>fácil</span> por ti
+          en tres simples pasos
         </h2>
 
         <ol className={styles.pasos}>
@@ -1105,1286 +1920,6 @@ export function SectionPasos() {
       </div>
     </section>
   );
-}
-</file>
-
-<file path=".gitignore">
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
-
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# env files (can opt-in for committing if needed)
-.env*
-
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-</file>
-
-<file path="app/(site)/politica-de-privacidad/page.tsx">
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Política de Privacidad | ARKA Living",
-  description:
-    "Política de privacidad y tratamiento de datos personales de ARKA Living, conforme a la Ley 1581 de 2012.",
-};
-
-export default function PoliticaPrivacidadPage() {
-  return (
-    <main
-      style={{
-        padding: "calc(var(--header-h) + 48px) var(--edge-space) 100px",
-        maxWidth: 780,
-        margin: "0 auto",
-      }}
-    >
-      <h1
-        style={{
-          fontFamily: "var(--font-display, Georgia, serif)",
-          fontSize: "clamp(28px, 4vw, 40px)",
-          fontWeight: 700,
-          color: "var(--arka-brown-dark)",
-          marginBottom: 8,
-        }}
-      >
-        Política de Privacidad
-      </h1>
-      <p
-        style={{
-          fontSize: 13,
-          color: "var(--arka-text-soft)",
-          marginBottom: 48,
-        }}
-      >
-        Última actualización: 2026/04/01
-      </p>
-
-      <Section n="1" title="Responsable del tratamiento">
-        <p>
-          El responsable del tratamiento de los datos personales es ARKA Living
-          (en adelante, "ARKA"), empresa dedicada a la gestión de propiedades
-          para rentas cortas en Colombia.
-        </p>
-        <p>
-          Contacto:
-          <br />
-          Correo electrónico: jacobocortes90@hotmail.com
-          <br />
-          WhatsApp: 3158254384
-        </p>
-        <p>
-          ARKA actúa como responsable del tratamiento respecto de los datos
-          recolectados a través de este sitio web.
-        </p>
-      </Section>
-
-      <Section n="2" title="Datos personales que recolectamos">
-        <p>ARKA podrá recolectar los siguientes datos:</p>
-        <p>
-          <strong>Datos de identificación:</strong>
-        </p>
-        <ul>
-          <li>Nombre completo</li>
-          <li>Correo electrónico</li>
-          <li>Número de teléfono / WhatsApp</li>
-        </ul>
-        <p>
-          <strong>Datos del inmueble:</strong>
-        </p>
-        <ul>
-          <li>Ciudad y ubicación</li>
-          <li>Características de la propiedad</li>
-          <li>Estado de ocupación</li>
-          <li>Fotografías</li>
-        </ul>
-        <p>
-          <strong>Datos técnicos:</strong>
-        </p>
-        <ul>
-          <li>Dirección IP</li>
-          <li>Navegador</li>
-          <li>Dispositivo</li>
-          <li>Cookies y comportamiento en el sitio</li>
-        </ul>
-      </Section>
-
-      <Section n="3" title="Finalidades del tratamiento">
-        <p>Los datos personales serán utilizados para:</p>
-        <ul>
-          <li>Evaluar la postulación de propiedades</li>
-          <li>Contactar al usuario</li>
-          <li>Gestionar relaciones comerciales con propietarios</li>
-          <li>Mejorar el sitio web y la experiencia del usuario</li>
-          <li>Analizar el comportamiento de navegación</li>
-          <li>Cumplir obligaciones legales</li>
-        </ul>
-        <p>ARKA no venderá ni comercializará los datos personales.</p>
-      </Section>
-
-      <Section n="4" title="Base legal del tratamiento">
-        <p>El tratamiento de datos se realiza con base en:</p>
-        <ul>
-          <li>Autorización del titular</li>
-          <li>Ejecución de una relación contractual o precontractual</li>
-          <li>Cumplimiento de obligaciones legales</li>
-        </ul>
-      </Section>
-
-      <Section n="5" title="Derechos del titular">
-        <p>El titular de los datos tiene derecho a:</p>
-        <ul>
-          <li>Conocer, actualizar y rectificar sus datos</li>
-          <li>Solicitar prueba de la autorización</li>
-          <li>Ser informado sobre el uso de sus datos</li>
-          <li>Revocar la autorización</li>
-          <li>Solicitar la eliminación de sus datos (cuando aplique)</li>
-        </ul>
-        <p>
-          Para ejercer estos derechos, el usuario puede contactar a ARKA a
-          través de los canales indicados.
-        </p>
-      </Section>
-
-      <Section n="6" title="Transferencia y uso de terceros">
-        <p>
-          ARKA utiliza servicios de terceros para operar el sitio, entre ellos:
-        </p>
-        <ul>
-          <li>Cloudinary (almacenamiento de imágenes)</li>
-          <li>Resend / servicios de email</li>
-          <li>Google Analytics / GTM / Clarity (analítica)</li>
-          <li>Cloudflare / Vercel (infraestructura)</li>
-        </ul>
-        <p>
-          Estos proveedores pueden procesar datos en servidores fuera de
-          Colombia. ARKA adopta medidas razonables para proteger la información.
-        </p>
-      </Section>
-
-      <Section n="7" title="Uso de cookies">
-        <p>El sitio utiliza cookies para:</p>
-        <ul>
-          <li>Analizar tráfico</li>
-          <li>Recordar preferencias</li>
-          <li>Mejorar la experiencia</li>
-        </ul>
-        <p>El usuario puede configurar su navegador para rechazarlas.</p>
-      </Section>
-
-      <Section n="8" title="Seguridad de la información">
-        <p>
-          ARKA implementa medidas técnicas y organizativas para proteger los
-          datos, incluyendo:
-        </p>
-        <ul>
-          <li>Acceso restringido</li>
-          <li>Uso de proveedores seguros</li>
-          <li>Protección contra accesos no autorizados</li>
-        </ul>
-        <p>Sin embargo, ningún sistema es completamente seguro.</p>
-      </Section>
-
-      <Section n="9" title="Conservación de datos">
-        <p>Los datos serán conservados:</p>
-        <ul>
-          <li>Mientras exista relación con el usuario</li>
-          <li>Durante el tiempo necesario para cumplir obligaciones legales</li>
-          <li>O hasta que el titular solicite su eliminación</li>
-        </ul>
-      </Section>
-
-      <Section n="10" title="Modificaciones">
-        <p>ARKA podrá modificar esta política en cualquier momento.</p>
-      </Section>
-
-      <Section n="11" title="Legislación aplicable">
-        <p>
-          Esta política se rige por la legislación colombiana, en especial la
-          Ley 1581 de 2012 y sus decretos reglamentarios.
-        </p>
-      </Section>
-
-      <Section n="12" title="Contacto">
-        <p>
-          Correo: jacobocortes90@hotmail.com
-          <br />
-          WhatsApp: 3158254384
-        </p>
-      </Section>
-    </main>
-  );
-}
-
-function Section({
-  n,
-  title,
-  children,
-}: {
-  n: string;
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section style={{ marginBottom: 40 }}>
-      <h2
-        style={{
-          fontFamily: "var(--font-display, Georgia, serif)",
-          fontSize: "clamp(17px, 2.2vw, 21px)",
-          fontWeight: 700,
-          color: "var(--arka-brown-dark)",
-          marginBottom: 12,
-          paddingBottom: 8,
-          borderBottom: "1px solid rgba(200,166,122,0.3)",
-        }}
-      >
-        {n}. {title}
-      </h2>
-      <div
-        style={{
-          fontSize: 15,
-          lineHeight: 1.75,
-          color: "var(--arka-text-soft)",
-          display: "flex",
-          flexDirection: "column",
-          gap: 12,
-        }}
-      >
-        {children}
-      </div>
-    </section>
-  );
-}
-</file>
-
-<file path="app/api/contact/route.ts">
-import { NextResponse } from "next/server";
-import { contactSchema } from "@/lib/schemas/contact";
-
-// ─── Rate limiting en memoria (MVP) ───────────────────────────────────────────
-// Map: ip → timestamps de envíos recientes
-// Limitación conocida: se resetea en cold start. Cloudflare WAF es la primera línea.
-const rateMap = new Map<string, number[]>();
-const RATE_LIMIT = 3; // máximo 3 envíos
-const RATE_WINDOW = 10 * 60 * 1000; // en 10 minutos
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const timestamps = (rateMap.get(ip) ?? []).filter(
-    (t) => now - t < RATE_WINDOW,
-  );
-
-  if (timestamps.length >= RATE_LIMIT) return true;
-
-  rateMap.set(ip, [...timestamps, now]);
-  return false;
-}
-
-// ─── Handler ──────────────────────────────────────────────────────────────────
-export async function POST(req: Request) {
-  // IP del cliente (Vercel pone la IP real en x-forwarded-for)
-  const ip =
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-
-  if (isRateLimited(ip)) {
-    return NextResponse.json(
-      {
-        message: "Demasiados intentos. Espera unos minutos e intenta de nuevo.",
-      },
-      { status: 429 },
-    );
-  }
-
-  // Parsear body
-  let body: unknown;
-  try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ message: "Body inválido." }, { status: 400 });
-  }
-
-  // Validar con Zod (server-side, siempre)
-  const parsed = contactSchema.safeParse(body);
-  if (!parsed.success) {
-    const firstError = parsed.error.issues[0]?.message ?? "Datos inválidos.";
-    return NextResponse.json({ message: firstError }, { status: 422 });
-  }
-
-  const { from, subject, message } = parsed.data;
-
-  const resendKey = process.env.RESEND_API_KEY;
-  const resendFrom = process.env.RESEND_FROM;
-  // Destino temporal hasta tener el correo oficial de ARKA
-  const to = process.env.CONTACT_TO ?? "jacobocortes90@hotmail.com";
-
-  if (!resendKey || !resendFrom) {
-    // DEV fallback — no bloquear en local
-    console.log("[DEV] Contacto recibido:", { from, subject, message });
-    return NextResponse.json({ success: true });
-  }
-
-  const html = `
-    <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; color: #4a3424;">
-      <h2 style="font-size: 22px; margin-bottom: 4px;">Nuevo mensaje de contacto</h2>
-      <p style="color: #a77e4d; margin-top: 0; font-size: 14px;">arkaliving.co — Formulario de contacto</p>
-      <hr style="border: none; border-top: 1px solid #c8a67a; margin: 20px 0;" />
-
-      <table style="width: 100%; border-collapse: collapse;">
-        <tr>
-          <td style="padding: 8px 0; font-size: 13px; color: #6f5b4b; width: 110px; vertical-align: top;">De</td>
-          <td style="padding: 8px 0; font-size: 15px; color: #4a3424; font-weight: 600;">${from}</td>
-        </tr>
-        <tr>
-          <td style="padding: 8px 0; font-size: 13px; color: #6f5b4b; vertical-align: top;">Asunto</td>
-          <td style="padding: 8px 0; font-size: 15px; color: #4a3424;">${subject}</td>
-        </tr>
-      </table>
-
-      <hr style="border: none; border-top: 1px solid #c8a67a; margin: 20px 0;" />
-
-      <p style="font-size: 13px; color: #6f5b4b; margin-bottom: 8px;">Mensaje</p>
-      <p style="font-size: 16px; line-height: 1.7; color: #4a3424; white-space: pre-wrap;">${message}</p>
-
-      <hr style="border: none; border-top: 1px solid #c8a67a; margin: 32px 0 20px;" />
-      <p style="font-size: 12px; color: #a77e4d;">ARKA Living · arkaliving.co</p>
-    </div>
-  `;
-
-  const resendRes = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${resendKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from: resendFrom,
-      to,
-      subject: `[ARKA Contacto] ${subject}`,
-      html,
-      reply_to: from.includes("@") ? from : undefined,
-    }),
-  });
-
-  if (!resendRes.ok) {
-    const err = await resendRes.text();
-    console.error("[Resend] Error al enviar contacto:", err);
-    return NextResponse.json(
-      { message: "No se pudo enviar el mensaje. Intenta de nuevo." },
-      { status: 502 },
-    );
-  }
-
-  return NextResponse.json({ success: true });
-}
-</file>
-
-<file path="app/api/postula/start/route.ts">
-import { NextResponse } from "next/server";
-import crypto from "crypto";
-
-function json(message: string, status = 400) {
-  return NextResponse.json({ message }, { status });
-}
-
-function isEmail(v: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
-}
-
-function sign(data: string, secret: string) {
-  return crypto.createHmac("sha256", secret).update(data).digest("hex");
-}
-
-export async function POST(req: Request) {
-  const { fullName, email, phone } = await req.json();
-
-  if (!fullName?.trim()) return json("Nombre requerido.");
-  if (!isEmail(email || "")) return json("Correo inválido.");
-  if (!phone?.trim()) return json("Celular/WhatsApp requerido.");
-
-  const secret = process.env.FORM_TOKEN_SECRET;
-  if (!secret) return json("Falta FORM_TOKEN_SECRET en env.", 500);
-
-  const code = String(Math.floor(100000 + Math.random() * 900000)); // 6 dígitos
-  const exp = Date.now() + 10 * 60 * 1000; // 10 min
-
-  const payload = JSON.stringify({
-    email: email.trim().toLowerCase(),
-    exp,
-    codeHash: sign(code, secret),
-  });
-  const token =
-    Buffer.from(payload).toString("base64url") + "." + sign(payload, secret);
-
-  // Email (Resend) — MVP
-  const resendKey = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM;
-  const to = email.trim().toLowerCase();
-
-  if (resendKey && from) {
-    await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${resendKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from,
-        to,
-        subject: "Tu código de verificación - ARKA Living",
-        html: `<p>Tu código de verificación es:</p><p style="font-size:24px;font-weight:800;letter-spacing:2px">${code}</p><p>Vence en 10 minutos.</p>`,
-      }),
-    });
-  } else {
-    // DEV fallback
-    console.log("[DEV] OTP code:", code, "for", to);
-  }
-
-  return NextResponse.json({ token });
-}
-</file>
-
-<file path="app/api/postula/verify/route.ts">
-import { NextResponse } from "next/server";
-import crypto from "crypto";
-
-function json(message: string, status = 400) {
-  return NextResponse.json({ message }, { status });
-}
-function sign(data: string, secret: string) {
-  return crypto.createHmac("sha256", secret).update(data).digest("hex");
-}
-
-export async function POST(req: Request) {
-  const { token, code } = await req.json();
-  const secret = process.env.FORM_TOKEN_SECRET;
-  if (!secret) return json("Falta FORM_TOKEN_SECRET en env.", 500);
-  if (!token || !code) return json("Token y código requeridos.");
-
-  const [b64, sig] = String(token).split(".");
-  if (!b64 || !sig) return json("Token inválido.");
-
-  const payloadStr = Buffer.from(b64, "base64url").toString("utf8");
-  if (sign(payloadStr, secret) !== sig) return json("Token inválido.");
-
-  const payload = JSON.parse(payloadStr);
-  if (Date.now() > payload.exp) return json("Código expirado.");
-
-  const codeHash = sign(String(code).trim(), secret);
-  if (codeHash !== payload.codeHash) return json("Código incorrecto.");
-
-  const verifiedPayload = JSON.stringify({
-    email: payload.email,
-    verified: true,
-    exp: Date.now() + 60 * 60 * 1000,
-  });
-  const verifiedToken =
-    Buffer.from(verifiedPayload).toString("base64url") +
-    "." +
-    sign(verifiedPayload, secret);
-
-  return NextResponse.json({ verifiedToken });
-}
-</file>
-
-<file path="components/contacto/Contacto.module.css">
-/* ============================================================
-   Contacto.module.css — ARKA Living
-   Tres bloques: Postula / Formulario contacto / Redes sociales
-   ============================================================ */
-
-/* ─── PÁGINA BASE ────────────────────────────────────────── */
-
-.page {
-  padding-top: calc(var(--header-h) + 60px);
-  padding-bottom: 0;
-  background: var(--arka-white);
-  color: var(--arka-brown-dark);
-  overflow-x: hidden;
-}
-
-/* ─── BLOQUE COMPARTIDO ──────────────────────────────────── */
-
-.block {
-  width: 100%;
-  padding: 80px var(--edge-space);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.blockInner {
-  width: 100%;
-  max-width: 640px;
-}
-
-/* ─── BLOQUE 1: POSTULA ──────────────────────────────────── */
-
-.postula {
-  background: var(--arka-white);
-  border-bottom: 1px solid rgba(167, 126, 77, 0.15);
-}
-
-.postulaLabel {
-  display: inline-block;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--arka-brown-mid);
-  margin-bottom: 20px;
-}
-
-/* Título → Inter */
-.postulaTitle {
-  font-family: var(--font-body, system-ui, sans-serif);
-  font-size: clamp(28px, 4.5vw, 46px);
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  color: var(--arka-brown-dark);
-  margin: 0 0 16px;
-}
-
-.postulaBody {
-  font-size: clamp(15px, 1.8vw, 17px);
-  line-height: 1.7;
-  color: var(--arka-text-soft);
-  margin: 0 0 36px;
-}
-
-.postulaBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 16px 36px;
-  background: var(--arka-brown-dark);
-  color: var(--arka-white);
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border-radius: 100px;
-  text-decoration: none;
-  transition:
-    background 220ms ease,
-    transform 220ms ease,
-    box-shadow 220ms ease;
-}
-
-.postulaBtn:hover {
-  background: var(--arka-brown-mid);
-  transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(74, 52, 36, 0.18);
-}
-
-.postulaBtn svg {
-  width: 18px;
-  height: 18px;
-  transition: transform 220ms ease;
-}
-
-.postulaBtn:hover svg {
-  transform: translateX(3px);
-}
-
-/* ─── BLOQUE 2: FORMULARIO CONTACTO ─────────────────────── */
-
-.contact {
-  background: linear-gradient(
-    180deg,
-    rgba(200, 166, 122, 0.06) 0%,
-    rgba(253, 252, 249, 1) 100%
-  );
-  border-bottom: 1px solid rgba(167, 126, 77, 0.15);
-}
-
-.contactLabel {
-  display: inline-block;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--arka-brown-mid);
-  margin-bottom: 20px;
-}
-
-/* Título → Inter */
-.contactTitle {
-  font-family: var(--font-body, system-ui, sans-serif);
-  font-size: clamp(26px, 4vw, 40px);
-  font-weight: 700;
-  line-height: 1.12;
-  letter-spacing: -0.02em;
-  color: var(--arka-brown-dark);
-  margin: 0 0 10px;
-}
-
-.contactSubtitle {
-  font-size: clamp(15px, 1.7vw, 17px);
-  line-height: 1.6;
-  color: var(--arka-text-soft);
-  margin: 0 0 40px;
-}
-
-/* ─── FORM ───────────────────────────────────────────────── */
-
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  text-align: left;
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
-
-.label {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--arka-brown-mid);
-}
-
-.input,
-.textarea {
-  width: 100%;
-  padding: 14px 18px;
-  background: #fff;
-  border: 1.5px solid rgba(167, 126, 77, 0.3);
-  border-radius: 10px;
-  font-size: 15px;
-  color: var(--arka-brown-dark);
-  font-family: var(--font-body, system-ui, sans-serif);
-  outline: none;
-  transition:
-    border-color 200ms ease,
-    box-shadow 200ms ease;
-  box-sizing: border-box;
-}
-
-.input::placeholder,
-.textarea::placeholder {
-  color: rgba(111, 91, 75, 0.45);
-}
-
-.input:focus,
-.textarea:focus {
-  border-color: var(--arka-brown-mid);
-  box-shadow: 0 0 0 3px rgba(167, 126, 77, 0.12);
-}
-
-.input:disabled,
-.textarea:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-
-.textarea {
-  resize: vertical;
-  min-height: 130px;
-  line-height: 1.6;
-}
-
-.fieldError {
-  font-size: 12px;
-  color: #b94a3a;
-  margin: 0;
-}
-
-/* ─── SUBMIT BTN ─────────────────────────────────────────── */
-
-.submitBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  width: 100%;
-  padding: 16px 24px;
-  background: var(--arka-brown-dark);
-  color: var(--arka-white);
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition:
-    background 220ms ease,
-    transform 220ms ease,
-    box-shadow 220ms ease;
-  margin-top: 8px;
-}
-
-.submitBtn:hover:not(:disabled) {
-  background: var(--arka-brown-mid);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(74, 52, 36, 0.16);
-}
-
-.submitBtn:disabled {
-  opacity: 0.65;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.submitBtn svg {
-  width: 18px;
-  height: 18px;
-}
-
-/* ─── ESTADOS: ÉXITO / ERROR ─────────────────────────────── */
-
-.statusSuccess {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  padding: 20px 22px;
-  background: rgba(74, 52, 36, 0.05);
-  border: 1.5px solid rgba(167, 126, 77, 0.35);
-  border-radius: 12px;
-  text-align: left;
-}
-
-.statusSuccess svg {
-  width: 22px;
-  height: 22px;
-  color: var(--arka-brown-mid);
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-.statusSuccessText strong {
-  display: block;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--arka-brown-dark);
-  margin-bottom: 4px;
-}
-
-.statusSuccessText span {
-  font-size: 14px;
-  color: var(--arka-text-soft);
-  line-height: 1.5;
-}
-
-.statusError {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 18px;
-  background: rgba(185, 74, 58, 0.06);
-  border: 1.5px solid rgba(185, 74, 58, 0.25);
-  border-radius: 10px;
-  font-size: 14px;
-  color: #b94a3a;
-  text-align: left;
-}
-
-.statusError svg {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-}
-
-/* ─── BLOQUE 3: REDES ────────────────────────────────────── */
-
-.social {
-  background: var(--arka-white);
-  padding: 60px var(--edge-space);
-}
-
-.socialTitle {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--arka-brown-mid);
-  margin-bottom: 28px;
-}
-
-.socialLinks {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-}
-
-.socialLink {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 52px;
-  height: 52px;
-  background: var(--arka-white);
-  border: 1.5px solid rgba(167, 126, 77, 0.28);
-  border-radius: 14px;
-  color: var(--arka-brown-mid);
-  transition:
-    transform 200ms ease,
-    box-shadow 200ms ease,
-    border-color 200ms ease;
-}
-
-.socialLink:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 24px rgba(167, 126, 77, 0.22);
-  border-color: var(--arka-brown-mid);
-}
-
-.socialLink svg {
-  width: 24px;
-  height: 24px;
-  stroke-width: 1.7;
-}
-
-/* ─── RESPONSIVE ─────────────────────────────────────────── */
-
-@media (max-width: 640px) {
-  .block {
-    padding: 60px var(--edge-space);
-  }
-
-  .social {
-    padding: 48px var(--edge-space);
-  }
-
-  .postulaBtn {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .postulaBtn,
-  .submitBtn,
-  .socialLink {
-    transition: none;
-  }
-}
-</file>
-
-<file path="components/contacto/ContactoPage.tsx">
-"use client";
-
-import Link from "next/link";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  ArrowRight,
-  CheckCircle2,
-  AlertCircle,
-  Loader2,
-  Instagram,
-  Mail,
-  MessageCircleMore,
-} from "lucide-react";
-import { contactSchema, type ContactPayload } from "@/lib/schemas/contact";
-import styles from "./Contacto.module.css";
-
-// ─── Bloque 1 ─────────────────────────────────────────────
-function BloquePostula() {
-  return (
-    <section className={`${styles.block} ${styles.postula}`}>
-      <div className={styles.blockInner}>
-        <span className={styles.postulaLabel}>Propietarios</span>
-        <h2 className={styles.postulaTitle}>
-          ¿Quieres postular
-          <br />
-          tu propiedad?
-        </h2>
-        <p className={styles.postulaBody}>
-          Cuéntanos sobre tu inmueble. Te respondemos en máximo 48 horas con una
-          propuesta clara y sin compromisos.
-        </p>
-        <Link href="/postula-tu-propiedad" className={styles.postulaBtn}>
-          Postúlala aquí
-          <ArrowRight />
-        </Link>
-      </div>
-    </section>
-  );
-}
-
-// ─── Bloque 2 ─────────────────────────────────────────────
-type FormStatus = "idle" | "loading" | "success" | "error";
-
-function BloqueFormulario() {
-  const [status, setStatus] = useState<FormStatus>("idle");
-  const [errorMsg, setErrorMsg] = useState("");
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<ContactPayload>({
-    resolver: zodResolver(contactSchema),
-  });
-
-  const isLoading = status === "loading";
-
-  async function onSubmit(data: ContactPayload) {
-    setStatus("loading");
-    setErrorMsg("");
-
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      const json = await res.json();
-
-      if (!res.ok) {
-        setErrorMsg(
-          json?.message ?? "No se pudo enviar el mensaje. Intenta de nuevo.",
-        );
-        setStatus("error");
-        return;
-      }
-
-      setStatus("success");
-      reset();
-    } catch {
-      setErrorMsg(
-        "Ocurrió un error de red. Verifica tu conexión e intenta de nuevo.",
-      );
-      setStatus("error");
-    }
-  }
-
-  return (
-    <section className={`${styles.block} ${styles.contact}`}>
-      <div className={styles.blockInner}>
-        <span className={styles.contactLabel}>Contacto</span>
-        <h2 className={styles.contactTitle}>
-          ¿Tienes dudas?
-          <br />
-          Hablemos.
-        </h2>
-        <p className={styles.contactSubtitle}>
-          Estamos aquí para ti. Escríbenos y te respondemos pronto.
-        </p>
-
-        {/* Estado de éxito */}
-        {status === "success" && (
-          <div className={styles.statusSuccess}>
-            <CheckCircle2 />
-            <div className={styles.statusSuccessText}>
-              <strong>Mensaje recibido.</strong>
-              <span>
-                Te respondemos a la brevedad. Gracias por escribirnos.
-              </span>
-            </div>
-          </div>
-        )}
-
-        {/* Formulario — oculto tras éxito */}
-        {status !== "success" && (
-          <form
-            className={styles.form}
-            onSubmit={handleSubmit(onSubmit)}
-            noValidate
-          >
-            {/* Campo: De */}
-            <div className={styles.field}>
-              <label className={styles.label} htmlFor="contact-from">
-                E-mail o teléfono
-              </label>
-              <input
-                id="contact-from"
-                className={styles.input}
-                placeholder="tu@correo.com o +57 300 000 0000"
-                disabled={isLoading}
-                {...register("from")}
-              />
-              {errors.from && (
-                <p className={styles.fieldError}>{errors.from.message}</p>
-              )}
-            </div>
-
-            {/* Campo: Asunto */}
-            <div className={styles.field}>
-              <label className={styles.label} htmlFor="contact-subject">
-                Asunto
-              </label>
-              <input
-                id="contact-subject"
-                className={styles.input}
-                placeholder="¿En qué podemos ayudarte?"
-                disabled={isLoading}
-                {...register("subject")}
-              />
-              {errors.subject && (
-                <p className={styles.fieldError}>{errors.subject.message}</p>
-              )}
-            </div>
-
-            {/* Campo: Mensaje */}
-            <div className={styles.field}>
-              <label className={styles.label} htmlFor="contact-message">
-                Mensaje
-              </label>
-              <textarea
-                id="contact-message"
-                className={styles.textarea}
-                placeholder="Escribe tu mensaje aquí..."
-                disabled={isLoading}
-                {...register("message")}
-              />
-              {errors.message && (
-                <p className={styles.fieldError}>{errors.message.message}</p>
-              )}
-            </div>
-
-            {/* Error global */}
-            {status === "error" && (
-              <div className={styles.statusError}>
-                <AlertCircle />
-                {errorMsg}
-              </div>
-            )}
-
-            {/* Submit */}
-            <button
-              type="submit"
-              className={styles.submitBtn}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 style={{ animation: "spin 1s linear infinite" }} />
-                  Enviando…
-                </>
-              ) : (
-                "Enviar mensaje"
-              )}
-            </button>
-          </form>
-        )}
-      </div>
-    </section>
-  );
-}
-
-// ─── Bloque 3 ─────────────────────────────────────────────
-function BloqueRedes() {
-  return (
-    <section className={`${styles.block} ${styles.social}`}>
-      <div className={styles.blockInner}>
-        <p className={styles.socialTitle}>Encuéntranos en</p>
-        <div className={styles.socialLinks}>
-          <a
-            href="https://instagram.com/arka_living.co"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.socialLink}
-            aria-label="Instagram de ARKA Living"
-          >
-            <Instagram />
-          </a>
-
-          <a
-            href="https://wa.me/573158254384?text=Hola%20ARKA%2C%20quiero%20recibir%20informaci%C3%B3n."
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.socialLink}
-            aria-label="WhatsApp de ARKA Living"
-          >
-            <MessageCircleMore />
-          </a>
-
-          <a
-            href="mailto:jacobocortes90@hotmail.com"
-            className={styles.socialLink}
-            aria-label="Correo electrónico de ARKA Living"
-          >
-            <Mail />
-          </a>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ─── Export principal ──────────────────────────────────────
-export function ContactoPage() {
-  return (
-    <div className={styles.page}>
-      <BloquePostula />
-      <BloqueFormulario />
-      <BloqueRedes />
-    </div>
-  );
-}
-</file>
-
-<file path="components/OwnerLoginModal.module.css">
-/* ============================================================
-   OwnerLoginModal.module.css — ARKA Living
-   Modal temporal "Muy pronto"
-   ============================================================ */
-
-.overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 10004;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px var(--edge-space);
-}
-
-.backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(74, 52, 36, 0.55);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
-
-.panel {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  max-width: 440px;
-  background: var(--arka-white);
-  border-radius: 16px;
-  padding: 48px 40px 44px;
-  display: flex;
-  flex-direction: column;
-}
-
-/* ─── Botón cerrar ───────────────────────────────────────── */
-
-.close {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  background: transparent;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  color: var(--arka-brown-mid);
-  opacity: 0.7;
-  transition:
-    opacity 160ms ease,
-    background 160ms ease;
-}
-
-.close:hover {
-  opacity: 1;
-  background: rgba(167, 126, 77, 0.1);
-}
-
-.closeIcon {
-  width: 18px;
-  height: 18px;
-  stroke-width: 1.8;
-}
-
-/* ─── Contenido ──────────────────────────────────────────── */
-
-.content {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.label {
-  display: inline-block;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--arka-brown-mid);
-}
-
-/* Título → Inter */
-.title {
-  font-family: var(--font-body, system-ui, sans-serif);
-  font-size: clamp(24px, 4vw, 32px);
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  color: var(--arka-brown-dark);
-  margin: 0;
-}
-
-.body {
-  font-size: 15px;
-  line-height: 1.7;
-  color: var(--arka-text-soft);
-  margin: 0;
-}
-
-/* ─── Badge "Muy pronto" ─────────────────────────────────── */
-
-.badge {
-  display: inline-flex;
-  align-self: flex-start;
-  margin-top: 8px;
-  padding: 6px 16px;
-  background: rgba(167, 126, 77, 0.1);
-  border: 1px solid rgba(167, 126, 77, 0.3);
-  border-radius: 100px;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--arka-brown-mid);
-}
-
-/* ─── Mobile ─────────────────────────────────────────────── */
-
-@media (max-width: 480px) {
-  .panel {
-    padding: 40px 28px 36px;
-  }
 }
 </file>
 
@@ -2812,226 +2347,6 @@ export function PropertiesGrid() {
       ))}
     </div>
   );
-}
-</file>
-
-<file path="components/properties/PropertyCard.module.css">
-/* ============================================================
-   PropertyCard.module.css
-   ============================================================ */
-
-.card {
-  display: flex;
-  flex-direction: column;
-  background: var(--arka-white);
-  border: 1px solid rgba(167, 126, 77, 0.18);
-  border-radius: 20px;
-  overflow: hidden;
-  transition:
-    transform 340ms cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 340ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 48px rgba(74, 52, 36, 0.12);
-}
-
-/* ── Imagen ───────────────────────────────────────────────── */
-
-.imageWrap {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  background: rgba(167, 126, 77, 0.08);
-  overflow: hidden;
-}
-
-.image {
-  object-fit: cover;
-  transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.card:hover .image {
-  transform: scale(1.04);
-}
-
-.imageWrapClickable {
-  cursor: zoom-in;
-}
-
-.galleryBadge {
-  position: absolute;
-  bottom: 14px;
-  right: 14px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 4px 10px;
-  background: rgba(30, 20, 12, 0.55);
-  backdrop-filter: blur(6px);
-  border-radius: 100px;
-  font-size: 12px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.9);
-  letter-spacing: 0.03em;
-  pointer-events: none;
-}
-
-.imagePlaceholder {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(
-    135deg,
-    rgba(167, 126, 77, 0.1) 0%,
-    rgba(200, 166, 122, 0.15) 100%
-  );
-}
-
-.placeholderIcon {
-  width: 48px;
-  height: 48px;
-  color: var(--arka-brown-light);
-  opacity: 0.6;
-}
-
-.badge {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  padding: 4px 12px;
-  background: rgba(253, 252, 249, 0.92);
-  backdrop-filter: blur(8px);
-  border-radius: 100px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--arka-brown-mid);
-}
-
-/* ── Cuerpo ───────────────────────────────────────────────── */
-
-.body {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  padding: 24px 24px 28px;
-  gap: 16px;
-}
-
-.sector {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--arka-brown-mid);
-}
-
-/* Nombre de propiedad → Inter (dato funcional) */
-.name {
-  font-family: var(--font-body, system-ui, sans-serif);
-  font-size: clamp(20px, 2.4vw, 26px);
-  font-weight: 700;
-  line-height: 1.15;
-  color: var(--arka-brown-dark);
-  margin: 0;
-}
-
-.description {
-  font-size: 15px;
-  line-height: 1.65;
-  color: var(--arka-text-soft);
-  margin: 0;
-}
-
-.meta {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.metaRow {
-  display: flex;
-  gap: 20px;
-}
-
-.metaItem {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--arka-text-soft);
-}
-
-.metaIcon {
-  width: 15px;
-  height: 15px;
-  color: var(--arka-brown-mid);
-  flex-shrink: 0;
-}
-
-.features {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.feature {
-  padding: 4px 12px;
-  background: rgba(167, 126, 77, 0.07);
-  border: 1px solid rgba(167, 126, 77, 0.15);
-  border-radius: 100px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--arka-brown-dark);
-}
-
-.divider {
-  height: 1px;
-  background: rgba(167, 126, 77, 0.15);
-  margin: 0;
-}
-
-.cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 22px;
-  background: var(--arka-brown-dark);
-  color: var(--arka-white);
-  border-radius: 100px;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.03em;
-  text-decoration: none;
-  align-self: flex-start;
-  transition:
-    background 260ms ease,
-    transform 260ms ease;
-}
-
-.cta:hover {
-  background: var(--arka-brown-mid);
-  transform: translateX(3px);
-}
-
-.ctaIcon {
-  width: 15px;
-  height: 15px;
-  flex-shrink: 0;
-  transition: transform 260ms ease;
-}
-
-.cta:hover .ctaIcon {
-  transform: translateX(3px);
 }
 </file>
 
@@ -4029,6 +3344,389 @@ function Section({
 }
 </file>
 
+<file path="components/contacto/Contacto.module.css">
+/* ============================================================
+   Contacto.module.css — ARKA Living
+   Tres bloques: Postula / Formulario contacto / Redes sociales
+   ============================================================ */
+
+/* ─── PÁGINA BASE ────────────────────────────────────────── */
+
+.page {
+  padding-top: calc(var(--header-h) + 60px);
+  padding-bottom: 0;
+  background: var(--arka-white);
+  color: var(--arka-brown-dark);
+  overflow-x: hidden;
+}
+
+/* ─── BLOQUE COMPARTIDO ──────────────────────────────────── */
+
+.block {
+  width: 100%;
+  padding: 80px var(--edge-space);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.blockInner {
+  width: 100%;
+  max-width: 640px;
+}
+
+/* ─── BLOQUE 1: POSTULA ──────────────────────────────────── */
+
+.postula {
+  background: var(--arka-white);
+  border-bottom: 1px solid rgba(167, 126, 77, 0.15);
+}
+
+.postulaLabel {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--arka-brown-mid);
+  margin-bottom: 20px;
+}
+
+/* Título → Inter */
+.postulaTitle {
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: clamp(28px, 4.5vw, 46px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--arka-brown-dark);
+  margin: 0 0 16px;
+}
+
+.postulaBody {
+  font-size: clamp(15px, 1.8vw, 17px);
+  line-height: 1.7;
+  color: var(--arka-text-soft);
+  margin: 0 0 36px;
+}
+
+.postulaBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 36px;
+  background: var(--arka-brown-dark);
+  color: var(--arka-white);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 100px;
+  text-decoration: none;
+  transition:
+    background 220ms ease,
+    transform 220ms ease,
+    box-shadow 220ms ease;
+}
+
+.postulaBtn:hover {
+  background: var(--arka-brown-mid);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(74, 52, 36, 0.18);
+}
+
+.postulaBtn svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 220ms ease;
+}
+
+.postulaBtn:hover svg {
+  transform: translateX(3px);
+}
+
+/* ─── BLOQUE 2: FORMULARIO CONTACTO ─────────────────────── */
+
+.contact {
+  background: linear-gradient(
+    180deg,
+    rgba(200, 166, 122, 0.06) 0%,
+    rgba(253, 252, 249, 1) 100%
+  );
+  border-bottom: 1px solid rgba(167, 126, 77, 0.15);
+}
+
+.contactLabel {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--arka-brown-mid);
+  margin-bottom: 20px;
+}
+
+/* Título → Inter */
+.contactTitle {
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: clamp(26px, 4vw, 40px);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--arka-brown-dark);
+  margin: 0 0 10px;
+}
+
+.contactSubtitle {
+  font-size: clamp(15px, 1.7vw, 17px);
+  line-height: 1.6;
+  color: var(--arka-text-soft);
+  margin: 0 0 40px;
+}
+
+/* ─── FORM ───────────────────────────────────────────────── */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: left;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--arka-brown-mid);
+}
+
+.input,
+.textarea {
+  width: 100%;
+  padding: 14px 18px;
+  background: #fff;
+  border: 1.5px solid rgba(167, 126, 77, 0.3);
+  border-radius: 10px;
+  font-size: 15px;
+  color: var(--arka-brown-dark);
+  font-family: var(--font-body, system-ui, sans-serif);
+  outline: none;
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+  box-sizing: border-box;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: rgba(111, 91, 75, 0.45);
+}
+
+.input:focus,
+.textarea:focus {
+  border-color: var(--arka-brown-mid);
+  box-shadow: 0 0 0 3px rgba(167, 126, 77, 0.12);
+}
+
+.input:disabled,
+.textarea:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 130px;
+  line-height: 1.6;
+}
+
+.fieldError {
+  font-size: 12px;
+  color: #b94a3a;
+  margin: 0;
+}
+
+/* ─── SUBMIT BTN ─────────────────────────────────────────── */
+
+.submitBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 16px 24px;
+  background: var(--arka-brown-dark);
+  color: var(--arka-white);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition:
+    background 220ms ease,
+    transform 220ms ease,
+    box-shadow 220ms ease;
+  margin-top: 8px;
+}
+
+.submitBtn:hover:not(:disabled) {
+  background: var(--arka-brown-mid);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(74, 52, 36, 0.16);
+}
+
+.submitBtn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.submitBtn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ─── ESTADOS: ÉXITO / ERROR ─────────────────────────────── */
+
+.statusSuccess {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 20px 22px;
+  background: rgba(74, 52, 36, 0.05);
+  border: 1.5px solid rgba(167, 126, 77, 0.35);
+  border-radius: 12px;
+  text-align: left;
+}
+
+.statusSuccess svg {
+  width: 22px;
+  height: 22px;
+  color: var(--arka-brown-mid);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.statusSuccessText strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--arka-brown-dark);
+  margin-bottom: 4px;
+}
+
+.statusSuccessText span {
+  font-size: 14px;
+  color: var(--arka-text-soft);
+  line-height: 1.5;
+}
+
+.statusError {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  background: rgba(185, 74, 58, 0.06);
+  border: 1.5px solid rgba(185, 74, 58, 0.25);
+  border-radius: 10px;
+  font-size: 14px;
+  color: #b94a3a;
+  text-align: left;
+}
+
+.statusError svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* ─── BLOQUE 3: REDES ────────────────────────────────────── */
+
+.social {
+  background: var(--arka-white);
+  padding: 60px var(--edge-space);
+}
+
+.socialTitle {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--arka-brown-mid);
+  margin-bottom: 28px;
+}
+
+.socialLinks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.socialLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  background: var(--arka-white);
+  border: 1.5px solid rgba(167, 126, 77, 0.28);
+  border-radius: 14px;
+  color: var(--arka-brown-mid);
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease,
+    border-color 200ms ease;
+}
+
+.socialLink:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(167, 126, 77, 0.22);
+  border-color: var(--arka-brown-mid);
+}
+
+.socialLink svg {
+  width: 24px;
+  height: 24px;
+  stroke-width: 1.7;
+}
+
+/* ─── RESPONSIVE ─────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  .block {
+    padding: 60px var(--edge-space);
+  }
+
+  .social {
+    padding: 48px var(--edge-space);
+  }
+
+  .postulaBtn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .postulaBtn,
+  .submitBtn,
+  .socialLink {
+    transition: none;
+  }
+}
+</file>
+
 <file path="components/home/FloatingCTA.tsx">
 import styles from "./FloatingCTA.module.css";
 
@@ -4042,6 +3740,1605 @@ export function FloatingCTA() {
       </a>
     </div>
   );
+}
+</file>
+
+<file path="components/nosotros/NosotrosPage.tsx">
+"use client";
+
+import { useEffect, useRef } from "react";
+import styles from "./Nosotros.module.css";
+
+function useScrollReveal() {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const targets = el.querySelectorAll<HTMLElement>("[data-reveal]");
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const target = entry.target as HTMLElement;
+          const mode = target.dataset.reveal; // "stay" | "toggle"
+
+          if (entry.isIntersecting) {
+            target.classList.add(styles.revealed);
+            if (mode === "stay") {
+              observer.unobserve(target);
+            }
+          } else {
+            if (mode === "toggle") {
+              target.classList.remove(styles.revealed);
+            }
+          }
+        });
+      },
+      {
+        threshold: 0.15,
+        rootMargin: "0px 0px -60px 0px",
+      },
+    );
+
+    targets.forEach((t) => observer.observe(t));
+
+    return () => observer.disconnect();
+  }, []);
+
+  return ref;
+}
+
+export function NosotrosPage() {
+  const containerRef = useScrollReveal();
+
+  return (
+    <main className={styles.page} ref={containerRef}>
+      {/* ─── HERO TITLE ─────────────────────────────────────────── */}
+      <section className={styles.heroSection}>
+        <div
+          className={`${styles.heroTitle} ${styles.revealUp}`}
+          data-reveal="stay"
+        >
+          <span className={styles.heroTitleLine}>Construyendo estructura</span>
+          <span className={styles.heroTitleLine}>en casa.</span>
+          <span className={`${styles.heroTitleLine} ${styles.heroTitleSoft}`}>
+            Operando con cuidado.
+          </span>
+        </div>
+
+        <div
+          className={`${styles.heroDivider} ${styles.revealScale}`}
+          data-reveal="stay"
+        />
+      </section>
+
+      {/* ─── MANIFIESTO ─────────────────────────────────────────── */}
+      <section className={styles.manifesto}>
+        <p
+          className={`${styles.bodyLarge} ${styles.revealFade}`}
+          data-reveal="toggle"
+        >
+          Decidimos volver a Colombia en un momento en el que la decisión más
+          cómoda era quedarnos afuera.
+        </p>
+
+        <p
+          className={`${styles.body} ${styles.revealFade}`}
+          data-reveal="toggle"
+        >
+          Habíamos migrado, estudiado, homologado títulos, proyectado maestrías
+          y evaluado escenarios con la frialdad de quien entiende que el tiempo
+          y el dinero son recursos finitos. Podríamos haber buscado un camino
+          más predecible, pero elegimos algo distinto:{" "}
+          <mark className={styles.highlight}>construir empresa en casa.</mark>
+        </p>
+
+        <blockquote
+          className={`${styles.pullQuote} ${styles.revealUp}`}
+          data-reveal="stay"
+        >
+          No volvimos por improvisación.
+          <br />
+          Volvimos por decisión.
+        </blockquote>
+
+        <p
+          className={`${styles.body} ${styles.revealFade}`}
+          data-reveal="toggle"
+        >
+          Durante años hemos trabajado en entornos donde el margen de error es
+          mínimo. Coordinando proyectos arquitectónicos de gran escala que
+          exigen precisión milimétrica y toma de decisiones bajo presión.
+          Cuidando pacientes en unidades críticas donde la serenidad no es
+          opcional y cualquier detalle puede cambiar de manera drásticamente el
+          resultado.
+        </p>
+
+        <blockquote
+          className={`${styles.pullQuoteSmall} ${styles.revealUp}`}
+          data-reveal="stay"
+        >
+          Aprendimos algo fundamental: la improvisación siempre termina costando
+          más.
+        </blockquote>
+
+        <p
+          className={`${styles.body} ${styles.revealFade}`}
+          data-reveal="toggle"
+        >
+          En Santa Marta encontramos inmuebles con enorme potencial, pero
+          gestionados sin estándares. Espacios que podrían ser excelentes
+          hospedajes, arruinados por fallas básicas de mantenimiento y limpieza.
+          Experiencias que no fracasan por falta de lujo, sino por falta de
+          rigor.
+        </p>
+
+        <div
+          className={`${styles.insight} ${styles.revealUp}`}
+          data-reveal="stay"
+        >
+          <span className={styles.insightLabel}>El diagnóstico</span>
+          <p className={styles.insightText}>
+            Entendimos que el problema no es el inmueble.
+            <br />
+            Es el sistema que lo opera.
+          </p>
+        </div>
+
+        <div
+          className={`${styles.arkaCallout} ${styles.revealUp}`}
+          data-reveal="stay"
+        >
+          <span className={styles.insightLabel}>La solución</span>
+          <p className={styles.arkaCalloutText}>ARKA nace para resolver eso.</p>
+        </div>
+      </section>
+
+      {/* ─── CREENCIAS ──────────────────────────────────────────── */}
+      <section className={styles.beliefsSection}>
+        {/* No creemos — toggle: desaparecen al salir del viewport */}
+        <ul className={styles.beliefsList}>
+          {[
+            "No creemos en crecer desmedidamente si el proceso no está listo para sostenerlo.",
+            "No creemos en maximizar ingresos sacrificando calidad.",
+            "No creemos en sobreprometer para captar propiedades.",
+          ].map((text, i) => (
+            <li
+              key={i}
+              className={`${styles.beliefItemSlow} ${styles.revealUp}`}
+              data-reveal="toggle"
+              style={{ "--delay": `${i * 220}ms` } as React.CSSProperties}
+            >
+              <span className={styles.beliefCross} aria-hidden="true">
+                ✕
+              </span>
+              <span>{text}</span>
+            </li>
+          ))}
+        </ul>
+
+        {/* Spacer: scroll vacío entre los dos grupos */}
+        <div className={styles.beliefsSpacer} aria-hidden="true" />
+
+        {/* Sí creemos — check ✓, toggle, con separación visual grande */}
+        <ul className={styles.beliefsList}>
+          {[
+            "Creemos en construir un sistema que permita crecer con control.",
+            "Creemos en generar empleo de calidad y profesionalizar un sector que todavía opera en la informalidad.",
+          ].map((text, i) => (
+            <li
+              key={i}
+              className={`${styles.beliefItemSlow} ${styles.revealUp}`}
+              data-reveal="toggle"
+              style={{ "--delay": `${i * 220}ms` } as React.CSSProperties}
+            >
+              <span className={styles.beliefCheck} aria-hidden="true">
+                ✓
+              </span>
+              <span>{text}</span>
+            </li>
+          ))}
+        </ul>
+
+        {/* Recuadro propietario — stay, aparece con los "Creemos" aún visibles */}
+        <div
+          className={`${styles.ownerCallout} ${styles.revealUp}`}
+          data-reveal="stay"
+        >
+          <p className={styles.ownerCalloutText}>
+            Queremos que cada propietario se sienta tranquilo, respaldado por el{" "}
+            <strong>Sistema ARKA</strong> que opera con criterio. No libre de
+            riesgo, pero acompañado por quienes saben lo que hacen.
+          </p>
+        </div>
+      </section>
+
+      {/* ─── VISIÓN ─────────────────────────────────────────────── */}
+      <section className={styles.visionSection}>
+        <div
+          className={`${styles.visionCard} ${styles.revealUp}`}
+          data-reveal="stay"
+        >
+          <p className={styles.visionText}>
+            Hoy empezamos con una estructura pensada para escalar. Nuestra
+            visión es clara: construir un sistema capaz de operar cientos de
+            propiedades con el mismo rigor con el que empezamos la primera.
+          </p>
+          <p className={styles.visionClosure}>
+            Si vamos a hacerlo, lo haremos bien.
+          </p>
+        </div>
+      </section>
+
+      {/* ─── FUNDADORES (sin título, pegados al card café) ───────── */}
+      <section className={styles.foundersSection}>
+        <div className={styles.foundersGrid}>
+          {/* ── Jacobo ── */}
+          <article
+            className={`${styles.founderCard} ${styles.revealUp}`}
+            data-reveal="stay"
+            style={{ "--delay": "0ms" } as React.CSSProperties}
+          >
+            {/* Cabecera: círculo foto (sobresale) + firma a la derecha */}
+            <div className={styles.founderHeader}>
+              {/*
+                FOTO: cuando tengas el archivo, reemplaza founderCirclePlaceholder por:
+                <Image
+                  src="/founders/jacobo.jpg"
+                  alt="Jacobo Cortés Ramos"
+                  fill
+                  className={styles.founderCircleImg}
+                />
+              */}
+              <div className={styles.founderCircle} aria-hidden="true">
+                <span className={styles.founderInitial}>J</span>
+              </div>
+
+              {/*
+                FIRMA: cuando tengas el PNG/SVG, reemplaza founderSignaturePlaceholder por:
+                <Image
+                  src="/founders/firma-jacobo.png"
+                  alt="Firma Jacobo"
+                  width={130} height={44}
+                  className={styles.founderSignature}
+                />
+              */}
+              <div
+                className={styles.founderSignaturePlaceholder}
+                aria-hidden="true"
+              />
+            </div>
+
+            <div className={styles.founderBody}>
+              <h3 className={styles.founderName}>Jacobo Cortés Ramos</h3>
+              <p className={styles.founderRole}>
+                Co-fundador · Operaciones & Crecimiento
+              </p>
+              <p className={styles.founderBio}>
+                Arquitecto de la Universidad de los Andes con más de 10 años de
+                experiencia en el desarrollo y coordinación de proyectos de gran
+                escala que exigen precisión y control. Como viajero empedernido
+                es capaz de ver el potencial de Santa Marta como destino
+                turístico mundial. Su papel en ARKA es liderar la estructura
+                operativa y el crecimiento controlado del sistema.
+              </p>
+            </div>
+          </article>
+
+          {/* ── Brenda ── */}
+          <article
+            className={`${styles.founderCard} ${styles.revealUp}`}
+            data-reveal="stay"
+            style={{ "--delay": "160ms" } as React.CSSProperties}
+          >
+            <div className={styles.founderHeader}>
+              {/*
+                FOTO: mismo patrón que Jacobo.
+                <Image
+                  src="/founders/brenda.jpg"
+                  alt="Brenda Montaño Estrada"
+                  fill
+                  className={styles.founderCircleImg}
+                />
+              */}
+              <div className={styles.founderCircle} aria-hidden="true">
+                <span className={styles.founderInitial}>B</span>
+              </div>
+
+              {/*
+                FIRMA: mismo patrón que Jacobo.
+                <Image
+                  src="/founders/firma-brenda.png"
+                  alt="Firma Brenda"
+                  width={130} height={44}
+                  className={styles.founderSignature}
+                />
+              */}
+              <div
+                className={styles.founderSignaturePlaceholder}
+                aria-hidden="true"
+              />
+            </div>
+
+            <div className={styles.founderBody}>
+              <h3 className={styles.founderName}>Brenda Montaño Estrada</h3>
+              <p className={styles.founderRole}>
+                Co-fundadora · Experiencia & Estándares
+              </p>
+              <p className={styles.founderBio}>
+                Enfermera con maestría en Cuidados Paliativos de la Pontificia
+                Universidad Javeriana y experiencia internacional en hospitales
+                de primer nivel y unidades de atención geriátrica de Alemania.
+                Ha trabajado en entornos de alta exigencia donde el cuidado y el
+                criterio no son negociables. Orgullosamente samaria, con su
+                vocación de cuidado y conexión con la ciudad, lidera en ARKA la
+                experiencia del huésped y los estándares de servicio.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+  );
+}
+</file>
+
+<file path="components/OwnerLoginModal.module.css">
+/* ============================================================
+   OwnerLoginModal.module.css — ARKA Living
+   Modal temporal "Muy pronto"
+   ============================================================ */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10004;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px var(--edge-space);
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(74, 52, 36, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.panel {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 440px;
+  background: var(--arka-white);
+  border-radius: 16px;
+  padding: 48px 40px 44px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── Botón cerrar ───────────────────────────────────────── */
+
+.close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--arka-brown-mid);
+  opacity: 0.7;
+  transition:
+    opacity 160ms ease,
+    background 160ms ease;
+}
+
+.close:hover {
+  opacity: 1;
+  background: rgba(167, 126, 77, 0.1);
+}
+
+.closeIcon {
+  width: 18px;
+  height: 18px;
+  stroke-width: 1.8;
+}
+
+/* ─── Contenido ──────────────────────────────────────────── */
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--arka-brown-mid);
+}
+
+/* Título → Inter */
+.title {
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--arka-brown-dark);
+  margin: 0;
+}
+
+.body {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--arka-text-soft);
+  margin: 0;
+}
+
+/* ─── Badge "Muy pronto" ─────────────────────────────────── */
+
+.badge {
+  display: inline-flex;
+  align-self: flex-start;
+  margin-top: 8px;
+  padding: 6px 16px;
+  background: rgba(167, 126, 77, 0.1);
+  border: 1px solid rgba(167, 126, 77, 0.3);
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--arka-brown-mid);
+}
+
+/* ─── Mobile ─────────────────────────────────────────────── */
+
+@media (max-width: 480px) {
+  .panel {
+    padding: 40px 28px 36px;
+  }
+}
+</file>
+
+<file path="components/OwnerLoginModal.tsx">
+"use client";
+
+import { X } from "lucide-react";
+import styles from "./OwnerLoginModal.module.css";
+
+export function OwnerLoginModal({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
+  if (!open) return null;
+
+  return (
+    <div
+      className={styles.overlay}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Soy propietario"
+    >
+      <div className={styles.backdrop} onClick={onClose} />
+
+      <div className={styles.panel}>
+        <button className={styles.close} onClick={onClose} aria-label="Cerrar">
+          <X className={styles.closeIcon} />
+        </button>
+
+        <div className={styles.content}>
+          <span className={styles.label}>Portal propietarios</span>
+
+          <h2 className={styles.title}>¿Eres propietario?</h2>
+
+          <p className={styles.body}>
+            Estamos construyendo el portal ARKA para que puedas ver en tiempo
+            real el desempeño de tu propiedad: ocupación, ingresos y bloqueos de
+            calendario.
+          </p>
+
+          <p className={styles.body}>
+            Muy pronto estará disponible. Si ya haces parte de ARKA, te
+            notificaremos en cuanto puedas acceder.
+          </p>
+
+          <div className={styles.badge}>Muy pronto</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+</file>
+
+<file path="components/properties/PropertyCard.module.css">
+/* ============================================================
+   PropertyCard.module.css
+   ============================================================ */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  background: var(--arka-white);
+  border: 1px solid rgba(167, 126, 77, 0.18);
+  border-radius: 20px;
+  overflow: hidden;
+  transition:
+    transform 340ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 340ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 48px rgba(74, 52, 36, 0.12);
+}
+
+/* ── Imagen ───────────────────────────────────────────────── */
+
+.imageWrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: rgba(167, 126, 77, 0.08);
+  overflow: hidden;
+}
+
+.image {
+  object-fit: cover;
+  transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.card:hover .image {
+  transform: scale(1.04);
+}
+
+.imageWrapClickable {
+  cursor: zoom-in;
+}
+
+.galleryBadge {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: rgba(30, 20, 12, 0.55);
+  backdrop-filter: blur(6px);
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.03em;
+  pointer-events: none;
+}
+
+.imagePlaceholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    rgba(167, 126, 77, 0.1) 0%,
+    rgba(200, 166, 122, 0.15) 100%
+  );
+}
+
+.placeholderIcon {
+  width: 48px;
+  height: 48px;
+  color: var(--arka-brown-light);
+  opacity: 0.6;
+}
+
+.badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  padding: 4px 12px;
+  background: rgba(253, 252, 249, 0.92);
+  backdrop-filter: blur(8px);
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--arka-brown-mid);
+}
+
+/* ── Cuerpo ───────────────────────────────────────────────── */
+
+.body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 24px 24px 28px;
+  gap: 16px;
+}
+
+.sector {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--arka-brown-mid);
+}
+
+/* Nombre de propiedad → Inter (dato funcional) */
+.name {
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: clamp(20px, 2.4vw, 26px);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--arka-brown-dark);
+  margin: 0;
+}
+
+.description {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--arka-text-soft);
+  margin: 0;
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.metaRow {
+  display: flex;
+  gap: 20px;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--arka-text-soft);
+}
+
+.metaIcon {
+  width: 15px;
+  height: 15px;
+  color: var(--arka-brown-mid);
+  flex-shrink: 0;
+}
+
+.features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.feature {
+  padding: 4px 12px;
+  background: rgba(167, 126, 77, 0.07);
+  border: 1px solid rgba(167, 126, 77, 0.15);
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--arka-brown-dark);
+}
+
+.divider {
+  height: 1px;
+  background: rgba(167, 126, 77, 0.15);
+  margin: 0;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  background: var(--arka-brown-dark);
+  color: var(--arka-white);
+  border-radius: 100px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  align-self: flex-start;
+  transition:
+    background 260ms ease,
+    transform 260ms ease;
+}
+
+.cta:hover {
+  background: var(--arka-brown-mid);
+  transform: translateX(3px);
+}
+
+.ctaIcon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  transition: transform 260ms ease;
+}
+
+.cta:hover .ctaIcon {
+  transform: translateX(3px);
+}
+</file>
+
+<file path="README.md">
+# ARKA Living — Web
+
+Sitio web oficial de **ARKA Living**, gestora de rentas cortas en Colombia (Santa Marta y Bogotá).
+
+Enfoque del proyecto:
+
+- SEO fuerte
+- Performance
+- Seguridad
+- Arquitectura limpia y escalable
+- Preparado para portal de propietarios y pagos
+
+---
+
+## Stack
+
+**Frontend**
+
+- Next.js (App Router)
+- React
+- CSS Modules
+- lucide-react (iconografía)
+
+**Backend (próxima fase)**
+
+- Node.js + NestJS
+- MongoDB Atlas
+- API documentada (Swagger) y versionada
+
+**Infra (sugerida)**
+
+- Vercel (frontend)
+- Cloudflare (DNS + seguridad)
+- Railway/Render (backend)
+- Sentry + Uptime + Analytics (GA4/GTM)
+
+---
+
+## Estructura (referencial)
+
+```
+app/
+  (site)/
+    layout.tsx
+    page.tsx
+
+components/
+  home/
+    Hero.tsx
+    FloatingCTA.tsx
+    FloatingCTA.module.css
+    MenuOverlay.tsx
+    MenuOverlay.module.css
+    Footer.tsx
+    Footer.module.css
+  layout/
+  ui/
+
+public/
+styles/
+```
+
+---
+
+## Sistema de UI
+
+**Tokens de color (ARKA):**
+
+- `--arka-white`
+- `--arka-brown-dark`
+- `--arka-brown-mid`
+- `--arka-brown-light`
+
+**Layout**
+
+- Header sticky (card blur) alineado con `--edge-space`
+- Footer con degradé radial sólido
+- CTA flotante controlado por `data-hero-stage`
+- Estados globales controlados con `data-*` en `<html>`
+
+---
+
+## Funcionalidades actuales (MVP)
+
+- Hero con sistema de _stages_ (scroll/pinned)
+- CTA flotante con estilos modulares + lógica global por stage
+- Menú lateral (overlay) con iconos consistentes
+- Footer estructurado con redes y copy
+- Enlaces externos abren en nueva pestaña con `rel="noopener noreferrer"`
+- Click en **HOME** desde menú resetea el Hero al stage 0 (scroll top + `data-hero-stage="0"`)
+
+---
+
+## Enlaces oficiales
+
+- Instagram: https://instagram.com/arka_living.co
+- WhatsApp: https://wa.me/573158254384
+
+---
+
+## Desarrollo local
+
+```bash
+npm install
+npm run dev
+```
+
+Abrir:
+
+- http://localhost:3000
+
+---
+
+## Flujo Git recomendado
+
+Crear rama de feature:
+
+```bash
+git checkout -b feature/nombre-corto
+```
+
+Merge a `main`:
+
+```bash
+git checkout main
+git pull origin main
+git merge feature/nombre-corto
+git push origin main
+```
+
+---
+
+## Próximos pasos
+
+- Catálogo + páginas por inmueble (SSR/ISR, metadata, OG, JSON-LD)
+- Portal de propietarios (RBAC + autorización por ownerId)
+- Calendario (iCal sync MVP + reglas anti-overbooking)
+- Pagos (payment_intent + webhooks idempotentes)
+
+---
+
+© 2026 — Sitio web creado por **JCR-Code**
+</file>
+
+<file path="app/(site)/nosotros/page.tsx">
+import { NosotrosPage } from "../../../components/nosotros/NosotrosPage";
+
+export const metadata = {
+  title: "Nosotros | ARKA Living",
+  description:
+    "Conoce la historia y el equipo detrás de ARKA Living, gestora de rentas cortas en Santa Marta.",
+};
+
+export default function Page() {
+  return <NosotrosPage />;
+}
+</file>
+
+<file path="app/(site)/postula-tu-propiedad/page.tsx">
+import { PropertyApplicationForm } from "../../../components/forms/PropertyApplicationForm";
+
+export const metadata = {
+  title: "Postula tu propiedad | ARKA Living",
+  description:
+    "Postula tu propiedad en Santa Marta para gestión de rentas cortas. Te contactamos en máximo 48 horas.",
+};
+
+export default function PostulaTuPropiedadPage() {
+  return <PropertyApplicationForm />;
+}
+</file>
+
+<file path="app/api/postula/submit/route.ts">
+import { NextResponse } from "next/server";
+import crypto from "crypto";
+
+function json(message: string, status = 400) {
+  return NextResponse.json({ message }, { status });
+}
+
+function signHmac(data: string, secret: string) {
+  return crypto.createHmac("sha256", secret).update(data).digest("hex");
+}
+
+function sha1(input: string) {
+  return crypto.createHash("sha1").update(input).digest("hex");
+}
+
+function requireEnv(name: string) {
+  const v = process.env[name];
+  if (!v) throw new Error(`Falta ${name} en env.`);
+  return v;
+}
+
+async function fileToBase64DataUri(file: File) {
+  const ab = await file.arrayBuffer();
+  const buf = Buffer.from(ab);
+  const b64 = buf.toString("base64");
+  return `data:${file.type};base64,${b64}`;
+}
+
+function formatPhoneFolder(phoneE164: string) {
+  const s = String(phoneE164 || "").trim();
+  const m = s.match(/^(\+?)(\d{1,4})(\d+)$/);
+  if (!m) return "unknown-phone";
+  const cc = m[2];
+  const rest = m[3];
+  return `${cc}-${rest}`;
+}
+
+async function uploadToCloudinary(
+  file: File,
+  opts: { folder: string; publicId: string; overwrite: boolean },
+) {
+  const cloudName = requireEnv("CLOUDINARY_CLOUD_NAME");
+  const apiKey = requireEnv("CLOUDINARY_API_KEY");
+  const apiSecret = requireEnv("CLOUDINARY_API_SECRET");
+  const timestamp = Math.floor(Date.now() / 1000);
+
+  const paramsToSign = [
+    `folder=${opts.folder}`,
+    `overwrite=${opts.overwrite ? "true" : "false"}`,
+    `public_id=${opts.publicId}`,
+    `timestamp=${timestamp}`,
+  ];
+
+  const signature = sha1(paramsToSign.join("&") + apiSecret);
+  const fileData = await fileToBase64DataUri(file);
+
+  const body = new URLSearchParams();
+  body.set("file", fileData);
+  body.set("api_key", apiKey);
+  body.set("timestamp", String(timestamp));
+  body.set("signature", signature);
+  body.set("folder", opts.folder);
+  body.set("public_id", opts.publicId);
+  body.set("overwrite", opts.overwrite ? "true" : "false");
+
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+    { method: "POST", body },
+  );
+
+  const out = await res.json();
+  if (!res.ok)
+    throw new Error(out?.error?.message || "Cloudinary upload failed");
+
+  return {
+    secure_url: out.secure_url as string,
+    public_id: out.public_id as string,
+  };
+}
+
+export async function POST(req: Request) {
+  try {
+    const secret = process.env.FORM_TOKEN_SECRET;
+    if (!secret) return json("Falta FORM_TOKEN_SECRET en env.", 500);
+
+    const form = await req.formData();
+    const verifiedToken = String(form.get("verifiedToken") || "");
+    const payloadStr = String(form.get("payload") || "");
+    const submissionId = String(form.get("submissionId") || "");
+
+    if (!verifiedToken) return json("Falta verifiedToken.");
+    if (!payloadStr) return json("Falta payload.");
+    if (!submissionId) return json("Falta submissionId.");
+
+    const [b64, sig] = verifiedToken.split(".");
+    if (!b64 || !sig) return json("verifiedToken inválido.");
+
+    const tokenPayloadStr = Buffer.from(b64, "base64url").toString("utf8");
+    if (signHmac(tokenPayloadStr, secret) !== sig)
+      return json("verifiedToken inválido.");
+
+    const tokenPayload = JSON.parse(tokenPayloadStr);
+    if (!tokenPayload.verified) return json("Correo no verificado.");
+    if (Date.now() > tokenPayload.exp)
+      return json("Sesión expirada, valida tu correo de nuevo.");
+
+    const payload = JSON.parse(payloadStr);
+
+    const photos = form.getAll("photos") as File[];
+    const MIN_FILES = 3;
+    const MAX_FILES = 5;
+    const MAX_MB = 5;
+
+    if (!photos?.length || photos.length < MIN_FILES) {
+      return json(`Debes subir al menos ${MIN_FILES} fotos.`);
+    }
+    if (photos.length > MAX_FILES) {
+      return json(`Máximo ${MAX_FILES} fotos.`);
+    }
+
+    for (const f of photos) {
+      if (!f.type?.startsWith("image/")) {
+        return json("Solo se permiten imágenes.");
+      }
+
+      const sizeMb = f.size / (1024 * 1024);
+      if (sizeMb > MAX_MB) {
+        return json(`Cada foto debe pesar máximo ${MAX_MB}MB.`);
+      }
+    }
+
+    const disableIdempotency =
+      process.env.NODE_ENV !== "production" &&
+      process.env.POSTULA_DISABLE_IDEMPOTENCY === "1";
+
+    let photoUrls: string[] = [];
+
+    try {
+      requireEnv("CLOUDINARY_CLOUD_NAME");
+      requireEnv("CLOUDINARY_API_KEY");
+      requireEnv("CLOUDINARY_API_SECRET");
+
+      const baseFolder = process.env.CLOUDINARY_FOLDER || "arka/postula";
+      const phoneE164 = String(payload?.owner?.phone || "");
+      const phoneFolder = formatPhoneFolder(phoneE164);
+
+      const now = new Date();
+      const yyyy = String(now.getFullYear());
+      const mm = String(now.getMonth() + 1).padStart(2, "0");
+
+      const folder = `${baseFolder}/${yyyy}/${mm}/${phoneFolder}`;
+
+      const requestId = disableIdempotency
+        ? crypto.randomBytes(6).toString("hex")
+        : "";
+
+      const uploads = await Promise.all(
+        photos.map((f, idx) =>
+          uploadToCloudinary(f, {
+            folder,
+            publicId: disableIdempotency
+              ? `${submissionId}_${requestId}_photo_${idx + 1}`
+              : `${submissionId}_photo_${idx + 1}`,
+            overwrite: disableIdempotency,
+          }),
+        ),
+      );
+
+      photoUrls = uploads.map((u) => u.secure_url);
+    } catch (e: any) {
+      const msg = String(e?.message || e);
+      console.error("Cloudinary error:", msg);
+
+      if (process.env.NODE_ENV !== "production") {
+        return json(`Cloudinary: ${msg}`, 500);
+      }
+
+      return json(
+        "No se pudieron subir las fotos. Intenta de nuevo en unos minutos.",
+        500,
+      );
+    }
+
+    const resendKey = process.env.RESEND_API_KEY;
+    const from = process.env.RESEND_FROM;
+    const internalTo = process.env.POSTULA_INTERNAL_TO;
+    const ownerTo = payload?.owner?.email;
+
+    const p = payload.property;
+
+    const summary = `
+ARKA - Nueva postulación recibida
+ID de postulación: ${submissionId}
+
+PROPIETARIO
+Nombre: ${payload.owner.fullName}
+Correo: ${payload.owner.email}
+Celular: ${payload.owner.phone}
+
+UBICACIÓN
+Ciudad: ${p.city}
+// TODO (multi-ciudad): Localidad Bogotá: ${p.bogotaLocalidad || "N/A"}
+Sector SM: ${p.sectorGroup || "N/A"}
+Subsector SM: ${p.sectorSub || "N/A"}
+Descripción libre: ${p.sectorFreeText || "N/A"}
+
+TIPO
+Tipo: ${p.type}
+Habitaciones: ${p.rooms ?? "N/A"}
+Baños: ${p.baths ?? "N/A"}
+Otro tipo: ${p.otherTypeText || "N/A"}
+
+CONDICIONES
+Amoblada: ${p.furnished}
+PH: ${p.isHOA}
+Permite STR: ${p.hoaAllowsSTR || "N/A"}
+
+OPERACIÓN
+Estado: ${payload.ops.currentStatus}
+Inicio: ${payload.ops.startWhen}
+
+EXPECTATIVA
+${payload.expectation.goal}
+
+FOTOS (Cloudinary)
+${photoUrls.map((u, i) => `${i + 1}) ${u}`).join("\n")}
+`;
+
+    if (resendKey && from && internalTo) {
+      await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${resendKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from,
+          to: internalTo,
+          subject: "Nueva postulación de propiedad - ARKA",
+          text: summary,
+        }),
+      });
+    } else {
+      console.log("[DEV] Nueva postulación:", summary);
+    }
+
+    if (resendKey && from && ownerTo) {
+      await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${resendKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from,
+          to: ownerTo,
+          subject: "Recibimos tu postulación - ARKA Living",
+          html: `<p>¡Gracias por postular tu propiedad!</p>
+                 <p>Revisaremos tu información y te contactaremos en un plazo máximo de <strong>48 horas</strong>.</p>
+                 <p>ARKA Living</p>`,
+        }),
+      });
+    }
+
+    return NextResponse.json({ ok: true, submissionId, photoUrls });
+  } catch (e: any) {
+    const msg = String(e?.message || e);
+    console.error("POST /api/postula/submit fatal:", msg);
+    return json("Error interno procesando la postulación.", 500);
+  }
+}
+</file>
+
+<file path="components/forms/PropertyApplicationForm.css">
+/* PropertyApplicationForm.css */
+/* =====================================================
+   FULL HEIGHT FORM (evita que el Footer aparezca sin scroll)
+===================================================== */
+
+.arkaFormPage {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--arka-white);
+}
+
+.arkaForm {
+  flex: 1;
+}
+
+/* ✅ FIX MOVIL (overflow-x) se movió a globals.css */
+
+/* 2) Box sizing global local al form */
+.arkaForm,
+.arkaForm * {
+  box-sizing: border-box;
+}
+
+.arkaForm {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.arkaFormInner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* ✅ Intro spacing (req #1) */
+.formIntro {
+  margin-bottom: 22px;
+}
+
+.formTitle {
+  color: var(--arka-brown-dark);
+  margin: 0 0 8px;
+}
+
+.formSubtitle {
+  color: var(--arka-text-soft);
+  margin: 0;
+}
+
+.formSectionTitle {
+  font-size: large;
+  font-weight: 600;
+  margin: 26px 0 10px;
+  color: var(--arka-brown-dark);
+}
+
+.arkaForm label {
+  display: block;
+  margin: 14px 0 6px;
+  color: var(--arka-brown-dark);
+  font-weight: 600;
+}
+
+.arkaForm input,
+.arkaForm select,
+.arkaForm textarea {
+  width: 100%;
+  max-width: 100%;
+  padding: 12px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(74, 52, 36, 0.25);
+  background: var(--arka-white);
+  color: var(--arka-brown-dark);
+  outline: none;
+}
+
+.arkaForm textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.arkaFormActions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.arkaForm button {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(74, 52, 36, 0.25);
+  background: var(--arka-white);
+  color: var(--arka-brown-dark);
+  cursor: pointer;
+  font-weight: 700;
+  transition:
+    transform 120ms ease,
+    opacity 120ms ease;
+}
+
+.arkaForm button:hover {
+  transform: translateY(-1px);
+}
+
+.arkaForm button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Teléfono: select + input en grid */
+.phoneRow {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 10px;
+}
+
+@media (max-width: 520px) {
+  .phoneRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Fotos: previews */
+.photoHelp {
+  color: var(--arka-text-soft);
+}
+
+.photoGrid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+@media (max-width: 520px) {
+  .photoGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.photoCard {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(74, 52, 36, 0.2);
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.photoImg {
+  display: block;
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
+}
+
+.photoRemove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+
+  border: 1px solid rgba(74, 52, 36, 0.25);
+  background: rgba(253, 252, 249, 0.95);
+  cursor: pointer;
+
+  /* no dependemos del glifo */
+  padding: 0;
+  margin: 0;
+
+  display: grid;
+  place-items: center;
+
+  /* ocultar el “×” del HTML sin romper accesibilidad */
+  color: transparent;
+  font-size: 0;
+  line-height: 0;
+}
+
+.photoRemove::before,
+.photoRemove::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 2px;
+  background: var(--arka-brown-dark);
+  border-radius: 999px;
+  left: 50%;
+  top: 50%;
+  transform-origin: center;
+}
+
+.photoRemove::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.photoRemove::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* Success modal */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10050;
+  background: rgba(0, 0, 0, 0.55);
+
+  display: grid;
+  place-items: center;
+  padding: 18px;
+}
+
+.modalCard {
+  width: min(520px, 92vw);
+  background: var(--arka-white);
+  border-radius: 18px;
+  border: 1px solid rgba(74, 52, 36, 0.18);
+  box-shadow: 0 18px 70px rgba(0, 0, 0, 0.25);
+  padding: 18px 18px 16px;
+  position: relative;
+}
+
+.modalTitle {
+  margin: 0 0 8px;
+  color: var(--arka-brown-dark);
+}
+
+.modalText {
+  margin: 0;
+  color: var(--arka-text-soft);
+  line-height: 1.45;
+}
+
+.modalClose {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+
+  border: 1px solid rgba(74, 52, 36, 0.25);
+  background: rgba(253, 252, 249, 0.95);
+  cursor: pointer;
+
+  padding: 0;
+  margin: 0;
+
+  display: grid;
+  place-items: center;
+
+  color: transparent;
+  font-size: 0;
+  line-height: 0;
+}
+
+.modalClose::before,
+.modalClose::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 2px;
+  background: var(--arka-brown-dark);
+  border-radius: 999px;
+  left: 50%;
+  top: 50%;
+  transform-origin: center;
+}
+
+.modalClose::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.modalClose::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.errorText {
+  margin-top: 8px;
+  color: #b3261e;
+  font-weight: 600;
+}
+
+.helpText {
+  margin-top: 6px;
+  color: var(--arka-text-soft);
+  font-size: 13px;
+}
+</file>
+
+<file path="components/home/FloatingCTA.module.css">
+.wrap {
+  position: fixed;
+
+  /* ✅ posición controlada por variables (stage manda) */
+  left: var(--cta-left, auto);
+  right: var(--cta-right, var(--edge-space));
+  bottom: var(--cta-bottom, var(--edge-space));
+  transform: var(--cta-transform, none);
+
+  z-index: 10001;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition:
+    transform 220ms ease,
+    opacity 220ms ease,
+    filter 220ms ease;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: var(--cta-pad-y, 12px) var(--cta-pad-x, 14px);
+  border-radius: 999px;
+
+  background: var(--arka-white);
+  color: var(--arka-brown-dark);
+
+  border: 1px solid var(--arka-brown-light);
+
+  font-weight: 600;
+  line-height: 1;
+  font-size: var(--cta-font, 14px);
+
+  box-shadow: 0 8px 20px rgba(74, 52, 36, 0.15);
+
+  text-decoration: none;
+
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 26px rgba(74, 52, 36, 0.22);
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon svg,
+.icon img {
+  width: 1em;
+  height: 1em;
+  display: block;
+}
+
+.label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+@keyframes ctaPulseBg {
+  0% {
+    background: rgba(255, 255, 255, 0.55);
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
+  }
+  50% {
+    background: rgba(255, 255, 255, 0.85);
+    border-color: rgba(0, 0, 0, 0.16);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+  }
+  100% {
+    background: rgba(255, 255, 255, 0.55);
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
+  }
+}
+
+/* ✅ Resalta que es clickable sin cambiar tamaño */
+.btn {
+  animation: ctaPulseBg 1.8s ease-in-out infinite;
+}
+
+/* Accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    animation: none;
+  }
+}
+
+/* Ocultar CTA flotante en stage 9 */
+html[data-hero-stage="7"] .wrap {
+  opacity: 0;
+  pointer-events: none;
 }
 </file>
 
@@ -4521,1249 +5818,6 @@ export function FloatingCTA() {
 }
 </file>
 
-<file path="components/nosotros/NosotrosPage.tsx">
-"use client";
-
-import { useEffect, useRef } from "react";
-import styles from "./Nosotros.module.css";
-
-function useScrollReveal() {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    const targets = el.querySelectorAll<HTMLElement>("[data-reveal]");
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const target = entry.target as HTMLElement;
-          const mode = target.dataset.reveal; // "stay" | "toggle"
-
-          if (entry.isIntersecting) {
-            target.classList.add(styles.revealed);
-            if (mode === "stay") {
-              observer.unobserve(target);
-            }
-          } else {
-            if (mode === "toggle") {
-              target.classList.remove(styles.revealed);
-            }
-          }
-        });
-      },
-      {
-        threshold: 0.15,
-        rootMargin: "0px 0px -60px 0px",
-      },
-    );
-
-    targets.forEach((t) => observer.observe(t));
-
-    return () => observer.disconnect();
-  }, []);
-
-  return ref;
-}
-
-export function NosotrosPage() {
-  const containerRef = useScrollReveal();
-
-  return (
-    <main className={styles.page} ref={containerRef}>
-      {/* ─── HERO TITLE ─────────────────────────────────────────── */}
-      <section className={styles.heroSection}>
-        <div
-          className={`${styles.heroTitle} ${styles.revealUp}`}
-          data-reveal="stay"
-        >
-          <span className={styles.heroTitleLine}>Construyendo estructura</span>
-          <span className={styles.heroTitleLine}>en casa.</span>
-          <span className={`${styles.heroTitleLine} ${styles.heroTitleSoft}`}>
-            Operando con cuidado.
-          </span>
-        </div>
-
-        <div
-          className={`${styles.heroDivider} ${styles.revealScale}`}
-          data-reveal="stay"
-        />
-      </section>
-
-      {/* ─── MANIFIESTO ─────────────────────────────────────────── */}
-      <section className={styles.manifesto}>
-        <p
-          className={`${styles.bodyLarge} ${styles.revealFade}`}
-          data-reveal="toggle"
-        >
-          Decidimos volver a Colombia en un momento en el que la decisión más
-          cómoda era quedarnos afuera.
-        </p>
-
-        <p
-          className={`${styles.body} ${styles.revealFade}`}
-          data-reveal="toggle"
-        >
-          Habíamos migrado, estudiado, homologado títulos, proyectado maestrías
-          y evaluado escenarios con la frialdad de quien entiende que el tiempo
-          y el dinero son recursos finitos. Podríamos haber buscado un camino
-          más predecible, pero elegimos algo distinto:{" "}
-          <mark className={styles.highlight}>construir empresa en casa.</mark>
-        </p>
-
-        <blockquote
-          className={`${styles.pullQuote} ${styles.revealUp}`}
-          data-reveal="stay"
-        >
-          No volvimos por improvisación.
-          <br />
-          Volvimos por decisión.
-        </blockquote>
-
-        <p
-          className={`${styles.body} ${styles.revealFade}`}
-          data-reveal="toggle"
-        >
-          Durante años hemos trabajado en entornos donde el margen de error es
-          mínimo. Coordinando proyectos arquitectónicos de gran escala que
-          exigen precisión milimétrica y toma de decisiones bajo presión.
-          Cuidando pacientes en unidades críticas donde la serenidad no es
-          opcional y cualquier detalle puede cambiar de manera drásticamente el
-          resultado.
-        </p>
-
-        <blockquote
-          className={`${styles.pullQuoteSmall} ${styles.revealUp}`}
-          data-reveal="stay"
-        >
-          Aprendimos algo fundamental: la improvisación siempre termina costando
-          más.
-        </blockquote>
-
-        <p
-          className={`${styles.body} ${styles.revealFade}`}
-          data-reveal="toggle"
-        >
-          En Santa Marta encontramos inmuebles con enorme potencial, pero
-          gestionados sin estándares. Espacios que podrían ser excelentes
-          hospedajes, arruinados por fallas básicas de mantenimiento y limpieza.
-          Experiencias que no fracasan por falta de lujo, sino por falta de
-          rigor.
-        </p>
-
-        <div
-          className={`${styles.insight} ${styles.revealUp}`}
-          data-reveal="stay"
-        >
-          <span className={styles.insightLabel}>El diagnóstico</span>
-          <p className={styles.insightText}>
-            Entendimos que el problema no es el inmueble.
-            <br />
-            Es el sistema que lo opera.
-          </p>
-        </div>
-
-        <div
-          className={`${styles.arkaCallout} ${styles.revealUp}`}
-          data-reveal="stay"
-        >
-          <span className={styles.insightLabel}>La solución</span>
-          <p className={styles.arkaCalloutText}>ARKA nace para resolver eso.</p>
-        </div>
-      </section>
-
-      {/* ─── CREENCIAS ──────────────────────────────────────────── */}
-      <section className={styles.beliefsSection}>
-        {/* No creemos — toggle: desaparecen al salir del viewport */}
-        <ul className={styles.beliefsList}>
-          {[
-            "No creemos en crecer desmedidamente si el proceso no está listo para sostenerlo.",
-            "No creemos en maximizar ingresos sacrificando calidad.",
-            "No creemos en sobreprometer para captar propiedades.",
-          ].map((text, i) => (
-            <li
-              key={i}
-              className={`${styles.beliefItemSlow} ${styles.revealUp}`}
-              data-reveal="toggle"
-              style={{ "--delay": `${i * 220}ms` } as React.CSSProperties}
-            >
-              <span className={styles.beliefCross} aria-hidden="true">
-                ✕
-              </span>
-              <span>{text}</span>
-            </li>
-          ))}
-        </ul>
-
-        {/* Spacer: scroll vacío entre los dos grupos */}
-        <div className={styles.beliefsSpacer} aria-hidden="true" />
-
-        {/* Sí creemos — check ✓, toggle, con separación visual grande */}
-        <ul className={styles.beliefsList}>
-          {[
-            "Creemos en construir un sistema que permita crecer con control.",
-            "Creemos en generar empleo de calidad y profesionalizar un sector que todavía opera en la informalidad.",
-          ].map((text, i) => (
-            <li
-              key={i}
-              className={`${styles.beliefItemSlow} ${styles.revealUp}`}
-              data-reveal="toggle"
-              style={{ "--delay": `${i * 220}ms` } as React.CSSProperties}
-            >
-              <span className={styles.beliefCheck} aria-hidden="true">
-                ✓
-              </span>
-              <span>{text}</span>
-            </li>
-          ))}
-        </ul>
-
-        {/* Recuadro propietario — stay, aparece con los "Creemos" aún visibles */}
-        <div
-          className={`${styles.ownerCallout} ${styles.revealUp}`}
-          data-reveal="stay"
-        >
-          <p className={styles.ownerCalloutText}>
-            Queremos que cada propietario se sienta tranquilo, respaldado por el{" "}
-            <strong>Sistema ARKA</strong> que opera con criterio. No libre de
-            riesgo, pero acompañado por quienes saben lo que hacen.
-          </p>
-        </div>
-      </section>
-
-      {/* ─── VISIÓN ─────────────────────────────────────────────── */}
-      <section className={styles.visionSection}>
-        <div
-          className={`${styles.visionCard} ${styles.revealUp}`}
-          data-reveal="stay"
-        >
-          <p className={styles.visionText}>
-            Hoy empezamos con una estructura pensada para escalar. Nuestra
-            visión es clara: construir un sistema capaz de operar cientos de
-            propiedades con el mismo rigor con el que empezamos la primera.
-          </p>
-          <p className={styles.visionClosure}>
-            Si vamos a hacerlo, lo haremos bien.
-          </p>
-        </div>
-      </section>
-
-      {/* ─── FUNDADORES (sin título, pegados al card café) ───────── */}
-      <section className={styles.foundersSection}>
-        <div className={styles.foundersGrid}>
-          {/* ── Jacobo ── */}
-          <article
-            className={`${styles.founderCard} ${styles.revealUp}`}
-            data-reveal="stay"
-            style={{ "--delay": "0ms" } as React.CSSProperties}
-          >
-            {/* Cabecera: círculo foto (sobresale) + firma a la derecha */}
-            <div className={styles.founderHeader}>
-              {/*
-                FOTO: cuando tengas el archivo, reemplaza founderCirclePlaceholder por:
-                <Image
-                  src="/founders/jacobo.jpg"
-                  alt="Jacobo Cortés Ramos"
-                  fill
-                  className={styles.founderCircleImg}
-                />
-              */}
-              <div className={styles.founderCircle} aria-hidden="true">
-                <span className={styles.founderInitial}>J</span>
-              </div>
-
-              {/*
-                FIRMA: cuando tengas el PNG/SVG, reemplaza founderSignaturePlaceholder por:
-                <Image
-                  src="/founders/firma-jacobo.png"
-                  alt="Firma Jacobo"
-                  width={130} height={44}
-                  className={styles.founderSignature}
-                />
-              */}
-              <div
-                className={styles.founderSignaturePlaceholder}
-                aria-hidden="true"
-              />
-            </div>
-
-            <div className={styles.founderBody}>
-              <h3 className={styles.founderName}>Jacobo Cortés Ramos</h3>
-              <p className={styles.founderRole}>
-                Co-fundador · Operaciones & Crecimiento
-              </p>
-              <p className={styles.founderBio}>
-                Arquitecto de la Universidad de los Andes con más de 10 años de
-                experiencia en el desarrollo y coordinación de proyectos de gran
-                escala que exigen precisión y control. Como viajero empedernido
-                es capaz de ver el potencial de Santa Marta como destino
-                turístico mundial. Su papel en ARKA es liderar la estructura
-                operativa y el crecimiento controlado del sistema.
-              </p>
-            </div>
-          </article>
-
-          {/* ── Brenda ── */}
-          <article
-            className={`${styles.founderCard} ${styles.revealUp}`}
-            data-reveal="stay"
-            style={{ "--delay": "160ms" } as React.CSSProperties}
-          >
-            <div className={styles.founderHeader}>
-              {/*
-                FOTO: mismo patrón que Jacobo.
-                <Image
-                  src="/founders/brenda.jpg"
-                  alt="Brenda Montaño Estrada"
-                  fill
-                  className={styles.founderCircleImg}
-                />
-              */}
-              <div className={styles.founderCircle} aria-hidden="true">
-                <span className={styles.founderInitial}>B</span>
-              </div>
-
-              {/*
-                FIRMA: mismo patrón que Jacobo.
-                <Image
-                  src="/founders/firma-brenda.png"
-                  alt="Firma Brenda"
-                  width={130} height={44}
-                  className={styles.founderSignature}
-                />
-              */}
-              <div
-                className={styles.founderSignaturePlaceholder}
-                aria-hidden="true"
-              />
-            </div>
-
-            <div className={styles.founderBody}>
-              <h3 className={styles.founderName}>Brenda Montaño Estrada</h3>
-              <p className={styles.founderRole}>
-                Co-fundadora · Experiencia & Estándares
-              </p>
-              <p className={styles.founderBio}>
-                Enfermera con maestría en Cuidados Paliativos de la Pontificia
-                Universidad Javeriana y experiencia internacional en hospitales
-                de primer nivel y unidades de atención geriátrica de Alemania.
-                Ha trabajado en entornos de alta exigencia donde el cuidado y el
-                criterio no son negociables. Orgullosamente samaria, con su
-                vocación de cuidado y conexión con la ciudad, lidera en ARKA la
-                experiencia del huésped y los estándares de servicio.
-              </p>
-            </div>
-          </article>
-        </div>
-      </section>
-    </main>
-  );
-}
-</file>
-
-<file path="components/OwnerLoginModal.tsx">
-"use client";
-
-import { X } from "lucide-react";
-import styles from "./OwnerLoginModal.module.css";
-
-export function OwnerLoginModal({
-  open,
-  onClose,
-}: {
-  open: boolean;
-  onClose: () => void;
-}) {
-  if (!open) return null;
-
-  return (
-    <div
-      className={styles.overlay}
-      role="dialog"
-      aria-modal="true"
-      aria-label="Soy propietario"
-    >
-      <div className={styles.backdrop} onClick={onClose} />
-
-      <div className={styles.panel}>
-        <button className={styles.close} onClick={onClose} aria-label="Cerrar">
-          <X className={styles.closeIcon} />
-        </button>
-
-        <div className={styles.content}>
-          <span className={styles.label}>Portal propietarios</span>
-
-          <h2 className={styles.title}>¿Eres propietario?</h2>
-
-          <p className={styles.body}>
-            Estamos construyendo el portal ARKA para que puedas ver en tiempo
-            real el desempeño de tu propiedad: ocupación, ingresos y bloqueos de
-            calendario.
-          </p>
-
-          <p className={styles.body}>
-            Muy pronto estará disponible. Si ya haces parte de ARKA, te
-            notificaremos en cuanto puedas acceder.
-          </p>
-
-          <div className={styles.badge}>Muy pronto</div>
-        </div>
-      </div>
-    </div>
-  );
-}
-</file>
-
-<file path="README.md">
-# ARKA Living — Web
-
-Sitio web oficial de **ARKA Living**, gestora de rentas cortas en Colombia (Santa Marta y Bogotá).
-
-Enfoque del proyecto:
-
-- SEO fuerte
-- Performance
-- Seguridad
-- Arquitectura limpia y escalable
-- Preparado para portal de propietarios y pagos
-
----
-
-## Stack
-
-**Frontend**
-
-- Next.js (App Router)
-- React
-- CSS Modules
-- lucide-react (iconografía)
-
-**Backend (próxima fase)**
-
-- Node.js + NestJS
-- MongoDB Atlas
-- API documentada (Swagger) y versionada
-
-**Infra (sugerida)**
-
-- Vercel (frontend)
-- Cloudflare (DNS + seguridad)
-- Railway/Render (backend)
-- Sentry + Uptime + Analytics (GA4/GTM)
-
----
-
-## Estructura (referencial)
-
-```
-app/
-  (site)/
-    layout.tsx
-    page.tsx
-
-components/
-  home/
-    Hero.tsx
-    FloatingCTA.tsx
-    FloatingCTA.module.css
-    MenuOverlay.tsx
-    MenuOverlay.module.css
-    Footer.tsx
-    Footer.module.css
-  layout/
-  ui/
-
-public/
-styles/
-```
-
----
-
-## Sistema de UI
-
-**Tokens de color (ARKA):**
-
-- `--arka-white`
-- `--arka-brown-dark`
-- `--arka-brown-mid`
-- `--arka-brown-light`
-
-**Layout**
-
-- Header sticky (card blur) alineado con `--edge-space`
-- Footer con degradé radial sólido
-- CTA flotante controlado por `data-hero-stage`
-- Estados globales controlados con `data-*` en `<html>`
-
----
-
-## Funcionalidades actuales (MVP)
-
-- Hero con sistema de _stages_ (scroll/pinned)
-- CTA flotante con estilos modulares + lógica global por stage
-- Menú lateral (overlay) con iconos consistentes
-- Footer estructurado con redes y copy
-- Enlaces externos abren en nueva pestaña con `rel="noopener noreferrer"`
-- Click en **HOME** desde menú resetea el Hero al stage 0 (scroll top + `data-hero-stage="0"`)
-
----
-
-## Enlaces oficiales
-
-- Instagram: https://instagram.com/arka_living.co
-- WhatsApp: https://wa.me/573158254384
-
----
-
-## Desarrollo local
-
-```bash
-npm install
-npm run dev
-```
-
-Abrir:
-
-- http://localhost:3000
-
----
-
-## Flujo Git recomendado
-
-Crear rama de feature:
-
-```bash
-git checkout -b feature/nombre-corto
-```
-
-Merge a `main`:
-
-```bash
-git checkout main
-git pull origin main
-git merge feature/nombre-corto
-git push origin main
-```
-
----
-
-## Próximos pasos
-
-- Catálogo + páginas por inmueble (SSR/ISR, metadata, OG, JSON-LD)
-- Portal de propietarios (RBAC + autorización por ownerId)
-- Calendario (iCal sync MVP + reglas anti-overbooking)
-- Pagos (payment_intent + webhooks idempotentes)
-
----
-
-© 2026 — Sitio web creado por **JCR-Code**
-</file>
-
-<file path="app/(site)/nosotros/page.tsx">
-import { NosotrosPage } from "../../../components/nosotros/NosotrosPage";
-
-export const metadata = {
-  title: "Nosotros | ARKA Living",
-  description:
-    "Conoce la historia y el equipo detrás de ARKA Living, gestora de rentas cortas en Santa Marta.",
-};
-
-export default function Page() {
-  return <NosotrosPage />;
-}
-</file>
-
-<file path="app/(site)/postula-tu-propiedad/page.tsx">
-import { PropertyApplicationForm } from "../../../components/forms/PropertyApplicationForm";
-
-export const metadata = {
-  title: "Postula tu propiedad | ARKA Living",
-  description:
-    "Postula tu propiedad en Santa Marta para gestión de rentas cortas. Te contactamos en máximo 48 horas.",
-};
-
-export default function PostulaTuPropiedadPage() {
-  return <PropertyApplicationForm />;
-}
-</file>
-
-<file path="app/api/postula/submit/route.ts">
-import { NextResponse } from "next/server";
-import crypto from "crypto";
-
-function json(message: string, status = 400) {
-  return NextResponse.json({ message }, { status });
-}
-
-function signHmac(data: string, secret: string) {
-  return crypto.createHmac("sha256", secret).update(data).digest("hex");
-}
-
-function sha1(input: string) {
-  return crypto.createHash("sha1").update(input).digest("hex");
-}
-
-function requireEnv(name: string) {
-  const v = process.env[name];
-  if (!v) throw new Error(`Falta ${name} en env.`);
-  return v;
-}
-
-async function fileToBase64DataUri(file: File) {
-  const ab = await file.arrayBuffer();
-  const buf = Buffer.from(ab);
-  const b64 = buf.toString("base64");
-  return `data:${file.type};base64,${b64}`;
-}
-
-function formatPhoneFolder(phoneE164: string) {
-  const s = String(phoneE164 || "").trim();
-  const m = s.match(/^(\+?)(\d{1,4})(\d+)$/);
-  if (!m) return "unknown-phone";
-  const cc = m[2];
-  const rest = m[3];
-  return `${cc}-${rest}`;
-}
-
-async function uploadToCloudinary(
-  file: File,
-  opts: { folder: string; publicId: string; overwrite: boolean },
-) {
-  const cloudName = requireEnv("CLOUDINARY_CLOUD_NAME");
-  const apiKey = requireEnv("CLOUDINARY_API_KEY");
-  const apiSecret = requireEnv("CLOUDINARY_API_SECRET");
-  const timestamp = Math.floor(Date.now() / 1000);
-
-  const paramsToSign = [
-    `folder=${opts.folder}`,
-    `overwrite=${opts.overwrite ? "true" : "false"}`,
-    `public_id=${opts.publicId}`,
-    `timestamp=${timestamp}`,
-  ];
-
-  const signature = sha1(paramsToSign.join("&") + apiSecret);
-  const fileData = await fileToBase64DataUri(file);
-
-  const body = new URLSearchParams();
-  body.set("file", fileData);
-  body.set("api_key", apiKey);
-  body.set("timestamp", String(timestamp));
-  body.set("signature", signature);
-  body.set("folder", opts.folder);
-  body.set("public_id", opts.publicId);
-  body.set("overwrite", opts.overwrite ? "true" : "false");
-
-  const res = await fetch(
-    `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-    { method: "POST", body },
-  );
-
-  const out = await res.json();
-  if (!res.ok)
-    throw new Error(out?.error?.message || "Cloudinary upload failed");
-
-  return {
-    secure_url: out.secure_url as string,
-    public_id: out.public_id as string,
-  };
-}
-
-export async function POST(req: Request) {
-  const secret = process.env.FORM_TOKEN_SECRET;
-  if (!secret) return json("Falta FORM_TOKEN_SECRET en env.", 500);
-
-  const form = await req.formData();
-  const verifiedToken = String(form.get("verifiedToken") || "");
-  const payloadStr = String(form.get("payload") || "");
-  const submissionId = String(form.get("submissionId") || "");
-
-  if (!verifiedToken) return json("Falta verifiedToken.");
-  if (!payloadStr) return json("Falta payload.");
-  if (!submissionId) return json("Falta submissionId.");
-
-  // 1) Verificar token
-  const [b64, sig] = verifiedToken.split(".");
-  if (!b64 || !sig) return json("verifiedToken inválido.");
-
-  const tokenPayloadStr = Buffer.from(b64, "base64url").toString("utf8");
-  if (signHmac(tokenPayloadStr, secret) !== sig)
-    return json("verifiedToken inválido.");
-
-  const tokenPayload = JSON.parse(tokenPayloadStr);
-  if (!tokenPayload.verified) return json("Correo no verificado.");
-  if (Date.now() > tokenPayload.exp)
-    return json("Sesión expirada, valida tu correo de nuevo.");
-
-  const payload = JSON.parse(payloadStr);
-
-  // 2) Validar fotos (min 2 / max 5)
-  const photos = form.getAll("photos") as File[];
-  const MIN_FILES = 2;
-  const MAX_FILES = 5;
-  const MAX_MB = 10;
-
-  if (!photos?.length || photos.length < MIN_FILES) {
-    return json(`Debes subir al menos ${MIN_FILES} fotos.`);
-  }
-  if (photos.length > MAX_FILES) {
-    return json(`Máximo ${MAX_FILES} fotos.`);
-  }
-
-  for (const f of photos) {
-    if (!f.type?.startsWith("image/"))
-      return json("Solo se permiten imágenes.");
-    const sizeMb = f.size / (1024 * 1024);
-    if (sizeMb > MAX_MB)
-      return json(`Cada foto debe pesar máximo ${MAX_MB}MB.`);
-  }
-
-  const disableIdempotency =
-    process.env.NODE_ENV !== "production" &&
-    process.env.POSTULA_DISABLE_IDEMPOTENCY === "1";
-
-  // 3) Upload Cloudinary
-  let photoUrls: string[] = [];
-  try {
-    requireEnv("CLOUDINARY_CLOUD_NAME");
-    requireEnv("CLOUDINARY_API_KEY");
-    requireEnv("CLOUDINARY_API_SECRET");
-
-    const baseFolder = process.env.CLOUDINARY_FOLDER || "arka/postula";
-    const phoneE164 = String(payload?.owner?.phone || "");
-    const phoneFolder = formatPhoneFolder(phoneE164);
-
-    const now = new Date();
-    const yyyy = String(now.getFullYear());
-    const mm = String(now.getMonth() + 1).padStart(2, "0");
-
-    const folder = `${baseFolder}/${yyyy}/${mm}/${phoneFolder}`;
-
-    const requestId = disableIdempotency
-      ? crypto.randomBytes(6).toString("hex")
-      : "";
-
-    const uploads = await Promise.all(
-      photos.map((f, idx) =>
-        uploadToCloudinary(f, {
-          folder,
-          publicId: disableIdempotency
-            ? `${submissionId}_${requestId}_photo_${idx + 1}`
-            : `${submissionId}_photo_${idx + 1}`,
-          overwrite: disableIdempotency ? true : false,
-        }),
-      ),
-    );
-
-    photoUrls = uploads.map((u) => u.secure_url);
-  } catch (e: any) {
-    const msg = String(e?.message || e);
-    console.error("Cloudinary error:", msg);
-
-    if (process.env.NODE_ENV !== "production") {
-      return json(`Cloudinary: ${msg}`, 500);
-    }
-
-    return json(
-      "No se pudieron subir las fotos. Intenta de nuevo en unos minutos.",
-      500,
-    );
-  }
-
-  // 4) Emails vía Resend
-  const resendKey = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM;
-  const internalTo = process.env.POSTULA_INTERNAL_TO;
-  const ownerTo = payload?.owner?.email;
-
-  const p = payload.property;
-
-  const summary = `
-ARKA - Nueva postulación recibida
-ID de postulación: ${submissionId}
-
-PROPIETARIO
-Nombre: ${payload.owner.fullName}
-Correo: ${payload.owner.email}
-Celular: ${payload.owner.phone}
-
-UBICACIÓN
-Ciudad: ${p.city}
-// TODO (multi-ciudad): Localidad Bogotá: ${p.bogotaLocalidad || "N/A"}
-Sector SM: ${p.sectorGroup || "N/A"}
-Subsector SM: ${p.sectorSub || "N/A"}
-Descripción libre: ${p.sectorFreeText || "N/A"}
-
-TIPO
-Tipo: ${p.type}
-Habitaciones: ${p.rooms ?? "N/A"}
-Baños: ${p.baths ?? "N/A"}
-Otro tipo: ${p.otherTypeText || "N/A"}
-
-CONDICIONES
-Amoblada: ${p.furnished}
-PH: ${p.isHOA}
-Permite STR: ${p.hoaAllowsSTR || "N/A"}
-
-OPERACIÓN
-Estado: ${payload.ops.currentStatus}
-Inicio: ${payload.ops.startWhen}
-
-EXPECTATIVA
-${payload.expectation.goal}
-
-FOTOS (Cloudinary)
-${photoUrls.map((u, i) => `${i + 1}) ${u}`).join("\n")}
-`;
-
-  if (resendKey && from && internalTo) {
-    await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${resendKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from,
-        to: internalTo,
-        subject: "Nueva postulación de propiedad - ARKA",
-        text: summary,
-      }),
-    });
-  } else {
-    console.log("[DEV] Nueva postulación:", summary);
-  }
-
-  if (resendKey && from && ownerTo) {
-    await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${resendKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from,
-        to: ownerTo,
-        subject: "Recibimos tu postulación - ARKA Living",
-        html: `<p>¡Gracias por postular tu propiedad!</p>
-               <p>Revisaremos tu información y te contactaremos en un plazo máximo de <strong>48 horas</strong>.</p>
-               <p>ARKA Living</p>`,
-      }),
-    });
-  }
-
-  return NextResponse.json({ ok: true, submissionId, photoUrls });
-}
-</file>
-
-<file path="components/forms/PropertyApplicationForm.css">
-/* PropertyApplicationForm.css */
-/* =====================================================
-   FULL HEIGHT FORM (evita que el Footer aparezca sin scroll)
-===================================================== */
-
-.arkaFormPage {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: var(--arka-white);
-}
-
-.arkaForm {
-  flex: 1;
-}
-
-/* ✅ FIX MOVIL (overflow-x) se movió a globals.css */
-
-/* 2) Box sizing global local al form */
-.arkaForm,
-.arkaForm * {
-  box-sizing: border-box;
-}
-
-.arkaForm {
-  width: 100%;
-  overflow-x: hidden;
-}
-
-.arkaFormInner {
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-/* ✅ Intro spacing (req #1) */
-.formIntro {
-  margin-bottom: 22px;
-}
-
-.formTitle {
-  color: var(--arka-brown-dark);
-  margin: 0 0 8px;
-}
-
-.formSubtitle {
-  color: var(--arka-text-soft);
-  margin: 0;
-}
-
-.formSectionTitle {
-  font-size: large;
-  font-weight: 600;
-  margin: 26px 0 10px;
-  color: var(--arka-brown-dark);
-}
-
-.arkaForm label {
-  display: block;
-  margin: 14px 0 6px;
-  color: var(--arka-brown-dark);
-  font-weight: 600;
-}
-
-.arkaForm input,
-.arkaForm select,
-.arkaForm textarea {
-  width: 100%;
-  max-width: 100%;
-  padding: 12px 12px;
-  border-radius: 12px;
-  border: 1px solid rgba(74, 52, 36, 0.25);
-  background: var(--arka-white);
-  color: var(--arka-brown-dark);
-  outline: none;
-}
-
-.arkaForm textarea {
-  min-height: 96px;
-  resize: vertical;
-}
-
-.arkaFormActions {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.arkaForm button {
-  margin-top: 16px;
-  padding: 12px 14px;
-  border-radius: 12px;
-  border: 1px solid rgba(74, 52, 36, 0.25);
-  background: var(--arka-white);
-  color: var(--arka-brown-dark);
-  cursor: pointer;
-  font-weight: 700;
-  transition:
-    transform 120ms ease,
-    opacity 120ms ease;
-}
-
-.arkaForm button:hover {
-  transform: translateY(-1px);
-}
-
-.arkaForm button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* Teléfono: select + input en grid */
-.phoneRow {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 10px;
-}
-
-@media (max-width: 520px) {
-  .phoneRow {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Fotos: previews */
-.photoHelp {
-  color: var(--arka-text-soft);
-}
-
-.photoGrid {
-  margin-top: 12px;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-}
-
-@media (max-width: 520px) {
-  .photoGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-.photoCard {
-  position: relative;
-  border-radius: 14px;
-  overflow: hidden;
-  border: 1px solid rgba(74, 52, 36, 0.2);
-  background: rgba(255, 255, 255, 0.5);
-}
-
-.photoImg {
-  display: block;
-  width: 100%;
-  height: 110px;
-  object-fit: cover;
-}
-
-.photoRemove {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-
-  width: 34px;
-  height: 34px;
-  border-radius: 999px;
-
-  border: 1px solid rgba(74, 52, 36, 0.25);
-  background: rgba(253, 252, 249, 0.95);
-  cursor: pointer;
-
-  /* no dependemos del glifo */
-  padding: 0;
-  margin: 0;
-
-  display: grid;
-  place-items: center;
-
-  /* ocultar el “×” del HTML sin romper accesibilidad */
-  color: transparent;
-  font-size: 0;
-  line-height: 0;
-}
-
-.photoRemove::before,
-.photoRemove::after {
-  content: "";
-  position: absolute;
-  width: 16px;
-  height: 2px;
-  background: var(--arka-brown-dark);
-  border-radius: 999px;
-  left: 50%;
-  top: 50%;
-  transform-origin: center;
-}
-
-.photoRemove::before {
-  transform: translate(-50%, -50%) rotate(45deg);
-}
-
-.photoRemove::after {
-  transform: translate(-50%, -50%) rotate(-45deg);
-}
-
-/* Success modal */
-.modalOverlay {
-  position: fixed;
-  inset: 0;
-  z-index: 10050;
-  background: rgba(0, 0, 0, 0.55);
-
-  display: grid;
-  place-items: center;
-  padding: 18px;
-}
-
-.modalCard {
-  width: min(520px, 92vw);
-  background: var(--arka-white);
-  border-radius: 18px;
-  border: 1px solid rgba(74, 52, 36, 0.18);
-  box-shadow: 0 18px 70px rgba(0, 0, 0, 0.25);
-  padding: 18px 18px 16px;
-  position: relative;
-}
-
-.modalTitle {
-  margin: 0 0 8px;
-  color: var(--arka-brown-dark);
-}
-
-.modalText {
-  margin: 0;
-  color: var(--arka-text-soft);
-  line-height: 1.45;
-}
-
-.modalClose {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-
-  width: 36px;
-  height: 36px;
-  border-radius: 999px;
-
-  border: 1px solid rgba(74, 52, 36, 0.25);
-  background: rgba(253, 252, 249, 0.95);
-  cursor: pointer;
-
-  padding: 0;
-  margin: 0;
-
-  display: grid;
-  place-items: center;
-
-  color: transparent;
-  font-size: 0;
-  line-height: 0;
-}
-
-.modalClose::before,
-.modalClose::after {
-  content: "";
-  position: absolute;
-  width: 16px;
-  height: 2px;
-  background: var(--arka-brown-dark);
-  border-radius: 999px;
-  left: 50%;
-  top: 50%;
-  transform-origin: center;
-}
-
-.modalClose::before {
-  transform: translate(-50%, -50%) rotate(45deg);
-}
-
-.modalClose::after {
-  transform: translate(-50%, -50%) rotate(-45deg);
-}
-
-.errorText {
-  margin-top: 8px;
-  color: #b3261e;
-  font-weight: 600;
-}
-
-.helpText {
-  margin-top: 6px;
-  color: var(--arka-text-soft);
-  font-size: 13px;
-}
-</file>
-
-<file path="components/home/FloatingCTA.module.css">
-.wrap {
-  position: fixed;
-
-  /* ✅ posición controlada por variables (stage manda) */
-  left: var(--cta-left, auto);
-  right: var(--cta-right, var(--edge-space));
-  bottom: var(--cta-bottom, var(--edge-space));
-  transform: var(--cta-transform, none);
-
-  z-index: 10001;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  transition:
-    transform 220ms ease,
-    opacity 220ms ease,
-    filter 220ms ease;
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-
-  padding: var(--cta-pad-y, 12px) var(--cta-pad-x, 14px);
-  border-radius: 999px;
-
-  background: var(--arka-white);
-  color: var(--arka-brown-dark);
-
-  border: 1px solid var(--arka-brown-light);
-
-  font-weight: 600;
-  line-height: 1;
-  font-size: var(--cta-font, 14px);
-
-  box-shadow: 0 8px 20px rgba(74, 52, 36, 0.15);
-
-  text-decoration: none;
-
-  transition:
-    transform 160ms ease,
-    box-shadow 160ms ease,
-    background 160ms ease;
-}
-
-.btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 12px 26px rgba(74, 52, 36, 0.22);
-}
-
-.icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.icon svg,
-.icon img {
-  width: 1em;
-  height: 1em;
-  display: block;
-}
-
-.label {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 6px;
-  white-space: nowrap;
-}
-
-@keyframes ctaPulseBg {
-  0% {
-    background: rgba(255, 255, 255, 0.55);
-    border-color: rgba(0, 0, 0, 0.1);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
-  }
-  50% {
-    background: rgba(255, 255, 255, 0.85);
-    border-color: rgba(0, 0, 0, 0.16);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
-  }
-  100% {
-    background: rgba(255, 255, 255, 0.55);
-    border-color: rgba(0, 0, 0, 0.1);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
-  }
-}
-
-/* ✅ Resalta que es clickable sin cambiar tamaño */
-.btn {
-  animation: ctaPulseBg 1.8s ease-in-out infinite;
-}
-
-/* Accesibilidad */
-@media (prefers-reduced-motion: reduce) {
-  .btn {
-    animation: none;
-  }
-}
-
-/* Ocultar CTA flotante en stage 9 */
-html[data-hero-stage="7"] .wrap {
-  opacity: 0;
-  pointer-events: none;
-}
-</file>
-
 <file path="package.json">
 {
   "name": "nextjs",
@@ -5777,6 +5831,7 @@ html[data-hero-stage="7"] .wrap {
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
+    "browser-image-compression": "^2.0.2",
     "lucide-react": "^0.574.0",
     "next": "16.1.6",
     "react": "19.2.3",
@@ -5800,6 +5855,7 @@ html[data-hero-stage="7"] .wrap {
 
 import { useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import imageCompression from "browser-image-compression";
 import "./PropertyApplicationForm.css";
 
 // TODO (multi-ciudad): cuando se reactive Bogotá, descomentar este tipo
@@ -5907,6 +5963,30 @@ function makeClientId() {
   );
 }
 
+async function compressImage(file: File): Promise<File> {
+  if (!file.type.startsWith("image/")) return file;
+
+  try {
+    const compressed = await imageCompression(file, {
+      maxSizeMB: 4.8,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+      initialQuality: 0.8,
+    });
+
+    const safeName =
+      file.name && file.name.trim() ? file.name : `photo-${Date.now()}.jpg`;
+
+    return new File([compressed], safeName, {
+      type: compressed.type || file.type || "image/jpeg",
+      lastModified: Date.now(),
+    });
+  } catch (error) {
+    console.error("Error compressing image:", error);
+    return file;
+  }
+}
+
 export function PropertyApplicationForm() {
   const router = useRouter();
   const pathname = usePathname();
@@ -5969,13 +6049,16 @@ export function PropertyApplicationForm() {
     | "Aún no lo tengo claro"
   >("");
 
-  // page 5 photos (✅ min 2 / max 5)
+  // page 5 photos
   const [photos, setPhotos] = useState<PhotoItem[]>([]);
-  const MIN_PHOTOS = 2;
+  const MIN_PHOTOS = 3;
   const MAX_PHOTOS = 5;
   const minPhotosOk = photos.length >= MIN_PHOTOS;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitPhase, setSubmitPhase] = useState<
+    "idle" | "compressing" | "sending"
+  >("idle");
   const submissionIdRef = useRef<string | null>(null);
 
   const [showSuccess, setShowSuccess] = useState(false);
@@ -6136,9 +6219,11 @@ export function PropertyApplicationForm() {
   }
 
   function addPhotos(files: File[]) {
+    const availableSlots = Math.max(0, MAX_PHOTOS - photos.length);
+
     const toAdd = files
       .filter((f) => f.type.startsWith("image/"))
-      .slice(0, Math.max(0, MAX_PHOTOS - photos.length))
+      .slice(0, availableSlots)
       .map((file) => {
         const id = makeClientId();
         const url = URL.createObjectURL(file);
@@ -6172,6 +6257,7 @@ export function PropertyApplicationForm() {
     }
 
     setIsSubmitting(true);
+    setSubmitPhase("compressing");
 
     if (!submissionIdRef.current) {
       submissionIdRef.current = makeClientId();
@@ -6179,6 +6265,7 @@ export function PropertyApplicationForm() {
     const submissionId = submissionIdRef.current;
     if (!submissionId) {
       setIsSubmitting(false);
+      setSubmitPhase("idle");
       return alert("No se pudo generar el ID de envío. Intenta de nuevo.");
     }
 
@@ -6188,6 +6275,7 @@ export function PropertyApplicationForm() {
     const cc = getFinalCountryCodeOrEmpty();
     if (!cc) {
       setIsSubmitting(false);
+      setSubmitPhase("idle");
       return alert("Falta el indicativo del país.");
     }
     const phoneE164 = `${cc}${onlyDigits(phoneNumber)}`;
@@ -6215,30 +6303,67 @@ export function PropertyApplicationForm() {
     };
 
     try {
+      const compressedFiles = await Promise.all(
+        photos.map(async (p) => compressImage(p.file)),
+      );
+
+      setSubmitPhase("sending");
+
       const fd = new FormData();
       fd.append("verifiedToken", verified);
       fd.append("payload", JSON.stringify(payload));
       fd.append("submissionId", submissionId);
-      photos.forEach((p) => fd.append("photos", p.file));
+
+      compressedFiles.forEach((file) => fd.append("photos", file));
 
       const res = await fetch("/api/postula/submit", {
         method: "POST",
         body: fd,
       });
 
-      const data = await res.json();
+      const raw = await res.text();
+      let data: { message?: string } | null = null;
+
+      try {
+        data = raw ? JSON.parse(raw) : null;
+      } catch {
+        data = { message: raw || "Respuesta inválida del servidor." };
+      }
 
       if (!res.ok) {
         setIsSubmitting(false);
-        return alert(data?.message || "No se pudo enviar el formulario.");
+        setSubmitPhase("idle");
+
+        if (res.status === 413) {
+          return alert(
+            "Las fotos pesan demasiado incluso después de optimizarlas. Intenta con imágenes más livianas.",
+          );
+        }
+
+        return alert(
+          data?.message ||
+            `No se pudo enviar el formulario. Error ${res.status}.`,
+        );
       }
 
+      setIsSubmitting(false);
+      setSubmitPhase("idle");
       setShowSuccess(true);
     } catch (e) {
       console.error(e);
       setIsSubmitting(false);
-      alert("Ocurrió un error enviando la postulación. Intenta de nuevo.");
+      setSubmitPhase("idle");
+      alert(
+        "Ocurrió un error enviando la postulación. Verifica tu conexión e intenta de nuevo.",
+      );
     }
+  }
+
+  function getSubmitLabel() {
+    if (!isSubmitting) return "Enviar postulación";
+    if (submitPhase === "compressing") return "Optimizando imágenes…";
+    if (submitPhase === "sending") return "Enviando…";
+    return "Enviando…";
   }
 
   return (
@@ -6256,7 +6381,6 @@ export function PropertyApplicationForm() {
             </p>
           </div>
 
-          {/* STEP 1 */}
           {step === 1 && (
             <div>
               <h3 className="formSectionTitle">Datos del propietario</h3>
@@ -6303,7 +6427,6 @@ export function PropertyApplicationForm() {
                 </>
               )}
 
-              {/* Checkbox política de privacidad */}
               <div
                 style={{
                   display: "flex",
@@ -6356,7 +6479,6 @@ export function PropertyApplicationForm() {
             </div>
           )}
 
-          {/* STEP 1.5 */}
           {step === 1.5 && (
             <div>
               <h3 className="formSectionTitle">Validación de correo</h3>
@@ -6383,7 +6505,6 @@ export function PropertyApplicationForm() {
             </div>
           )}
 
-          {/* STEP 2 */}
           {step === 2 && (
             <div>
               <h3 className="formSectionTitle">Datos de la propiedad</h3>
@@ -6394,28 +6515,8 @@ export function PropertyApplicationForm() {
                 onChange={(e) => setCity(e.target.value as City)}
               >
                 <option value="">Selecciona</option>
-                {/* TODO (multi-ciudad): descomentar cuando se active Bogotá */}
-                {/* <option value="Bogotá">Bogotá</option> */}
                 <option value="Santa Marta">Santa Marta</option>
               </select>
-
-              {/* TODO (multi-ciudad): descomentar cuando se active Bogotá */}
-              {/* {city === "Bogotá" && (
-                <>
-                  <label>Localidad</label>
-                  <select
-                    value={bogotaLocalidad}
-                    onChange={(e) => setBogotaLocalidad(e.target.value)}
-                  >
-                    <option value="">Selecciona</option>
-                    {BOGOTA_LOCALIDADES.map((l) => (
-                      <option key={l} value={l}>
-                        {l}
-                      </option>
-                    ))}
-                  </select>
-                </>
-              )} */}
 
               {city === "Santa Marta" && (
                 <>
@@ -6562,7 +6663,6 @@ export function PropertyApplicationForm() {
             </div>
           )}
 
-          {/* STEP 3 */}
           {step === 3 && (
             <div>
               <h3 className="formSectionTitle">Información operativa básica</h3>
@@ -6602,7 +6702,6 @@ export function PropertyApplicationForm() {
             </div>
           )}
 
-          {/* STEP 4 */}
           {step === 4 && (
             <div>
               <h3 className="formSectionTitle">Expectativa del propietario</h3>
@@ -6632,15 +6731,14 @@ export function PropertyApplicationForm() {
             </div>
           )}
 
-          {/* STEP 5 */}
           {step === 5 && (
             <div>
               <h3 className="formSectionTitle">Fotos</h3>
 
               <p className="photoHelp">
-                Sube al menos 2 fotos de la habitación principal y baño.
-                Opcionalmente, sube otras que consideres importantes. Máximo: 5
-                fotos en total.
+                Sube al menos 3 fotos de la habitación principal, baño y una
+                vista adicional de la propiedad. Opcionalmente, sube otras que
+                consideres importantes. Máximo: 5 fotos en total.
               </p>
 
               <input
@@ -6683,7 +6781,7 @@ export function PropertyApplicationForm() {
                   Atrás
                 </button>
                 <button onClick={submitAll} disabled={isSubmitting}>
-                  {isSubmitting ? "Enviando…" : "Enviar postulación"}
+                  {getSubmitLabel()}
                 </button>
               </div>
             </div>
@@ -6691,7 +6789,6 @@ export function PropertyApplicationForm() {
         </div>
       </div>
 
-      {/* SUCCESS MODAL */}
       {showSuccess && (
         <div
           className="modalOverlay"
@@ -6825,75 +6922,6 @@ export function Header() {
       />
 
       <OwnerLoginModal open={ownerOpen} onClose={() => setOwnerOpen(false)} />
-    </>
-  );
-}
-</file>
-
-<file path="app/(site)/layout.tsx">
-import "../globals.css";
-import type { Metadata } from "next";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
-import { Playfair_Display, Inter } from "next/font/google";
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["400", "600", "700"],
-  variable: "--font-display",
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-body",
-});
-
-export const metadata = {
-  title: "ARKA Living",
-  description: "Gestión inteligente de rentas cortas",
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
-
-export default function SiteLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <html lang="es" className={`${playfair.variable} ${inter.variable}`}>
-      <body>
-        <div id="app-root">
-          <Header />
-          <main>{children}</main>
-          <Footer />
-        </div>
-      </body>
-    </html>
-  );
-}
-</file>
-
-<file path="app/(site)/page.tsx">
-import { Hero } from "../../components/home/Hero";
-import { FloatingCTA } from "../../components/home/FloatingCTA";
-import { SectionBeneficios } from "../../components/home/SectionBeneficios";
-import { SectionFrase } from "../../components/home/SectionFrase";
-import { SectionPasos } from "../../components/home/SectionPasos";
-import { SectionCasoExito } from "../../components/home/SectionCasoExito";
-
-export default function Page() {
-  return (
-    <>
-      <Hero />
-      <SectionBeneficios />
-      <SectionFrase />
-      <SectionPasos />
-      <SectionCasoExito />
-      <FloatingCTA />
     </>
   );
 }
@@ -7506,6 +7534,75 @@ export default function Page() {
 }
 </file>
 
+<file path="app/(site)/layout.tsx">
+import "../globals.css";
+import type { Metadata } from "next";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { Playfair_Display, Inter } from "next/font/google";
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  variable: "--font-display",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-body",
+});
+
+export const metadata = {
+  title: "ARKA Living",
+  description: "Gestión inteligente de rentas cortas",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
+export default function SiteLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="es" className={`${playfair.variable} ${inter.variable}`}>
+      <body>
+        <div id="app-root">
+          <Header />
+          <main>{children}</main>
+          <Footer />
+        </div>
+      </body>
+    </html>
+  );
+}
+</file>
+
+<file path="app/(site)/page.tsx">
+import { Hero } from "../../components/home/Hero";
+import { FloatingCTA } from "../../components/home/FloatingCTA";
+import { SectionBeneficios } from "../../components/home/SectionBeneficios";
+import { SectionFrase } from "../../components/home/SectionFrase";
+import { SectionPasos } from "../../components/home/SectionPasos";
+import { SectionCasoExito } from "../../components/home/SectionCasoExito";
+
+export default function Page() {
+  return (
+    <>
+      <Hero />
+      <SectionBeneficios />
+      <SectionFrase />
+      <SectionPasos />
+      <SectionCasoExito />
+      <FloatingCTA />
+    </>
+  );
+}
+</file>
+
 <file path="components/MenuOverlay.tsx">
 "use client";
 
@@ -7673,12 +7770,22 @@ export function Footer() {
   const isHome = pathname === "/";
 
   const [takeoverSignal, setTakeoverSignal] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  // Estado visual congelado: no cambia mientras el menú está abierto
+  const [takeoverFrozen, setTakeoverFrozen] = useState(false);
 
   useEffect(() => {
     const el = document.documentElement;
 
     const read = () => {
-      setTakeoverSignal(el.dataset.takeoverActive === "true");
+      const isMenuOpen = el.dataset.menuOpen === "true";
+      const isTakeover = el.dataset.takeoverActive === "true";
+      setMenuOpen(isMenuOpen);
+      setTakeoverSignal(isTakeover);
+      // Solo actualizar el estado visual cuando el menú está cerrado
+      if (!isMenuOpen) {
+        setTakeoverFrozen(isTakeover);
+      }
     };
 
     read();
@@ -7686,7 +7793,7 @@ export function Footer() {
     const obs = new MutationObserver(read);
     obs.observe(el, {
       attributes: true,
-      attributeFilter: ["data-takeover-active"],
+      attributeFilter: ["data-takeover-active", "data-menu-open"],
     });
 
     window.addEventListener("arka:hero:stage0", read);
@@ -7697,9 +7804,10 @@ export function Footer() {
     };
   }, []);
 
+  // El estado visual usa takeoverFrozen — congelado mientras el menú está abierto
   const takeoverActive = useMemo(() => {
-    return isHome && takeoverSignal;
-  }, [isHome, takeoverSignal]);
+    return isHome && takeoverFrozen;
+  }, [isHome, takeoverFrozen]);
 
   return (
     <>
@@ -8175,12 +8283,6 @@ html.menu-open,
 body.menu-open {
   overflow: hidden;
   height: 100%;
-}
-
-body.menu-open {
-  position: fixed;
-  width: 100%;
-  overflow: hidden;
 }
 
 @supports not (overflow-x: clip) {

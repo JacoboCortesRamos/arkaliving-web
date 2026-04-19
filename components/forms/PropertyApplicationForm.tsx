@@ -2,7 +2,8 @@
 
 import { useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import "./PropertyApplicationForm.css";
+import imageCompression from "browser-image-compression";
+import styles from "./PropertyApplicationForm.module.css";
 
 // TODO (multi-ciudad): cuando se reactive Bogotá, descomentar este tipo
 // type City = "Bogotá" | "Santa Marta";
@@ -84,6 +85,19 @@ const COUNTRY_CODES = [
   { label: "Otro", code: "OTHER" },
 ] as const;
 
+// [FIX #3] Tipos MIME permitidos explícitamente en el selector de fotos
+const ALLOWED_PHOTO_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
+  "image/heic",
+  "image/heif",
+];
+
+// [FIX #2] Límite de tamaño antes de intentar comprimir (rechaza archivos absurdos)
+const MAX_INPUT_MB = 50;
+
 function isEmail(v: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 }
@@ -107,6 +121,30 @@ function makeClientId() {
   return (
     c?.randomUUID?.() ?? `${Date.now()}_${Math.random().toString(16).slice(2)}`
   );
+}
+
+async function compressImage(file: File): Promise<File> {
+  if (!file.type.startsWith("image/")) return file;
+
+  try {
+    const compressed = await imageCompression(file, {
+      maxSizeMB: 4.8,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+      initialQuality: 0.8,
+    });
+
+    const safeName =
+      file.name && file.name.trim() ? file.name : `photo-${Date.now()}.jpg`;
+
+    return new File([compressed], safeName, {
+      type: compressed.type || file.type || "image/jpeg",
+      lastModified: Date.now(),
+    });
+  } catch (error) {
+    console.error("Error compressing image:", error);
+    return file;
+  }
 }
 
 export function PropertyApplicationForm() {
@@ -171,13 +209,16 @@ export function PropertyApplicationForm() {
     | "Aún no lo tengo claro"
   >("");
 
-  // page 5 photos (✅ min 2 / max 5)
+  // page 5 photos
   const [photos, setPhotos] = useState<PhotoItem[]>([]);
-  const MIN_PHOTOS = 2;
+  const MIN_PHOTOS = 3;
   const MAX_PHOTOS = 5;
   const minPhotosOk = photos.length >= MIN_PHOTOS;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitPhase, setSubmitPhase] = useState<
+    "idle" | "compressing" | "sending"
+  >("idle");
   const submissionIdRef = useRef<string | null>(null);
 
   const [showSuccess, setShowSuccess] = useState(false);
@@ -337,15 +378,39 @@ export function PropertyApplicationForm() {
     setStep(2);
   }
 
+  // [FIX #2 + #3] Validar tipo MIME y tamaño máximo ANTES de agregar al estado
   function addPhotos(files: File[]) {
-    const toAdd = files
-      .filter((f) => f.type.startsWith("image/"))
-      .slice(0, Math.max(0, MAX_PHOTOS - photos.length))
-      .map((file) => {
-        const id = makeClientId();
-        const url = URL.createObjectURL(file);
-        return { id, file, url };
-      });
+    const availableSlots = Math.max(0, MAX_PHOTOS - photos.length);
+    const rejected: string[] = [];
+
+    const validated = files.filter((f) => {
+      if (!ALLOWED_PHOTO_TYPES.includes(f.type)) {
+        rejected.push(
+          `"${f.name}" tiene un formato no soportado (${f.type || "desconocido"}).`,
+        );
+        return false;
+      }
+      const sizeMb = f.size / (1024 * 1024);
+      if (sizeMb > MAX_INPUT_MB) {
+        rejected.push(
+          `"${f.name}" es demasiado grande (${sizeMb.toFixed(0)}MB, máximo ${MAX_INPUT_MB}MB).`,
+        );
+        return false;
+      }
+      return true;
+    });
+
+    if (rejected.length > 0) {
+      alert(
+        `Las siguientes fotos no se pudieron agregar:\n\n${rejected.join("\n")}\n\nUsa archivos JPG, PNG o WebP de menos de ${MAX_INPUT_MB}MB.`,
+      );
+    }
+
+    const toAdd = validated.slice(0, availableSlots).map((file) => {
+      const id = makeClientId();
+      const url = URL.createObjectURL(file);
+      return { id, file, url };
+    });
 
     setPhotos((prev) => [...prev, ...toAdd]);
   }
@@ -381,6 +446,7 @@ export function PropertyApplicationForm() {
     const submissionId = submissionIdRef.current;
     if (!submissionId) {
       setIsSubmitting(false);
+      setSubmitPhase("idle");
       return alert("No se pudo generar el ID de envío. Intenta de nuevo.");
     }
 
@@ -390,6 +456,7 @@ export function PropertyApplicationForm() {
     const cc = getFinalCountryCodeOrEmpty();
     if (!cc) {
       setIsSubmitting(false);
+      setSubmitPhase("idle");
       return alert("Falta el indicativo del país.");
     }
     const phoneE164 = `${cc}${onlyDigits(phoneNumber)}`;
@@ -417,64 +484,129 @@ export function PropertyApplicationForm() {
     };
 
     try {
+      // [FIX #1] setSubmitPhase("compressing") va INMEDIATAMENTE antes del Promise.all
+      setSubmitPhase("compressing");
+      const compressedFiles = await Promise.all(
+        photos.map(async (p) => compressImage(p.file)),
+      );
+
+      setSubmitPhase("sending");
+
       const fd = new FormData();
       fd.append("verifiedToken", verified);
       fd.append("payload", JSON.stringify(payload));
       fd.append("submissionId", submissionId);
-      photos.forEach((p) => fd.append("photos", p.file));
 
-      const res = await fetch("/api/postula/submit", {
-        method: "POST",
-        body: fd,
-      });
+      compressedFiles.forEach((file) => fd.append("photos", file));
 
-      const data = await res.json();
+      // [FIX #4] Timeout global de 2 minutos para el fetch de submit
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 120_000);
+
+      let res: Response;
+      try {
+        res = await fetch("/api/postula/submit", {
+          method: "POST",
+          body: fd,
+          signal: controller.signal,
+        });
+      } catch (fetchErr: any) {
+        clearTimeout(timeoutId);
+        setIsSubmitting(false);
+        setSubmitPhase("idle");
+        if (fetchErr?.name === "AbortError") {
+          return alert(
+            "El envío tardó demasiado y fue cancelado. Verifica tu conexión e intenta de nuevo.",
+          );
+        }
+        throw fetchErr;
+      }
+      clearTimeout(timeoutId);
+
+      const raw = await res.text();
+      let data: { message?: string } | null = null;
+
+      try {
+        data = raw ? JSON.parse(raw) : null;
+      } catch {
+        data = { message: raw || "Respuesta inválida del servidor." };
+      }
 
       if (!res.ok) {
         setIsSubmitting(false);
-        return alert(data?.message || "No se pudo enviar el formulario.");
+        setSubmitPhase("idle");
+
+        if (res.status === 413) {
+          return alert(
+            "Las fotos pesan demasiado incluso después de optimizarlas. Intenta con imágenes más livianas.",
+          );
+        }
+
+        return alert(
+          data?.message ||
+            `No se pudo enviar el formulario. Error ${res.status}.`,
+        );
       }
 
+      setIsSubmitting(false);
+      setSubmitPhase("idle");
       setShowSuccess(true);
     } catch (e) {
       console.error(e);
       setIsSubmitting(false);
-      alert("Ocurrió un error enviando la postulación. Intenta de nuevo.");
+      setSubmitPhase("idle");
+      alert(
+        "Ocurrió un error enviando la postulación. Verifica tu conexión e intenta de nuevo.",
+      );
     }
+  }
+
+  function getSubmitLabel() {
+    if (!isSubmitting) return "Enviar postulación";
+    if (submitPhase === "compressing") return "Optimizando imágenes…";
+    if (submitPhase === "sending") return "Enviando…";
+    return "Enviando…";
   }
 
   return (
     <section
-      className="arkaFormPage"
+      className={styles.arkaFormPage}
       style={{ padding: "calc(var(--header-h) + 24px) var(--edge-space) 56px" }}
     >
-      <div className="arkaForm">
-        <div className="arkaFormInner">
-          <div className="formIntro">
-            <h1 className="formTitle">Postula tu propiedad</h1>
-            <p className="formSubtitle">
+      <div className={styles.arkaForm}>
+        <div className={styles.arkaFormInner}>
+          <div className={styles.formIntro}>
+            <h1 className={styles.formTitle}>Postula tu propiedad</h1>
+            <p className={styles.formSubtitle}>
               Completa la información y te contactaremos en un plazo máximo de
               48 horas.
             </p>
           </div>
 
-          {/* STEP 1 */}
           {step === 1 && (
             <div>
-              <h3 className="formSectionTitle">Datos del propietario</h3>
+              <h3 className={styles.formSectionTitle}>Datos del propietario</h3>
 
-              <label>Nombre completo</label>
+              <label className={styles.label}>Nombre completo</label>
               <input
+                className={styles.input}
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
               />
 
-              <label>Correo electrónico</label>
-              <input value={email} onChange={(e) => setEmail(e.target.value)} />
+              <label className={styles.label}>Correo electrónico</label>
+              <input
+                className={styles.input}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
 
-              <label>Número de celular o WhatsApp</label>
-              <div className="phoneRow">
+              <label className={styles.label}>
+                Número de celular o WhatsApp
+              </label>
+              <div className={styles.phoneRow}>
                 <select
+                  className={styles.select}
                   value={countryCode}
                   onChange={(e) => setCountryCode(e.target.value)}
                 >
@@ -486,6 +618,7 @@ export function PropertyApplicationForm() {
                 </select>
 
                 <input
+                  className={styles.input}
                   value={phoneNumber}
                   inputMode="tel"
                   placeholder="Ej: 3158254384"
@@ -495,8 +628,9 @@ export function PropertyApplicationForm() {
 
               {countryCode === "OTHER" && (
                 <>
-                  <label>Indicativo (ej: +49)</label>
+                  <label className={styles.label}>Indicativo (ej: +49)</label>
                   <input
+                    className={styles.input}
                     value={otherCountryCode}
                     onChange={(e) => setOtherCountryCode(e.target.value)}
                     placeholder="Ej: +49"
@@ -505,7 +639,6 @@ export function PropertyApplicationForm() {
                 </>
               )}
 
-              {/* Checkbox política de privacidad */}
               <div
                 style={{
                   display: "flex",
@@ -554,14 +687,15 @@ export function PropertyApplicationForm() {
                 </label>
               </div>
 
-              <button onClick={startEmailVerification}>Continuar</button>
+              <button className={styles.btn} onClick={startEmailVerification}>
+                Continuar
+              </button>
             </div>
           )}
 
-          {/* STEP 1.5 */}
           {step === 1.5 && (
             <div>
-              <h3 className="formSectionTitle">Validación de correo</h3>
+              <h3 className={styles.formSectionTitle}>Validación de correo</h3>
               <p>
                 <strong>
                   Para continuar, revisa tu correo electrónico y valida tu
@@ -573,56 +707,42 @@ export function PropertyApplicationForm() {
               </p>
 
               <input
+                className={styles.input}
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
                 placeholder="Código"
               />
 
-              <div className="arkaFormActions">
-                <button onClick={back}>Atrás</button>
-                <button onClick={verifyCode}>Validar y continuar</button>
+              <div className={styles.arkaFormActions}>
+                <button className={styles.btn} onClick={back}>
+                  Atrás
+                </button>
+                <button className={styles.btn} onClick={verifyCode}>
+                  Validar y continuar
+                </button>
               </div>
             </div>
           )}
 
-          {/* STEP 2 */}
           {step === 2 && (
             <div>
-              <h3 className="formSectionTitle">Datos de la propiedad</h3>
+              <h3 className={styles.formSectionTitle}>Datos de la propiedad</h3>
 
-              <label>Ciudad</label>
+              <label className={styles.label}>Ciudad</label>
               <select
+                className={styles.select}
                 value={city}
                 onChange={(e) => setCity(e.target.value as City)}
               >
                 <option value="">Selecciona</option>
-                {/* TODO (multi-ciudad): descomentar cuando se active Bogotá */}
-                {/* <option value="Bogotá">Bogotá</option> */}
                 <option value="Santa Marta">Santa Marta</option>
               </select>
 
-              {/* TODO (multi-ciudad): descomentar cuando se active Bogotá */}
-              {/* {city === "Bogotá" && (
-                <>
-                  <label>Localidad</label>
-                  <select
-                    value={bogotaLocalidad}
-                    onChange={(e) => setBogotaLocalidad(e.target.value)}
-                  >
-                    <option value="">Selecciona</option>
-                    {BOGOTA_LOCALIDADES.map((l) => (
-                      <option key={l} value={l}>
-                        {l}
-                      </option>
-                    ))}
-                  </select>
-                </>
-              )} */}
-
               {city === "Santa Marta" && (
                 <>
-                  <label>Sector</label>
+                  <label className={styles.label}>Sector</label>
                   <select
+                    className={styles.select}
                     value={smSectorGroup}
                     onChange={(e) => {
                       setSmSectorGroup(e.target.value);
@@ -640,8 +760,9 @@ export function PropertyApplicationForm() {
 
                   {!!smGroupObj?.subs?.length && (
                     <>
-                      <label>Sub-sector</label>
+                      <label className={styles.label}>Sub-sector</label>
                       <select
+                        className={styles.select}
                         value={smSectorSub}
                         onChange={(e) => setSmSectorSub(e.target.value)}
                       >
@@ -657,10 +778,11 @@ export function PropertyApplicationForm() {
 
                   {smGroupObj?.freeText && (
                     <>
-                      <label>
+                      <label className={styles.label}>
                         Describe en máximo 50 palabras la ubicación general
                       </label>
                       <textarea
+                        className={styles.textarea}
                         value={smSectorFreeText}
                         onChange={(e) => setSmSectorFreeText(e.target.value)}
                       />
@@ -669,8 +791,9 @@ export function PropertyApplicationForm() {
                 </>
               )}
 
-              <label>Tipo de propiedad</label>
+              <label className={styles.label}>Tipo de propiedad</label>
               <select
+                className={styles.select}
                 value={propertyType}
                 onChange={(e) => setPropertyType(e.target.value as any)}
               >
@@ -687,8 +810,11 @@ export function PropertyApplicationForm() {
 
               {(propertyType === "Apartamento" || propertyType === "Casa") && (
                 <>
-                  <label>¿Cuántas habitaciones tiene?</label>
+                  <label className={styles.label}>
+                    ¿Cuántas habitaciones tiene?
+                  </label>
                   <input
+                    className={styles.input}
                     type="number"
                     value={rooms}
                     onChange={(e) =>
@@ -697,8 +823,9 @@ export function PropertyApplicationForm() {
                     min={0}
                   />
 
-                  <label>¿Cuántos baños tiene?</label>
+                  <label className={styles.label}>¿Cuántos baños tiene?</label>
                   <input
+                    className={styles.input}
                     type="number"
                     value={baths}
                     onChange={(e) =>
@@ -711,16 +838,22 @@ export function PropertyApplicationForm() {
 
               {propertyType === "Otro" && (
                 <>
-                  <label>Descríbelo en máximo 50 palabras</label>
+                  <label className={styles.label}>
+                    Descríbelo en máximo 50 palabras
+                  </label>
                   <textarea
+                    className={styles.textarea}
                     value={otherTypeText}
                     onChange={(e) => setOtherTypeText(e.target.value)}
                   />
                 </>
               )}
 
-              <label>¿La propiedad está actualmente amoblada?</label>
+              <label className={styles.label}>
+                ¿La propiedad está actualmente amoblada?
+              </label>
               <select
+                className={styles.select}
                 value={furnished}
                 onChange={(e) => setFurnished(e.target.value as any)}
               >
@@ -730,8 +863,11 @@ export function PropertyApplicationForm() {
                 <option value="No">No</option>
               </select>
 
-              <label>¿Hace parte de una propiedad horizontal?</label>
+              <label className={styles.label}>
+                ¿Hace parte de una propiedad horizontal?
+              </label>
               <select
+                className={styles.select}
                 value={isHOA}
                 onChange={(e) => setIsHOA(e.target.value as any)}
               >
@@ -742,10 +878,11 @@ export function PropertyApplicationForm() {
 
               {isHOA === "Sí" && (
                 <>
-                  <label>
+                  <label className={styles.label}>
                     ¿El manual de propiedad horizontal permite rentas cortas?
                   </label>
                   <select
+                    className={styles.select}
                     value={hoaAllowsSTR}
                     onChange={(e) => setHoaAllowsSTR(e.target.value as any)}
                   >
@@ -757,20 +894,28 @@ export function PropertyApplicationForm() {
                 </>
               )}
 
-              <div className="arkaFormActions">
-                <button onClick={back}>Atrás</button>
-                <button onClick={next}>Continuar</button>
+              <div className={styles.arkaFormActions}>
+                <button className={styles.btn} onClick={back}>
+                  Atrás
+                </button>
+                <button className={styles.btn} onClick={next}>
+                  Continuar
+                </button>
               </div>
             </div>
           )}
 
-          {/* STEP 3 */}
           {step === 3 && (
             <div>
-              <h3 className="formSectionTitle">Información operativa básica</h3>
+              <h3 className={styles.formSectionTitle}>
+                Información operativa básica
+              </h3>
 
-              <label>¿Actualmente la propiedad está?</label>
+              <label className={styles.label}>
+                ¿Actualmente la propiedad está?
+              </label>
               <select
+                className={styles.select}
                 value={currentStatus}
                 onChange={(e) => setCurrentStatus(e.target.value as any)}
               >
@@ -784,10 +929,11 @@ export function PropertyApplicationForm() {
                 </option>
               </select>
 
-              <label>
+              <label className={styles.label}>
                 ¿Desde cuándo estaría disponible para iniciar operación?
               </label>
               <select
+                className={styles.select}
                 value={startWhen}
                 onChange={(e) => setStartWhen(e.target.value as any)}
               >
@@ -797,20 +943,26 @@ export function PropertyApplicationForm() {
                 <option value="Más adelante">Más adelante</option>
               </select>
 
-              <div className="arkaFormActions">
-                <button onClick={back}>Atrás</button>
-                <button onClick={next}>Continuar</button>
+              <div className={styles.arkaFormActions}>
+                <button className={styles.btn} onClick={back}>
+                  Atrás
+                </button>
+                <button className={styles.btn} onClick={next}>
+                  Continuar
+                </button>
               </div>
             </div>
           )}
 
-          {/* STEP 4 */}
           {step === 4 && (
             <div>
-              <h3 className="formSectionTitle">Expectativa del propietario</h3>
+              <h3 className={styles.formSectionTitle}>
+                Expectativa del propietario
+              </h3>
 
-              <label>¿Qué busca principalmente?</label>
+              <label className={styles.label}>¿Qué busca principalmente?</label>
               <select
+                className={styles.select}
                 value={goal}
                 onChange={(e) => setGoal(e.target.value as any)}
               >
@@ -827,27 +979,31 @@ export function PropertyApplicationForm() {
                 </option>
               </select>
 
-              <div className="arkaFormActions">
-                <button onClick={back}>Atrás</button>
-                <button onClick={next}>Continuar</button>
+              <div className={styles.arkaFormActions}>
+                <button className={styles.btn} onClick={back}>
+                  Atrás
+                </button>
+                <button className={styles.btn} onClick={next}>
+                  Continuar
+                </button>
               </div>
             </div>
           )}
 
-          {/* STEP 5 */}
           {step === 5 && (
             <div>
-              <h3 className="formSectionTitle">Fotos</h3>
+              <h3 className={styles.formSectionTitle}>Fotos</h3>
 
-              <p className="photoHelp">
-                Sube al menos 2 fotos de la habitación principal y baño.
-                Opcionalmente, sube otras que consideres importantes. Máximo: 5
-                fotos en total.
+              <p className={styles.photoHelp}>
+                Sube al menos 3 fotos de la habitación principal, baño y una
+                vista adicional de la propiedad. Opcionalmente, sube otras que
+                consideres importantes. Máximo: 5 fotos en total.
               </p>
 
               <input
+                className={styles.input}
                 type="file"
-                accept="image/*"
+                accept="image/jpeg,image/jpg,image/png,image/webp,image/heic,image/heif"
                 multiple
                 onChange={(e) => {
                   const list = Array.from(e.target.files || []);
@@ -863,13 +1019,17 @@ export function PropertyApplicationForm() {
               </p>
 
               {photos.length > 0 && (
-                <div className="photoGrid">
+                <div className={styles.photoGrid}>
                   {photos.map((p) => (
-                    <div className="photoCard" key={p.id}>
-                      <img className="photoImg" src={p.url} alt="Foto subida" />
+                    <div className={styles.photoCard} key={p.id}>
+                      <img
+                        className={styles.photoImg}
+                        src={p.url}
+                        alt="Foto subida"
+                      />
                       <button
                         type="button"
-                        className="photoRemove"
+                        className={styles.photoRemove}
                         aria-label="Borrar foto"
                         onClick={() => removePhoto(p.id)}
                       >
@@ -880,12 +1040,20 @@ export function PropertyApplicationForm() {
                 </div>
               )}
 
-              <div className="arkaFormActions">
-                <button onClick={back} disabled={isSubmitting}>
+              <div className={styles.arkaFormActions}>
+                <button
+                  className={styles.btn}
+                  onClick={back}
+                  disabled={isSubmitting}
+                >
                   Atrás
                 </button>
-                <button onClick={submitAll} disabled={isSubmitting}>
-                  {isSubmitting ? "Enviando…" : "Enviar postulación"}
+                <button
+                  className={styles.btn}
+                  onClick={submitAll}
+                  disabled={isSubmitting}
+                >
+                  {getSubmitLabel()}
                 </button>
               </div>
             </div>
@@ -893,25 +1061,29 @@ export function PropertyApplicationForm() {
         </div>
       </div>
 
-      {/* SUCCESS MODAL */}
       {showSuccess && (
         <div
-          className="modalOverlay"
+          className={styles.modalOverlay}
           role="dialog"
           aria-modal="true"
           onClick={closeSuccessAndGoHome}
         >
-          <div className="modalCard" onClick={(e) => e.stopPropagation()}>
+          <div
+            className={styles.modalCard}
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
-              className="modalClose"
+              className={styles.modalClose}
               aria-label="Cerrar"
               onClick={closeSuccessAndGoHome}
             >
               ×
             </button>
 
-            <h3 className="modalTitle">¡Gracias por postular tu propiedad!</h3>
-            <p className="modalText">
+            <h3 className={styles.modalTitle}>
+              ¡Gracias por postular tu propiedad!
+            </h3>
+            <p className={styles.modalText}>
               Revisaremos tu información y te contactaremos en un plazo máximo
               de 48 horas.
             </p>
