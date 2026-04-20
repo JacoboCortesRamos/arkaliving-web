@@ -53,14 +53,15 @@ app/api/contact/route.ts
 app/api/postula/start/route.ts
 app/api/postula/submit/route.ts
 app/api/postula/verify/route.ts
+app/api/properties/route.ts
 app/favicon.ico
 app/globals.css
+app/globals.d.ts
 components/contacto/Contacto.module.css
 components/contacto/ContactoPage.tsx
 components/Footer.module.css
 components/Footer.tsx
-components/forms/custom.d.ts
-components/forms/PropertyApplicationForm.css
+components/forms/PropertyApplicationForm.module.css
 components/forms/PropertyApplicationForm.tsx
 components/Header.module.css
 components/Header.tsx
@@ -80,6 +81,7 @@ components/MenuOverlay.module.css
 components/MenuOverlay.tsx
 components/nosotros/Nosotros.module.css
 components/nosotros/NosotrosPage.tsx
+components/OrientationLock.tsx
 components/OwnerLoginModal.module.css
 components/OwnerLoginModal.tsx
 components/properties/ImageLightbox.module.css
@@ -88,6 +90,7 @@ components/properties/PropertiesGrid.tsx
 components/properties/PropertyCard.module.css
 components/properties/PropertyCard.tsx
 eslint.config.mjs
+lib/api/fetchProperties.ts
 lib/properties.ts
 lib/schemas/contact.ts
 next.config.ts
@@ -120,8 +123,51 @@ tsconfig.json
 <files>
 This section contains the contents of the repository's files.
 
-<file path="components/forms/custom.d.ts">
-declare module "*.css";
+<file path="app/api/properties/route.ts">
+// app/api/properties/route.ts
+// Endpoint GET que expone las propiedades activas como JSON.
+// MVP: lee de lib/properties.ts
+// A FUTURO: reemplazar getActiveProperties() por query a MongoDB cuando esté conectado.
+
+import { NextResponse } from "next/server";
+import { getActiveProperties } from "@/lib/properties";
+
+export async function GET() {
+  try {
+    const properties = getActiveProperties();
+    return NextResponse.json(properties);
+  } catch (error) {
+    console.error("[/api/properties] Error:", error);
+    return NextResponse.json(
+      { message: "No se pudieron cargar las propiedades." },
+      { status: 500 },
+    );
+  }
+}
+</file>
+
+<file path="lib/api/fetchProperties.ts">
+// lib/api/fetchProperties.ts
+// Función que encapsula el fetch a /api/properties.
+// Se puede usar en cualquier Server Component o página que necesite las propiedades.
+
+import type { IProperty } from "@/lib/properties";
+
+export async function fetchProperties(): Promise<IProperty[]> {
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL ??
+    `http://localhost:${process.env.PORT ?? 3000}`;
+
+  const res = await fetch(`${baseUrl}/api/properties`, {
+    next: { revalidate: 3600 },
+  });
+
+  if (!res.ok) {
+    throw new Error(`Error cargando propiedades: ${res.status}`);
+  }
+
+  return res.json();
+}
 </file>
 
 <file path=".gitignore">
@@ -633,6 +679,10 @@ export async function POST(req: Request) {
 }
 </file>
 
+<file path="app/globals.d.ts">
+declare module "*.css";
+</file>
+
 <file path="components/contacto/ContactoPage.tsx">
 "use client";
 
@@ -888,6 +938,310 @@ export function ContactoPage() {
       <BloqueRedes />
     </div>
   );
+}
+</file>
+
+<file path="components/forms/PropertyApplicationForm.module.css">
+/* PropertyApplicationForm.module.css */
+/* =====================================================
+   FULL HEIGHT FORM (evita que el Footer aparezca sin scroll)
+===================================================== */
+
+.arkaFormPage {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--arka-white);
+}
+
+.arkaForm {
+  flex: 1;
+  width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+/* Box sizing para todos los hijos del form */
+.arkaForm * {
+  box-sizing: border-box;
+}
+
+.arkaFormInner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* ── Intro ─────────────────────────────────────────── */
+
+.formIntro {
+  margin-bottom: 22px;
+}
+
+.formTitle {
+  color: var(--arka-brown-dark);
+  margin: 0 0 8px;
+}
+
+.formSubtitle {
+  color: var(--arka-text-soft);
+  margin: 0;
+}
+
+.formSectionTitle {
+  font-size: large;
+  font-weight: 600;
+  margin: 26px 0 10px;
+  color: var(--arka-brown-dark);
+}
+
+/* ── Campos ────────────────────────────────────────── */
+
+.label {
+  display: block;
+  margin: 14px 0 6px;
+  color: var(--arka-brown-dark);
+  font-weight: 600;
+}
+
+.input,
+.select,
+.textarea {
+  width: 100%;
+  max-width: 100%;
+  padding: 12px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(74, 52, 36, 0.25);
+  background: var(--arka-white);
+  color: var(--arka-brown-dark);
+  outline: none;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+/* ── Botones ───────────────────────────────────────── */
+
+.arkaFormActions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(74, 52, 36, 0.25);
+  background: var(--arka-white);
+  color: var(--arka-brown-dark);
+  cursor: pointer;
+  font-weight: 700;
+  font-family: inherit;
+  font-size: inherit;
+  transition:
+    transform 120ms ease,
+    opacity 120ms ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── Teléfono ──────────────────────────────────────── */
+
+.phoneRow {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 10px;
+}
+
+@media (max-width: 520px) {
+  .phoneRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Fotos ─────────────────────────────────────────── */
+
+.photoHelp {
+  color: var(--arka-text-soft);
+}
+
+.photoGrid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+@media (max-width: 520px) {
+  .photoGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.photoCard {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(74, 52, 36, 0.2);
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.photoImg {
+  display: block;
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
+}
+
+.photoRemove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+
+  border: 1px solid rgba(74, 52, 36, 0.25);
+  background: rgba(253, 252, 249, 0.95);
+  cursor: pointer;
+
+  padding: 0;
+  margin: 0;
+
+  display: grid;
+  place-items: center;
+
+  /* ocultar el "×" del HTML sin romper accesibilidad */
+  color: transparent;
+  font-size: 0;
+  line-height: 0;
+}
+
+.photoRemove::before,
+.photoRemove::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 2px;
+  background: var(--arka-brown-dark);
+  border-radius: 999px;
+  left: 50%;
+  top: 50%;
+  transform-origin: center;
+}
+
+.photoRemove::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.photoRemove::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* ── Modal de éxito ────────────────────────────────── */
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10050;
+  background: rgba(0, 0, 0, 0.55);
+
+  display: grid;
+  place-items: center;
+  padding: 18px;
+}
+
+.modalCard {
+  width: min(520px, 92vw);
+  background: var(--arka-white);
+  border-radius: 18px;
+  border: 1px solid rgba(74, 52, 36, 0.18);
+  box-shadow: 0 18px 70px rgba(0, 0, 0, 0.25);
+  padding: 18px 18px 16px;
+  position: relative;
+}
+
+.modalTitle {
+  margin: 0 0 8px;
+  color: var(--arka-brown-dark);
+}
+
+.modalText {
+  margin: 0;
+  color: var(--arka-text-soft);
+  line-height: 1.45;
+}
+
+.modalClose {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+
+  border: 1px solid rgba(74, 52, 36, 0.25);
+  background: rgba(253, 252, 249, 0.95);
+  cursor: pointer;
+
+  padding: 0;
+  margin: 0;
+
+  display: grid;
+  place-items: center;
+
+  color: transparent;
+  font-size: 0;
+  line-height: 0;
+}
+
+.modalClose::before,
+.modalClose::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 2px;
+  background: var(--arka-brown-dark);
+  border-radius: 999px;
+  left: 50%;
+  top: 50%;
+  transform-origin: center;
+}
+
+.modalClose::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.modalClose::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* ── Utilidades ────────────────────────────────────── */
+
+.errorText {
+  margin-top: 8px;
+  color: #b3261e;
+  font-weight: 600;
+}
+
+.helpText {
+  margin-top: 6px;
+  color: var(--arka-text-soft);
+  font-size: 13px;
 }
 </file>
 
@@ -1923,6 +2277,99 @@ export function SectionPasos() {
 }
 </file>
 
+<file path="components/OrientationLock.tsx">
+"use client";
+
+import { useEffect, useState } from "react";
+
+export function OrientationLock() {
+  const [isLandscape, setIsLandscape] = useState(false);
+
+  useEffect(() => {
+    const check = () => {
+      // Solo activar en dispositivos donde el ancho EN PORTRAIT sería <= 768px.
+      // Usamos el mínimo entre ancho y alto para inferir el ancho natural del device.
+      const narrowSide = Math.min(window.innerWidth, window.innerHeight);
+      const isMobileDevice = narrowSide <= 480;
+      setIsLandscape(isMobileDevice && window.innerWidth > window.innerHeight);
+    };
+
+    check();
+    window.addEventListener("resize", check);
+    window.addEventListener("orientationchange", check);
+    return () => {
+      window.removeEventListener("resize", check);
+      window.removeEventListener("orientationchange", check);
+    };
+  }, []);
+
+  if (!isLandscape) return null;
+
+  return (
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 99999,
+        background: "#4a3424",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 24,
+        padding: "0 40px",
+        textAlign: "center",
+      }}
+    >
+      {/* Ícono de rotación en marrón claro */}
+      <svg
+        width="56"
+        height="56"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#c8a67a"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+        style={{ opacity: 0.9 }}
+      >
+        <path d="M17 1l4 4-4 4" />
+        <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+        <path d="M7 23l-4-4 4-4" />
+        <path d="M21 13v2a4 4 0 0 1-4 4H3" />
+      </svg>
+
+      <p
+        style={{
+          margin: 0,
+          fontFamily: "var(--font-display, serif)",
+          fontSize: "clamp(18px, 4vw, 22px)",
+          fontWeight: 600,
+          color: "#fdfcf9",
+          lineHeight: 1.3,
+          letterSpacing: "-0.01em",
+        }}
+      >
+        Por favor rota tu dispositivo
+      </p>
+
+      <p
+        style={{
+          margin: 0,
+          fontFamily: "var(--font-body, sans-serif)",
+          fontSize: "clamp(13px, 3vw, 15px)",
+          color: "rgba(253, 252, 249, 0.6)",
+          lineHeight: 1.6,
+        }}
+      >
+        Esta experiencia está optimizada para verse en vertical.
+      </p>
+    </div>
+  );
+}
+</file>
+
 <file path="components/properties/ImageLightbox.module.css">
 /* ============================================================
    ImageLightbox.module.css
@@ -2310,14 +2757,31 @@ export function ImageLightbox({
 </file>
 
 <file path="components/properties/PropertiesGrid.tsx">
-import { getActiveProperties } from "../../lib/properties";
+// components/properties/PropertiesGrid.tsx
+// Server Component async — obtiene propiedades via fetch a /api/properties.
+
+import { fetchProperties } from "../../lib/api/fetchProperties";
 import { PropertyCard } from "./PropertyCard";
 
-// Server Component — sin "use client", se puede pre-renderizar
-// Cuando haya fetch a MongoDB: hacer este componente async y await los datos
+export async function PropertiesGrid() {
+  let properties;
 
-export function PropertiesGrid() {
-  const properties = getActiveProperties();
+  try {
+    properties = await fetchProperties();
+  } catch (error) {
+    return (
+      <p
+        style={{
+          textAlign: "center",
+          color: "var(--arka-text-soft)",
+          padding: "60px 0",
+          fontSize: "17px",
+        }}
+      >
+        No se pudieron cargar las propiedades. Intenta de nuevo más tarde.
+      </p>
+    );
+  }
 
   if (properties.length === 0) {
     return (
@@ -4661,576 +5125,6 @@ export default function PostulaTuPropiedadPage() {
 }
 </file>
 
-<file path="app/api/postula/submit/route.ts">
-import { NextResponse } from "next/server";
-import crypto from "crypto";
-
-function json(message: string, status = 400) {
-  return NextResponse.json({ message }, { status });
-}
-
-function signHmac(data: string, secret: string) {
-  return crypto.createHmac("sha256", secret).update(data).digest("hex");
-}
-
-function sha1(input: string) {
-  return crypto.createHash("sha1").update(input).digest("hex");
-}
-
-function requireEnv(name: string) {
-  const v = process.env[name];
-  if (!v) throw new Error(`Falta ${name} en env.`);
-  return v;
-}
-
-async function fileToBase64DataUri(file: File) {
-  const ab = await file.arrayBuffer();
-  const buf = Buffer.from(ab);
-  const b64 = buf.toString("base64");
-  return `data:${file.type};base64,${b64}`;
-}
-
-function formatPhoneFolder(phoneE164: string) {
-  const s = String(phoneE164 || "").trim();
-  const m = s.match(/^(\+?)(\d{1,4})(\d+)$/);
-  if (!m) return "unknown-phone";
-  const cc = m[2];
-  const rest = m[3];
-  return `${cc}-${rest}`;
-}
-
-async function uploadToCloudinary(
-  file: File,
-  opts: { folder: string; publicId: string; overwrite: boolean },
-) {
-  const cloudName = requireEnv("CLOUDINARY_CLOUD_NAME");
-  const apiKey = requireEnv("CLOUDINARY_API_KEY");
-  const apiSecret = requireEnv("CLOUDINARY_API_SECRET");
-  const timestamp = Math.floor(Date.now() / 1000);
-
-  const paramsToSign = [
-    `folder=${opts.folder}`,
-    `overwrite=${opts.overwrite ? "true" : "false"}`,
-    `public_id=${opts.publicId}`,
-    `timestamp=${timestamp}`,
-  ];
-
-  const signature = sha1(paramsToSign.join("&") + apiSecret);
-  const fileData = await fileToBase64DataUri(file);
-
-  const body = new URLSearchParams();
-  body.set("file", fileData);
-  body.set("api_key", apiKey);
-  body.set("timestamp", String(timestamp));
-  body.set("signature", signature);
-  body.set("folder", opts.folder);
-  body.set("public_id", opts.publicId);
-  body.set("overwrite", opts.overwrite ? "true" : "false");
-
-  const res = await fetch(
-    `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-    { method: "POST", body },
-  );
-
-  const out = await res.json();
-  if (!res.ok)
-    throw new Error(out?.error?.message || "Cloudinary upload failed");
-
-  return {
-    secure_url: out.secure_url as string,
-    public_id: out.public_id as string,
-  };
-}
-
-export async function POST(req: Request) {
-  try {
-    const secret = process.env.FORM_TOKEN_SECRET;
-    if (!secret) return json("Falta FORM_TOKEN_SECRET en env.", 500);
-
-    const form = await req.formData();
-    const verifiedToken = String(form.get("verifiedToken") || "");
-    const payloadStr = String(form.get("payload") || "");
-    const submissionId = String(form.get("submissionId") || "");
-
-    if (!verifiedToken) return json("Falta verifiedToken.");
-    if (!payloadStr) return json("Falta payload.");
-    if (!submissionId) return json("Falta submissionId.");
-
-    const [b64, sig] = verifiedToken.split(".");
-    if (!b64 || !sig) return json("verifiedToken inválido.");
-
-    const tokenPayloadStr = Buffer.from(b64, "base64url").toString("utf8");
-    if (signHmac(tokenPayloadStr, secret) !== sig)
-      return json("verifiedToken inválido.");
-
-    const tokenPayload = JSON.parse(tokenPayloadStr);
-    if (!tokenPayload.verified) return json("Correo no verificado.");
-    if (Date.now() > tokenPayload.exp)
-      return json("Sesión expirada, valida tu correo de nuevo.");
-
-    const payload = JSON.parse(payloadStr);
-
-    const photos = form.getAll("photos") as File[];
-    const MIN_FILES = 3;
-    const MAX_FILES = 5;
-    const MAX_MB = 5;
-
-    if (!photos?.length || photos.length < MIN_FILES) {
-      return json(`Debes subir al menos ${MIN_FILES} fotos.`);
-    }
-    if (photos.length > MAX_FILES) {
-      return json(`Máximo ${MAX_FILES} fotos.`);
-    }
-
-    for (const f of photos) {
-      if (!f.type?.startsWith("image/")) {
-        return json("Solo se permiten imágenes.");
-      }
-
-      const sizeMb = f.size / (1024 * 1024);
-      if (sizeMb > MAX_MB) {
-        return json(`Cada foto debe pesar máximo ${MAX_MB}MB.`);
-      }
-    }
-
-    const disableIdempotency =
-      process.env.NODE_ENV !== "production" &&
-      process.env.POSTULA_DISABLE_IDEMPOTENCY === "1";
-
-    let photoUrls: string[] = [];
-
-    try {
-      requireEnv("CLOUDINARY_CLOUD_NAME");
-      requireEnv("CLOUDINARY_API_KEY");
-      requireEnv("CLOUDINARY_API_SECRET");
-
-      const baseFolder = process.env.CLOUDINARY_FOLDER || "arka/postula";
-      const phoneE164 = String(payload?.owner?.phone || "");
-      const phoneFolder = formatPhoneFolder(phoneE164);
-
-      const now = new Date();
-      const yyyy = String(now.getFullYear());
-      const mm = String(now.getMonth() + 1).padStart(2, "0");
-
-      const folder = `${baseFolder}/${yyyy}/${mm}/${phoneFolder}`;
-
-      const requestId = disableIdempotency
-        ? crypto.randomBytes(6).toString("hex")
-        : "";
-
-      const uploads = await Promise.all(
-        photos.map((f, idx) =>
-          uploadToCloudinary(f, {
-            folder,
-            publicId: disableIdempotency
-              ? `${submissionId}_${requestId}_photo_${idx + 1}`
-              : `${submissionId}_photo_${idx + 1}`,
-            overwrite: disableIdempotency,
-          }),
-        ),
-      );
-
-      photoUrls = uploads.map((u) => u.secure_url);
-    } catch (e: any) {
-      const msg = String(e?.message || e);
-      console.error("Cloudinary error:", msg);
-
-      if (process.env.NODE_ENV !== "production") {
-        return json(`Cloudinary: ${msg}`, 500);
-      }
-
-      return json(
-        "No se pudieron subir las fotos. Intenta de nuevo en unos minutos.",
-        500,
-      );
-    }
-
-    const resendKey = process.env.RESEND_API_KEY;
-    const from = process.env.RESEND_FROM;
-    const internalTo = process.env.POSTULA_INTERNAL_TO;
-    const ownerTo = payload?.owner?.email;
-
-    const p = payload.property;
-
-    const summary = `
-ARKA - Nueva postulación recibida
-ID de postulación: ${submissionId}
-
-PROPIETARIO
-Nombre: ${payload.owner.fullName}
-Correo: ${payload.owner.email}
-Celular: ${payload.owner.phone}
-
-UBICACIÓN
-Ciudad: ${p.city}
-// TODO (multi-ciudad): Localidad Bogotá: ${p.bogotaLocalidad || "N/A"}
-Sector SM: ${p.sectorGroup || "N/A"}
-Subsector SM: ${p.sectorSub || "N/A"}
-Descripción libre: ${p.sectorFreeText || "N/A"}
-
-TIPO
-Tipo: ${p.type}
-Habitaciones: ${p.rooms ?? "N/A"}
-Baños: ${p.baths ?? "N/A"}
-Otro tipo: ${p.otherTypeText || "N/A"}
-
-CONDICIONES
-Amoblada: ${p.furnished}
-PH: ${p.isHOA}
-Permite STR: ${p.hoaAllowsSTR || "N/A"}
-
-OPERACIÓN
-Estado: ${payload.ops.currentStatus}
-Inicio: ${payload.ops.startWhen}
-
-EXPECTATIVA
-${payload.expectation.goal}
-
-FOTOS (Cloudinary)
-${photoUrls.map((u, i) => `${i + 1}) ${u}`).join("\n")}
-`;
-
-    if (resendKey && from && internalTo) {
-      await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${resendKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          from,
-          to: internalTo,
-          subject: "Nueva postulación de propiedad - ARKA",
-          text: summary,
-        }),
-      });
-    } else {
-      console.log("[DEV] Nueva postulación:", summary);
-    }
-
-    if (resendKey && from && ownerTo) {
-      await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${resendKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          from,
-          to: ownerTo,
-          subject: "Recibimos tu postulación - ARKA Living",
-          html: `<p>¡Gracias por postular tu propiedad!</p>
-                 <p>Revisaremos tu información y te contactaremos en un plazo máximo de <strong>48 horas</strong>.</p>
-                 <p>ARKA Living</p>`,
-        }),
-      });
-    }
-
-    return NextResponse.json({ ok: true, submissionId, photoUrls });
-  } catch (e: any) {
-    const msg = String(e?.message || e);
-    console.error("POST /api/postula/submit fatal:", msg);
-    return json("Error interno procesando la postulación.", 500);
-  }
-}
-</file>
-
-<file path="components/forms/PropertyApplicationForm.css">
-/* PropertyApplicationForm.css */
-/* =====================================================
-   FULL HEIGHT FORM (evita que el Footer aparezca sin scroll)
-===================================================== */
-
-.arkaFormPage {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: var(--arka-white);
-}
-
-.arkaForm {
-  flex: 1;
-}
-
-/* ✅ FIX MOVIL (overflow-x) se movió a globals.css */
-
-/* 2) Box sizing global local al form */
-.arkaForm,
-.arkaForm * {
-  box-sizing: border-box;
-}
-
-.arkaForm {
-  width: 100%;
-  overflow-x: hidden;
-}
-
-.arkaFormInner {
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-/* ✅ Intro spacing (req #1) */
-.formIntro {
-  margin-bottom: 22px;
-}
-
-.formTitle {
-  color: var(--arka-brown-dark);
-  margin: 0 0 8px;
-}
-
-.formSubtitle {
-  color: var(--arka-text-soft);
-  margin: 0;
-}
-
-.formSectionTitle {
-  font-size: large;
-  font-weight: 600;
-  margin: 26px 0 10px;
-  color: var(--arka-brown-dark);
-}
-
-.arkaForm label {
-  display: block;
-  margin: 14px 0 6px;
-  color: var(--arka-brown-dark);
-  font-weight: 600;
-}
-
-.arkaForm input,
-.arkaForm select,
-.arkaForm textarea {
-  width: 100%;
-  max-width: 100%;
-  padding: 12px 12px;
-  border-radius: 12px;
-  border: 1px solid rgba(74, 52, 36, 0.25);
-  background: var(--arka-white);
-  color: var(--arka-brown-dark);
-  outline: none;
-}
-
-.arkaForm textarea {
-  min-height: 96px;
-  resize: vertical;
-}
-
-.arkaFormActions {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.arkaForm button {
-  margin-top: 16px;
-  padding: 12px 14px;
-  border-radius: 12px;
-  border: 1px solid rgba(74, 52, 36, 0.25);
-  background: var(--arka-white);
-  color: var(--arka-brown-dark);
-  cursor: pointer;
-  font-weight: 700;
-  transition:
-    transform 120ms ease,
-    opacity 120ms ease;
-}
-
-.arkaForm button:hover {
-  transform: translateY(-1px);
-}
-
-.arkaForm button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* Teléfono: select + input en grid */
-.phoneRow {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 10px;
-}
-
-@media (max-width: 520px) {
-  .phoneRow {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Fotos: previews */
-.photoHelp {
-  color: var(--arka-text-soft);
-}
-
-.photoGrid {
-  margin-top: 12px;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-}
-
-@media (max-width: 520px) {
-  .photoGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-.photoCard {
-  position: relative;
-  border-radius: 14px;
-  overflow: hidden;
-  border: 1px solid rgba(74, 52, 36, 0.2);
-  background: rgba(255, 255, 255, 0.5);
-}
-
-.photoImg {
-  display: block;
-  width: 100%;
-  height: 110px;
-  object-fit: cover;
-}
-
-.photoRemove {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-
-  width: 34px;
-  height: 34px;
-  border-radius: 999px;
-
-  border: 1px solid rgba(74, 52, 36, 0.25);
-  background: rgba(253, 252, 249, 0.95);
-  cursor: pointer;
-
-  /* no dependemos del glifo */
-  padding: 0;
-  margin: 0;
-
-  display: grid;
-  place-items: center;
-
-  /* ocultar el “×” del HTML sin romper accesibilidad */
-  color: transparent;
-  font-size: 0;
-  line-height: 0;
-}
-
-.photoRemove::before,
-.photoRemove::after {
-  content: "";
-  position: absolute;
-  width: 16px;
-  height: 2px;
-  background: var(--arka-brown-dark);
-  border-radius: 999px;
-  left: 50%;
-  top: 50%;
-  transform-origin: center;
-}
-
-.photoRemove::before {
-  transform: translate(-50%, -50%) rotate(45deg);
-}
-
-.photoRemove::after {
-  transform: translate(-50%, -50%) rotate(-45deg);
-}
-
-/* Success modal */
-.modalOverlay {
-  position: fixed;
-  inset: 0;
-  z-index: 10050;
-  background: rgba(0, 0, 0, 0.55);
-
-  display: grid;
-  place-items: center;
-  padding: 18px;
-}
-
-.modalCard {
-  width: min(520px, 92vw);
-  background: var(--arka-white);
-  border-radius: 18px;
-  border: 1px solid rgba(74, 52, 36, 0.18);
-  box-shadow: 0 18px 70px rgba(0, 0, 0, 0.25);
-  padding: 18px 18px 16px;
-  position: relative;
-}
-
-.modalTitle {
-  margin: 0 0 8px;
-  color: var(--arka-brown-dark);
-}
-
-.modalText {
-  margin: 0;
-  color: var(--arka-text-soft);
-  line-height: 1.45;
-}
-
-.modalClose {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-
-  width: 36px;
-  height: 36px;
-  border-radius: 999px;
-
-  border: 1px solid rgba(74, 52, 36, 0.25);
-  background: rgba(253, 252, 249, 0.95);
-  cursor: pointer;
-
-  padding: 0;
-  margin: 0;
-
-  display: grid;
-  place-items: center;
-
-  color: transparent;
-  font-size: 0;
-  line-height: 0;
-}
-
-.modalClose::before,
-.modalClose::after {
-  content: "";
-  position: absolute;
-  width: 16px;
-  height: 2px;
-  background: var(--arka-brown-dark);
-  border-radius: 999px;
-  left: 50%;
-  top: 50%;
-  transform-origin: center;
-}
-
-.modalClose::before {
-  transform: translate(-50%, -50%) rotate(45deg);
-}
-
-.modalClose::after {
-  transform: translate(-50%, -50%) rotate(-45deg);
-}
-
-.errorText {
-  margin-top: 8px;
-  color: #b3261e;
-  font-weight: 600;
-}
-
-.helpText {
-  margin-top: 6px;
-  color: var(--arka-text-soft);
-  font-size: 13px;
-}
-</file>
-
 <file path="components/home/FloatingCTA.module.css">
 .wrap {
   position: fixed;
@@ -5818,1003 +5712,291 @@ html[data-hero-stage="7"] .wrap {
 }
 </file>
 
-<file path="package.json">
-{
-  "name": "nextjs",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
-  },
-  "dependencies": {
-    "@hookform/resolvers": "^5.2.2",
-    "browser-image-compression": "^2.0.2",
-    "lucide-react": "^0.574.0",
-    "next": "16.1.6",
-    "react": "19.2.3",
-    "react-dom": "19.2.3"
-  },
-  "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.1.6",
-    "tailwindcss": "^4",
-    "typescript": "^5"
-  }
-}
-</file>
+<file path="app/api/postula/submit/route.ts">
+import { NextResponse } from "next/server";
+import crypto from "crypto";
 
-<file path="components/forms/PropertyApplicationForm.tsx">
-"use client";
-
-import { useMemo, useRef, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
-import imageCompression from "browser-image-compression";
-import "./PropertyApplicationForm.css";
-
-// TODO (multi-ciudad): cuando se reactive Bogotá, descomentar este tipo
-// type City = "Bogotá" | "Santa Marta";
-type City = "Santa Marta";
-
-// TODO (multi-ciudad): descomentar cuando se active Bogotá
-// const BOGOTA_LOCALIDADES = [
-//   "Usaquén",
-//   "Chapinero",
-//   "Santa Fe",
-//   "San Cristóbal",
-//   "Usme",
-//   "Tunjuelito",
-//   "Bosa",
-//   "Kennedy",
-//   "Fontibón",
-//   "Engativá",
-//   "Suba",
-//   "Barrios Unidos",
-//   "Teusaquillo",
-//   "Los Mártires",
-//   "Antonio Nariño",
-//   "Puente Aranda",
-//   "La Candelaria",
-//   "Rafael Uribe Uribe",
-//   "Ciudad Bolívar",
-//   "Sumapaz",
-// ];
-
-const SM_SECTORES: Array<{
-  group: string;
-  subs?: string[];
-  freeText?: boolean;
-}> = [
-  {
-    group: "Centro",
-    subs: ["Centro Histórico", "El Centro", "Pescaíto", "San Francisco"],
-  },
-  {
-    group: "Rodadero – Gaira",
-    subs: [
-      "El Rodadero",
-      "Rodadero Sur",
-      "Rodadero Reservado",
-      "Gaira",
-      "Playa Salguero",
-    ],
-  },
-  {
-    group: "Corredor Pozos Colorados – Bello Horizonte",
-    subs: ["Pozos Colorados", "Bello Horizonte", "Aeropuerto", "Cabo Tortuga"],
-  },
-  {
-    group: "Zona Urbana Tradicional",
-    subs: [
-      "Bavaria",
-      "Los Almendros",
-      "Jardín",
-      "María Eugenia",
-      "Mamatoco",
-      "Olaya Herrera",
-    ],
-  },
-  { group: "Zonas Alternativas", subs: ["Taganga", "Bonda"] },
-  { group: "Otro / No estoy seguro", freeText: true },
-];
-
-// ✅ Lista reducida + "Otro"
-const COUNTRY_CODES = [
-  { label: "Colombia (+57)", code: "+57" },
-  { label: "Estados Unidos (+1)", code: "+1" },
-  { label: "Canadá (+1)", code: "+1" },
-  { label: "México (+52)", code: "+52" },
-  { label: "España (+34)", code: "+34" },
-  { label: "Panamá (+507)", code: "+507" },
-  { label: "Venezuela (+58)", code: "+58" },
-  { label: "Brasil (+55)", code: "+55" },
-  { label: "Perú (+51)", code: "+51" },
-  { label: "Otro", code: "OTHER" },
-] as const;
-
-function isEmail(v: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+function json(message: string, status = 400) {
+  return NextResponse.json({ message }, { status });
 }
 
-function onlyDigits(v: string) {
-  return v.replace(/[^\d]/g, "");
+function signHmac(data: string, secret: string) {
+  return crypto.createHmac("sha256", secret).update(data).digest("hex");
 }
 
-function normalizeCountryCode(raw: string) {
-  const s = raw.trim();
-  if (!s) return "";
-  const withPlus = s.startsWith("+") ? s : `+${s}`;
-  return "+" + onlyDigits(withPlus);
+function sha1(input: string) {
+  return crypto.createHash("sha1").update(input).digest("hex");
 }
 
-type PhotoItem = { id: string; file: File; url: string };
-
-function makeClientId() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const c: any = globalThis.crypto;
-  return (
-    c?.randomUUID?.() ?? `${Date.now()}_${Math.random().toString(16).slice(2)}`
-  );
+function requireEnv(name: string) {
+  const v = process.env[name];
+  if (!v) throw new Error(`Falta ${name} en env.`);
+  return v;
 }
 
-async function compressImage(file: File): Promise<File> {
-  if (!file.type.startsWith("image/")) return file;
+async function fileToBase64DataUri(file: File) {
+  const ab = await file.arrayBuffer();
+  const buf = Buffer.from(ab);
+  const b64 = buf.toString("base64");
+  return `data:${file.type};base64,${b64}`;
+}
 
+function formatPhoneFolder(phoneE164: string) {
+  const s = String(phoneE164 || "").trim();
+  const m = s.match(/^(\+?)(\d{1,4})(\d+)$/);
+  if (!m) return "unknown-phone";
+  const cc = m[2];
+  const rest = m[3];
+  return `${cc}-${rest}`;
+}
+
+// [FIX #4] uploadToCloudinary con AbortController y timeout de 30s por foto
+async function uploadToCloudinary(
+  file: File,
+  opts: { folder: string; publicId: string; overwrite: boolean },
+) {
+  const cloudName = requireEnv("CLOUDINARY_CLOUD_NAME");
+  const apiKey = requireEnv("CLOUDINARY_API_KEY");
+  const apiSecret = requireEnv("CLOUDINARY_API_SECRET");
+  const timestamp = Math.floor(Date.now() / 1000);
+
+  const paramsToSign = [
+    `folder=${opts.folder}`,
+    `overwrite=${opts.overwrite ? "true" : "false"}`,
+    `public_id=${opts.publicId}`,
+    `timestamp=${timestamp}`,
+  ];
+
+  const signature = sha1(paramsToSign.join("&") + apiSecret);
+  const fileData = await fileToBase64DataUri(file);
+
+  const body = new URLSearchParams();
+  body.set("file", fileData);
+  body.set("api_key", apiKey);
+  body.set("timestamp", String(timestamp));
+  body.set("signature", signature);
+  body.set("folder", opts.folder);
+  body.set("public_id", opts.publicId);
+  body.set("overwrite", opts.overwrite ? "true" : "false");
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 30_000); // 30s por foto
+
+  let res: Response;
   try {
-    const compressed = await imageCompression(file, {
-      maxSizeMB: 4.8,
-      maxWidthOrHeight: 1920,
-      useWebWorker: true,
-      initialQuality: 0.8,
-    });
-
-    const safeName =
-      file.name && file.name.trim() ? file.name : `photo-${Date.now()}.jpg`;
-
-    return new File([compressed], safeName, {
-      type: compressed.type || file.type || "image/jpeg",
-      lastModified: Date.now(),
-    });
-  } catch (error) {
-    console.error("Error compressing image:", error);
-    return file;
+    res = await fetch(
+      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+      { method: "POST", body, signal: controller.signal },
+    );
+  } catch (err: any) {
+    clearTimeout(timeoutId);
+    if (err?.name === "AbortError") {
+      throw new Error(`Cloudinary upload timeout para ${opts.publicId}`);
+    }
+    throw err;
   }
+  clearTimeout(timeoutId);
+
+  const out = await res.json();
+  if (!res.ok)
+    throw new Error(out?.error?.message || "Cloudinary upload failed");
+
+  return {
+    secure_url: out.secure_url as string,
+    public_id: out.public_id as string,
+  };
 }
 
-export function PropertyApplicationForm() {
-  const router = useRouter();
-  const pathname = usePathname();
+export async function POST(req: Request) {
+  try {
+    const secret = process.env.FORM_TOKEN_SECRET;
+    if (!secret) return json("Falta FORM_TOKEN_SECRET en env.", 500);
 
-  const [step, setStep] = useState<number>(1);
+    const form = await req.formData();
+    const verifiedToken = String(form.get("verifiedToken") || "");
+    const payloadStr = String(form.get("payload") || "");
+    const submissionId = String(form.get("submissionId") || "");
 
-  const [startToken, setStartToken] = useState<string | null>(null);
-  const [verifiedToken, setVerifiedToken] = useState<string | null>(null);
+    if (!verifiedToken) return json("Falta verifiedToken.");
+    if (!payloadStr) return json("Falta payload.");
+    if (!submissionId) return json("Falta submissionId.");
 
-  // page 1
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [privacyAccepted, setPrivacyAccepted] = useState(false);
+    const [b64, sig] = verifiedToken.split(".");
+    if (!b64 || !sig) return json("verifiedToken inválido.");
 
-  // phone with country code
-  const [countryCode, setCountryCode] = useState<string>("+57");
-  const [otherCountryCode, setOtherCountryCode] = useState<string>("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+    const tokenPayloadStr = Buffer.from(b64, "base64url").toString("utf8");
+    if (signHmac(tokenPayloadStr, secret) !== sig)
+      return json("verifiedToken inválido.");
 
-  // otp
-  const [otp, setOtp] = useState("");
+    const tokenPayload = JSON.parse(tokenPayloadStr);
+    if (!tokenPayload.verified) return json("Correo no verificado.");
+    if (Date.now() > tokenPayload.exp)
+      return json("Sesión expirada, valida tu correo de nuevo.");
 
-  // page 2
-  const [city, setCity] = useState<City | "">("");
-  // TODO (multi-ciudad): descomentar cuando se active Bogotá
-  // const [bogotaLocalidad, setBogotaLocalidad] = useState("");
-  const [smSectorGroup, setSmSectorGroup] = useState("");
-  const [smSectorSub, setSmSectorSub] = useState("");
-  const [smSectorFreeText, setSmSectorFreeText] = useState("");
+    const payload = JSON.parse(payloadStr);
 
-  const [propertyType, setPropertyType] = useState<
-    "" | "Studio o único espacio" | "Apartamento" | "Casa" | "Otro"
-  >("");
-  const [rooms, setRooms] = useState<number | "">("");
-  const [baths, setBaths] = useState<number | "">("");
-  const [otherTypeText, setOtherTypeText] = useState("");
+    const photos = form.getAll("photos") as File[];
+    const MIN_FILES = 3;
+    const MAX_FILES = 5;
+    const MAX_MB = 5;
 
-  const [furnished, setFurnished] = useState<"" | "Sí" | "Parcialmente" | "No">(
-    "",
-  );
-  const [isHOA, setIsHOA] = useState<"" | "Sí" | "No">("");
-  const [hoaAllowsSTR, setHoaAllowsSTR] = useState<
-    "" | "Sí" | "No" | "No estoy seguro"
-  >("");
-
-  // page 3
-  const [currentStatus, setCurrentStatus] = useState<
-    "" | "Desocupada" | "Arrendada a largo plazo" | "Ya en Airbnb / Booking"
-  >("");
-  const [startWhen, setStartWhen] = useState<
-    "" | "Inmediato" | "En 1–3 meses" | "Más adelante"
-  >("");
-
-  // page 4
-  const [goal, setGoal] = useState<
-    | ""
-    | "Ingreso fijo mensual"
-    | "Ingreso optimizado por noche"
-    | "Mezcla de ambos"
-    | "Aún no lo tengo claro"
-  >("");
-
-  // page 5 photos
-  const [photos, setPhotos] = useState<PhotoItem[]>([]);
-  const MIN_PHOTOS = 3;
-  const MAX_PHOTOS = 5;
-  const minPhotosOk = photos.length >= MIN_PHOTOS;
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitPhase, setSubmitPhase] = useState<
-    "idle" | "compressing" | "sending"
-  >("idle");
-  const submissionIdRef = useRef<string | null>(null);
-
-  const [showSuccess, setShowSuccess] = useState(false);
-
-  const smGroupObj = useMemo(
-    () => SM_SECTORES.find((s) => s.group === smSectorGroup),
-    [smSectorGroup],
-  );
-
-  function goHomeStage0() {
-    const fire = () => window.dispatchEvent(new Event("arka:hero:stage0"));
-
-    if (pathname !== "/") {
-      router.push("/");
-      window.setTimeout(fire, 80);
-    } else {
-      fire();
+    if (!photos?.length || photos.length < MIN_FILES) {
+      return json(`Debes subir al menos ${MIN_FILES} fotos.`);
     }
-  }
+    if (photos.length > MAX_FILES) {
+      return json(`Máximo ${MAX_FILES} fotos.`);
+    }
 
-  function closeSuccessAndGoHome() {
-    setShowSuccess(false);
-    goHomeStage0();
-  }
-
-  function back() {
-    if (step === 1.5) setStep(1);
-    else setStep((s) => Math.max(1, s - 1));
-  }
-
-  function validateStepOrAlert(current: number): boolean {
-    if (current === 2) {
-      if (!city) return (alert("Selecciona la ciudad."), false);
-
-      // TODO (multi-ciudad): descomentar cuando se active Bogotá
-      // if (city === "Bogotá" && !bogotaLocalidad)
-      //   return (alert("Selecciona la localidad."), false);
-
-      if (city === "Santa Marta") {
-        if (!smSectorGroup) return (alert("Selecciona el sector."), false);
-        if (smGroupObj?.subs?.length && !smSectorSub)
-          return (alert("Selecciona el sub-sector."), false);
-        if (smGroupObj?.freeText && !smSectorFreeText.trim())
-          return (
-            alert("Describe la ubicación general (máx. 50 palabras)."),
-            false
-          );
+    for (const f of photos) {
+      if (!f.type?.startsWith("image/")) {
+        return json("Solo se permiten imágenes.");
       }
 
-      if (!propertyType)
-        return (alert("Selecciona el tipo de propiedad."), false);
-
-      const needsRoomsBaths =
-        propertyType === "Apartamento" || propertyType === "Casa";
-      if (needsRoomsBaths && (rooms === "" || baths === ""))
-        return (alert("Indica habitaciones y baños."), false);
-
-      if (propertyType === "Otro" && !otherTypeText.trim())
-        return (alert("Describe el tipo (máx. 50 palabras)."), false);
-
-      if (!furnished) return (alert("Indica si está amoblada."), false);
-      if (!isHOA)
-        return (alert("Indica si hace parte de propiedad horizontal."), false);
-      if (isHOA === "Sí" && !hoaAllowsSTR)
-        return (alert("Indica si permite rentas cortas."), false);
-
-      return true;
+      const sizeMb = f.size / (1024 * 1024);
+      if (sizeMb > MAX_MB) {
+        return json(`Cada foto debe pesar máximo ${MAX_MB}MB.`);
+      }
     }
 
-    if (current === 3) {
-      if (!currentStatus) return (alert("Indica el estado actual."), false);
-      if (!startWhen)
-        return (alert("Indica desde cuándo estaría disponible."), false);
-      return true;
-    }
+    const disableIdempotency =
+      process.env.NODE_ENV !== "production" &&
+      process.env.POSTULA_DISABLE_IDEMPOTENCY === "1";
 
-    if (current === 4) {
-      if (!goal) return (alert("Indica tu expectativa."), false);
-      return true;
-    }
-
-    if (current === 5) {
-      if (!minPhotosOk)
-        return (
-          alert(
-            `Sube al menos ${MIN_PHOTOS} fotos (habitación principal y baño).`,
-          ),
-          false
-        );
-      return true;
-    }
-
-    return true;
-  }
-
-  function next() {
-    if (!validateStepOrAlert(step)) return;
-    setStep((s) => Math.min(5, s + 1));
-  }
-
-  function getFinalCountryCodeOrEmpty() {
-    if (countryCode === "OTHER") return normalizeCountryCode(otherCountryCode);
-    return countryCode;
-  }
-
-  async function startEmailVerification() {
-    const phoneDigits = onlyDigits(phoneNumber);
-
-    if (!fullName.trim()) return alert("Ingresa tu nombre completo.");
-    if (!isEmail(email)) return alert("Ingresa un correo válido.");
-
-    const cc = getFinalCountryCodeOrEmpty();
-    if (!cc) return alert("Selecciona el indicativo del país.");
-    if (countryCode === "OTHER" && !cc)
-      return alert("Escribe el indicativo (ej: +49).");
-
-    if (!phoneDigits) return alert("Ingresa tu número de celular o WhatsApp.");
-    if (phoneDigits.length < 7)
-      return alert("El número parece demasiado corto.");
-
-    const phoneE164 = `${cc}${phoneDigits}`;
-
-    if (!privacyAccepted) {
-      return alert("Debes aceptar la Política de Privacidad para continuar.");
-    }
-
-    const res = await fetch("/api/postula/start", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ fullName, email, phone: phoneE164 }),
-    });
-
-    const data = await res.json();
-    if (!res.ok)
-      return alert(
-        data?.message || "No se pudo enviar el correo de validación.",
-      );
-
-    setStartToken(data.token);
-    setStep(1.5);
-  }
-
-  async function verifyCode() {
-    if (!startToken) return alert("No hay verificación iniciada.");
-    if (!otp.trim()) return alert("Ingresa el código.");
-
-    const res = await fetch("/api/postula/verify", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token: startToken, code: otp.trim() }),
-    });
-
-    const data = await res.json();
-    if (!res.ok) return alert(data?.message || "Código inválido o expirado.");
-
-    setVerifiedToken(data.verifiedToken);
-    setStep(2);
-  }
-
-  function addPhotos(files: File[]) {
-    const availableSlots = Math.max(0, MAX_PHOTOS - photos.length);
-
-    const toAdd = files
-      .filter((f) => f.type.startsWith("image/"))
-      .slice(0, availableSlots)
-      .map((file) => {
-        const id = makeClientId();
-        const url = URL.createObjectURL(file);
-        return { id, file, url };
-      });
-
-    setPhotos((prev) => [...prev, ...toAdd]);
-  }
-
-  function removePhoto(id: string) {
-    setPhotos((prev) => {
-      const target = prev.find((p) => p.id === id);
-      if (target) URL.revokeObjectURL(target.url);
-      return prev.filter((p) => p.id !== id);
-    });
-  }
-
-  async function submitAll() {
-    if (isSubmitting) return;
-
-    const verified = verifiedToken;
-    if (!verified) return alert("Debes validar tu correo para continuar.");
-
-    if (
-      !validateStepOrAlert(2) ||
-      !validateStepOrAlert(3) ||
-      !validateStepOrAlert(4) ||
-      !validateStepOrAlert(5)
-    ) {
-      return;
-    }
-
-    setIsSubmitting(true);
-    setSubmitPhase("compressing");
-
-    if (!submissionIdRef.current) {
-      submissionIdRef.current = makeClientId();
-    }
-    const submissionId = submissionIdRef.current;
-    if (!submissionId) {
-      setIsSubmitting(false);
-      setSubmitPhase("idle");
-      return alert("No se pudo generar el ID de envío. Intenta de nuevo.");
-    }
-
-    const needsRoomsBaths =
-      propertyType === "Apartamento" || propertyType === "Casa";
-
-    const cc = getFinalCountryCodeOrEmpty();
-    if (!cc) {
-      setIsSubmitting(false);
-      setSubmitPhase("idle");
-      return alert("Falta el indicativo del país.");
-    }
-    const phoneE164 = `${cc}${onlyDigits(phoneNumber)}`;
-
-    const payload = {
-      submissionId,
-      owner: { fullName, email, phone: phoneE164 },
-      property: {
-        city,
-        // TODO (multi-ciudad): descomentar cuando se active Bogotá
-        // bogotaLocalidad: city === "Bogotá" ? bogotaLocalidad : null,
-        sectorGroup: smSectorGroup || null,
-        sectorSub: smSectorSub || null,
-        sectorFreeText: smSectorFreeText || null,
-        type: propertyType,
-        rooms: needsRoomsBaths ? rooms : null,
-        baths: needsRoomsBaths ? baths : null,
-        otherTypeText: propertyType === "Otro" ? otherTypeText : null,
-        furnished,
-        isHOA,
-        hoaAllowsSTR: isHOA === "Sí" ? hoaAllowsSTR : null,
-      },
-      ops: { currentStatus, startWhen },
-      expectation: { goal },
-    };
+    let photoUrls: string[] = [];
 
     try {
-      const compressedFiles = await Promise.all(
-        photos.map(async (p) => compressImage(p.file)),
+      requireEnv("CLOUDINARY_CLOUD_NAME");
+      requireEnv("CLOUDINARY_API_KEY");
+      requireEnv("CLOUDINARY_API_SECRET");
+
+      const baseFolder = process.env.CLOUDINARY_FOLDER || "arka/postula";
+      const phoneE164 = String(payload?.owner?.phone || "");
+      const phoneFolder = formatPhoneFolder(phoneE164);
+
+      const now = new Date();
+      const yyyy = String(now.getFullYear());
+      const mm = String(now.getMonth() + 1).padStart(2, "0");
+
+      const folder = `${baseFolder}/${yyyy}/${mm}/${phoneFolder}`;
+
+      const requestId = disableIdempotency
+        ? crypto.randomBytes(6).toString("hex")
+        : "";
+
+      const uploads = await Promise.all(
+        photos.map((f, idx) =>
+          uploadToCloudinary(f, {
+            folder,
+            publicId: disableIdempotency
+              ? `${submissionId}_${requestId}_photo_${idx + 1}`
+              : `${submissionId}_photo_${idx + 1}`,
+            overwrite: disableIdempotency,
+          }),
+        ),
       );
 
-      setSubmitPhase("sending");
+      photoUrls = uploads.map((u) => u.secure_url);
+    } catch (e: any) {
+      const msg = String(e?.message || e);
+      console.error("Cloudinary error:", msg);
 
-      const fd = new FormData();
-      fd.append("verifiedToken", verified);
-      fd.append("payload", JSON.stringify(payload));
-      fd.append("submissionId", submissionId);
-
-      compressedFiles.forEach((file) => fd.append("photos", file));
-
-      const res = await fetch("/api/postula/submit", {
-        method: "POST",
-        body: fd,
-      });
-
-      const raw = await res.text();
-      let data: { message?: string } | null = null;
-
-      try {
-        data = raw ? JSON.parse(raw) : null;
-      } catch {
-        data = { message: raw || "Respuesta inválida del servidor." };
+      if (process.env.NODE_ENV !== "production") {
+        return json(`Cloudinary: ${msg}`, 500);
       }
 
-      if (!res.ok) {
-        setIsSubmitting(false);
-        setSubmitPhase("idle");
-
-        if (res.status === 413) {
-          return alert(
-            "Las fotos pesan demasiado incluso después de optimizarlas. Intenta con imágenes más livianas.",
-          );
-        }
-
-        return alert(
-          data?.message ||
-            `No se pudo enviar el formulario. Error ${res.status}.`,
-        );
-      }
-
-      setIsSubmitting(false);
-      setSubmitPhase("idle");
-      setShowSuccess(true);
-    } catch (e) {
-      console.error(e);
-      setIsSubmitting(false);
-      setSubmitPhase("idle");
-      alert(
-        "Ocurrió un error enviando la postulación. Verifica tu conexión e intenta de nuevo.",
+      return json(
+        "No se pudieron subir las fotos. Intenta de nuevo en unos minutos.",
+        500,
       );
     }
+
+    const resendKey = process.env.RESEND_API_KEY;
+    const from = process.env.RESEND_FROM;
+    const internalTo = process.env.POSTULA_INTERNAL_TO;
+    const ownerTo = payload?.owner?.email;
+
+    const p = payload.property;
+
+    const summary = `
+ARKA - Nueva postulación recibida
+ID de postulación: ${submissionId}
+
+PROPIETARIO
+Nombre: ${payload.owner.fullName}
+Correo: ${payload.owner.email}
+Celular: ${payload.owner.phone}
+
+UBICACIÓN
+Ciudad: ${p.city}
+// TODO (multi-ciudad): Localidad Bogotá: ${p.bogotaLocalidad || "N/A"}
+Sector SM: ${p.sectorGroup || "N/A"}
+Subsector SM: ${p.sectorSub || "N/A"}
+Descripción libre: ${p.sectorFreeText || "N/A"}
+
+TIPO
+Tipo: ${p.type}
+Habitaciones: ${p.rooms ?? "N/A"}
+Baños: ${p.baths ?? "N/A"}
+Otro tipo: ${p.otherTypeText || "N/A"}
+
+CONDICIONES
+Amoblada: ${p.furnished}
+PH: ${p.isHOA}
+Permite STR: ${p.hoaAllowsSTR || "N/A"}
+
+OPERACIÓN
+Estado: ${payload.ops.currentStatus}
+Inicio: ${payload.ops.startWhen}
+
+EXPECTATIVA
+${payload.expectation.goal}
+
+FOTOS (Cloudinary)
+${photoUrls.map((u, i) => `${i + 1}) ${u}`).join("\n")}
+`;
+
+    if (resendKey && from && internalTo) {
+      await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${resendKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from,
+          to: internalTo,
+          subject: "Nueva postulación de propiedad - ARKA",
+          text: summary,
+        }),
+      });
+    } else {
+      console.log("[DEV] Nueva postulación:", summary);
+    }
+
+    if (resendKey && from && ownerTo) {
+      await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${resendKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from,
+          to: ownerTo,
+          subject: "Recibimos tu postulación - ARKA Living",
+          html: `<p>¡Gracias por postular tu propiedad!</p>
+                 <p>Revisaremos tu información y te contactaremos en un plazo máximo de <strong>48 horas</strong>.</p>
+                 <p>ARKA Living</p>`,
+        }),
+      });
+    }
+
+    return NextResponse.json({ ok: true, submissionId, photoUrls });
+  } catch (e: any) {
+    const msg = String(e?.message || e);
+    console.error("POST /api/postula/submit fatal:", msg);
+    return json("Error interno procesando la postulación.", 500);
   }
-
-  function getSubmitLabel() {
-    if (!isSubmitting) return "Enviar postulación";
-    if (submitPhase === "compressing") return "Optimizando imágenes…";
-    if (submitPhase === "sending") return "Enviando…";
-    return "Enviando…";
-  }
-
-  return (
-    <section
-      className="arkaFormPage"
-      style={{ padding: "calc(var(--header-h) + 24px) var(--edge-space) 56px" }}
-    >
-      <div className="arkaForm">
-        <div className="arkaFormInner">
-          <div className="formIntro">
-            <h1 className="formTitle">Postula tu propiedad</h1>
-            <p className="formSubtitle">
-              Completa la información y te contactaremos en un plazo máximo de
-              48 horas.
-            </p>
-          </div>
-
-          {step === 1 && (
-            <div>
-              <h3 className="formSectionTitle">Datos del propietario</h3>
-
-              <label>Nombre completo</label>
-              <input
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-              />
-
-              <label>Correo electrónico</label>
-              <input value={email} onChange={(e) => setEmail(e.target.value)} />
-
-              <label>Número de celular o WhatsApp</label>
-              <div className="phoneRow">
-                <select
-                  value={countryCode}
-                  onChange={(e) => setCountryCode(e.target.value)}
-                >
-                  {COUNTRY_CODES.map((c) => (
-                    <option key={`${c.label}_${c.code}`} value={c.code}>
-                      {c.label}
-                    </option>
-                  ))}
-                </select>
-
-                <input
-                  value={phoneNumber}
-                  inputMode="tel"
-                  placeholder="Ej: 3158254384"
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                />
-              </div>
-
-              {countryCode === "OTHER" && (
-                <>
-                  <label>Indicativo (ej: +49)</label>
-                  <input
-                    value={otherCountryCode}
-                    onChange={(e) => setOtherCountryCode(e.target.value)}
-                    placeholder="Ej: +49"
-                    inputMode="tel"
-                  />
-                </>
-              )}
-
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "flex-start",
-                  gap: 10,
-                  margin: "18px 0 4px",
-                }}
-              >
-                <input
-                  type="checkbox"
-                  id="privacy-accept"
-                  checked={privacyAccepted}
-                  onChange={(e) => setPrivacyAccepted(e.target.checked)}
-                  style={{
-                    marginTop: 3,
-                    accentColor: "var(--arka-brown-mid)",
-                    flexShrink: 0,
-                    width: 16,
-                    height: 16,
-                  }}
-                />
-                <label
-                  htmlFor="privacy-accept"
-                  style={{
-                    fontWeight: 400,
-                    fontSize: 14,
-                    lineHeight: 1.5,
-                    color: "var(--arka-text-soft)",
-                    margin: 0,
-                    cursor: "pointer",
-                  }}
-                >
-                  Acepto la{" "}
-                  <a
-                    href="/politica-de-privacidad"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      color: "var(--arka-brown-mid)",
-                      textDecoration: "underline",
-                    }}
-                  >
-                    Política de Privacidad
-                  </a>{" "}
-                  y el tratamiento de mis datos personales.
-                </label>
-              </div>
-
-              <button onClick={startEmailVerification}>Continuar</button>
-            </div>
-          )}
-
-          {step === 1.5 && (
-            <div>
-              <h3 className="formSectionTitle">Validación de correo</h3>
-              <p>
-                <strong>
-                  Para continuar, revisa tu correo electrónico y valida tu
-                  cuenta.
-                </strong>
-              </p>
-              <p style={{ color: "var(--arka-text-soft)" }}>
-                Te enviamos un código de verificación. Escríbelo aquí:
-              </p>
-
-              <input
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                placeholder="Código"
-              />
-
-              <div className="arkaFormActions">
-                <button onClick={back}>Atrás</button>
-                <button onClick={verifyCode}>Validar y continuar</button>
-              </div>
-            </div>
-          )}
-
-          {step === 2 && (
-            <div>
-              <h3 className="formSectionTitle">Datos de la propiedad</h3>
-
-              <label>Ciudad</label>
-              <select
-                value={city}
-                onChange={(e) => setCity(e.target.value as City)}
-              >
-                <option value="">Selecciona</option>
-                <option value="Santa Marta">Santa Marta</option>
-              </select>
-
-              {city === "Santa Marta" && (
-                <>
-                  <label>Sector</label>
-                  <select
-                    value={smSectorGroup}
-                    onChange={(e) => {
-                      setSmSectorGroup(e.target.value);
-                      setSmSectorSub("");
-                      setSmSectorFreeText("");
-                    }}
-                  >
-                    <option value="">Selecciona</option>
-                    {SM_SECTORES.map((s) => (
-                      <option key={s.group} value={s.group}>
-                        {s.group}
-                      </option>
-                    ))}
-                  </select>
-
-                  {!!smGroupObj?.subs?.length && (
-                    <>
-                      <label>Sub-sector</label>
-                      <select
-                        value={smSectorSub}
-                        onChange={(e) => setSmSectorSub(e.target.value)}
-                      >
-                        <option value="">Selecciona</option>
-                        {smGroupObj.subs!.map((sub) => (
-                          <option key={sub} value={sub}>
-                            {sub}
-                          </option>
-                        ))}
-                      </select>
-                    </>
-                  )}
-
-                  {smGroupObj?.freeText && (
-                    <>
-                      <label>
-                        Describe en máximo 50 palabras la ubicación general
-                      </label>
-                      <textarea
-                        value={smSectorFreeText}
-                        onChange={(e) => setSmSectorFreeText(e.target.value)}
-                      />
-                    </>
-                  )}
-                </>
-              )}
-
-              <label>Tipo de propiedad</label>
-              <select
-                value={propertyType}
-                onChange={(e) => setPropertyType(e.target.value as any)}
-              >
-                <option value="">Selecciona</option>
-                <option value="Studio o único espacio">
-                  Studio o único espacio
-                </option>
-                <option value="Apartamento">
-                  Apartamento de 1 o más habitaciones
-                </option>
-                <option value="Casa">Casa</option>
-                <option value="Otro">Otro</option>
-              </select>
-
-              {(propertyType === "Apartamento" || propertyType === "Casa") && (
-                <>
-                  <label>¿Cuántas habitaciones tiene?</label>
-                  <input
-                    type="number"
-                    value={rooms}
-                    onChange={(e) =>
-                      setRooms(e.target.value ? Number(e.target.value) : "")
-                    }
-                    min={0}
-                  />
-
-                  <label>¿Cuántos baños tiene?</label>
-                  <input
-                    type="number"
-                    value={baths}
-                    onChange={(e) =>
-                      setBaths(e.target.value ? Number(e.target.value) : "")
-                    }
-                    min={0}
-                  />
-                </>
-              )}
-
-              {propertyType === "Otro" && (
-                <>
-                  <label>Descríbelo en máximo 50 palabras</label>
-                  <textarea
-                    value={otherTypeText}
-                    onChange={(e) => setOtherTypeText(e.target.value)}
-                  />
-                </>
-              )}
-
-              <label>¿La propiedad está actualmente amoblada?</label>
-              <select
-                value={furnished}
-                onChange={(e) => setFurnished(e.target.value as any)}
-              >
-                <option value="">Selecciona</option>
-                <option value="Sí">Sí</option>
-                <option value="Parcialmente">Parcialmente</option>
-                <option value="No">No</option>
-              </select>
-
-              <label>¿Hace parte de una propiedad horizontal?</label>
-              <select
-                value={isHOA}
-                onChange={(e) => setIsHOA(e.target.value as any)}
-              >
-                <option value="">Selecciona</option>
-                <option value="Sí">Sí</option>
-                <option value="No">No</option>
-              </select>
-
-              {isHOA === "Sí" && (
-                <>
-                  <label>
-                    ¿El manual de propiedad horizontal permite rentas cortas?
-                  </label>
-                  <select
-                    value={hoaAllowsSTR}
-                    onChange={(e) => setHoaAllowsSTR(e.target.value as any)}
-                  >
-                    <option value="">Selecciona</option>
-                    <option value="Sí">Sí</option>
-                    <option value="No">No</option>
-                    <option value="No estoy seguro">No estoy seguro</option>
-                  </select>
-                </>
-              )}
-
-              <div className="arkaFormActions">
-                <button onClick={back}>Atrás</button>
-                <button onClick={next}>Continuar</button>
-              </div>
-            </div>
-          )}
-
-          {step === 3 && (
-            <div>
-              <h3 className="formSectionTitle">Información operativa básica</h3>
-
-              <label>¿Actualmente la propiedad está?</label>
-              <select
-                value={currentStatus}
-                onChange={(e) => setCurrentStatus(e.target.value as any)}
-              >
-                <option value="">Selecciona</option>
-                <option value="Desocupada">Desocupada</option>
-                <option value="Arrendada a largo plazo">
-                  Arrendada a largo plazo
-                </option>
-                <option value="Ya en Airbnb / Booking">
-                  Ya en Airbnb / Booking
-                </option>
-              </select>
-
-              <label>
-                ¿Desde cuándo estaría disponible para iniciar operación?
-              </label>
-              <select
-                value={startWhen}
-                onChange={(e) => setStartWhen(e.target.value as any)}
-              >
-                <option value="">Selecciona</option>
-                <option value="Inmediato">Inmediato</option>
-                <option value="En 1–3 meses">En 1–3 meses</option>
-                <option value="Más adelante">Más adelante</option>
-              </select>
-
-              <div className="arkaFormActions">
-                <button onClick={back}>Atrás</button>
-                <button onClick={next}>Continuar</button>
-              </div>
-            </div>
-          )}
-
-          {step === 4 && (
-            <div>
-              <h3 className="formSectionTitle">Expectativa del propietario</h3>
-
-              <label>¿Qué busca principalmente?</label>
-              <select
-                value={goal}
-                onChange={(e) => setGoal(e.target.value as any)}
-              >
-                <option value="">Selecciona</option>
-                <option value="Ingreso fijo mensual">
-                  Ingreso fijo mensual
-                </option>
-                <option value="Ingreso optimizado por noche">
-                  Ingreso optimizado por noche
-                </option>
-                <option value="Mezcla de ambos">Mezcla de ambos</option>
-                <option value="Aún no lo tengo claro">
-                  Aún no lo tengo claro
-                </option>
-              </select>
-
-              <div className="arkaFormActions">
-                <button onClick={back}>Atrás</button>
-                <button onClick={next}>Continuar</button>
-              </div>
-            </div>
-          )}
-
-          {step === 5 && (
-            <div>
-              <h3 className="formSectionTitle">Fotos</h3>
-
-              <p className="photoHelp">
-                Sube al menos 3 fotos de la habitación principal, baño y una
-                vista adicional de la propiedad. Opcionalmente, sube otras que
-                consideres importantes. Máximo: 5 fotos en total.
-              </p>
-
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={(e) => {
-                  const list = Array.from(e.target.files || []);
-                  addPhotos(list);
-                  e.currentTarget.value = "";
-                }}
-              />
-
-              <p style={{ color: minPhotosOk ? "inherit" : "crimson" }}>
-                {minPhotosOk
-                  ? `OK: ${photos.length} archivos`
-                  : `Faltan fotos: tienes ${photos.length}/${MIN_PHOTOS}`}
-              </p>
-
-              {photos.length > 0 && (
-                <div className="photoGrid">
-                  {photos.map((p) => (
-                    <div className="photoCard" key={p.id}>
-                      <img className="photoImg" src={p.url} alt="Foto subida" />
-                      <button
-                        type="button"
-                        className="photoRemove"
-                        aria-label="Borrar foto"
-                        onClick={() => removePhoto(p.id)}
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              <div className="arkaFormActions">
-                <button onClick={back} disabled={isSubmitting}>
-                  Atrás
-                </button>
-                <button onClick={submitAll} disabled={isSubmitting}>
-                  {getSubmitLabel()}
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {showSuccess && (
-        <div
-          className="modalOverlay"
-          role="dialog"
-          aria-modal="true"
-          onClick={closeSuccessAndGoHome}
-        >
-          <div className="modalCard" onClick={(e) => e.stopPropagation()}>
-            <button
-              className="modalClose"
-              aria-label="Cerrar"
-              onClick={closeSuccessAndGoHome}
-            >
-              ×
-            </button>
-
-            <h3 className="modalTitle">¡Gracias por postular tu propiedad!</h3>
-            <p className="modalText">
-              Revisaremos tu información y te contactaremos en un plazo máximo
-              de 48 horas.
-            </p>
-          </div>
-        </div>
-      )}
-    </section>
-  );
 }
 </file>
 
@@ -6924,6 +6106,38 @@ export function Header() {
       <OwnerLoginModal open={ownerOpen} onClose={() => setOwnerOpen(false)} />
     </>
   );
+}
+</file>
+
+<file path="package.json">
+{
+  "name": "nextjs",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
+    "browser-image-compression": "^2.0.2",
+    "lucide-react": "^0.574.0",
+    "next": "16.1.6",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.6",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
 }
 </file>
 
@@ -7248,6 +6462,1104 @@ export function Header() {
 }
 </file>
 
+<file path="components/forms/PropertyApplicationForm.tsx">
+"use client";
+
+import { useMemo, useRef, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import imageCompression from "browser-image-compression";
+import styles from "./PropertyApplicationForm.module.css";
+
+// TODO (multi-ciudad): cuando se reactive Bogotá, descomentar este tipo
+// type City = "Bogotá" | "Santa Marta";
+type City = "Santa Marta";
+
+// TODO (multi-ciudad): descomentar cuando se active Bogotá
+// const BOGOTA_LOCALIDADES = [
+//   "Usaquén",
+//   "Chapinero",
+//   "Santa Fe",
+//   "San Cristóbal",
+//   "Usme",
+//   "Tunjuelito",
+//   "Bosa",
+//   "Kennedy",
+//   "Fontibón",
+//   "Engativá",
+//   "Suba",
+//   "Barrios Unidos",
+//   "Teusaquillo",
+//   "Los Mártires",
+//   "Antonio Nariño",
+//   "Puente Aranda",
+//   "La Candelaria",
+//   "Rafael Uribe Uribe",
+//   "Ciudad Bolívar",
+//   "Sumapaz",
+// ];
+
+const SM_SECTORES: Array<{
+  group: string;
+  subs?: string[];
+  freeText?: boolean;
+}> = [
+  {
+    group: "Centro",
+    subs: ["Centro Histórico", "El Centro", "Pescaíto", "San Francisco"],
+  },
+  {
+    group: "Rodadero – Gaira",
+    subs: [
+      "El Rodadero",
+      "Rodadero Sur",
+      "Rodadero Reservado",
+      "Gaira",
+      "Playa Salguero",
+    ],
+  },
+  {
+    group: "Corredor Pozos Colorados – Bello Horizonte",
+    subs: ["Pozos Colorados", "Bello Horizonte", "Aeropuerto", "Cabo Tortuga"],
+  },
+  {
+    group: "Zona Urbana Tradicional",
+    subs: [
+      "Bavaria",
+      "Los Almendros",
+      "Jardín",
+      "María Eugenia",
+      "Mamatoco",
+      "Olaya Herrera",
+    ],
+  },
+  { group: "Zonas Alternativas", subs: ["Taganga", "Bonda"] },
+  { group: "Otro / No estoy seguro", freeText: true },
+];
+
+// ✅ Lista reducida + "Otro"
+const COUNTRY_CODES = [
+  { label: "Colombia (+57)", code: "+57" },
+  { label: "Estados Unidos (+1)", code: "+1" },
+  { label: "Canadá (+1)", code: "+1" },
+  { label: "México (+52)", code: "+52" },
+  { label: "España (+34)", code: "+34" },
+  { label: "Panamá (+507)", code: "+507" },
+  { label: "Venezuela (+58)", code: "+58" },
+  { label: "Brasil (+55)", code: "+55" },
+  { label: "Perú (+51)", code: "+51" },
+  { label: "Otro", code: "OTHER" },
+] as const;
+
+// [FIX #3] Tipos MIME permitidos explícitamente en el selector de fotos
+const ALLOWED_PHOTO_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
+  "image/heic",
+  "image/heif",
+];
+
+// [FIX #2] Límite de tamaño antes de intentar comprimir (rechaza archivos absurdos)
+const MAX_INPUT_MB = 50;
+
+function isEmail(v: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+}
+
+function onlyDigits(v: string) {
+  return v.replace(/[^\d]/g, "");
+}
+
+function normalizeCountryCode(raw: string) {
+  const s = raw.trim();
+  if (!s) return "";
+  const withPlus = s.startsWith("+") ? s : `+${s}`;
+  return "+" + onlyDigits(withPlus);
+}
+
+type PhotoItem = { id: string; file: File; url: string };
+
+function makeClientId() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const c: any = globalThis.crypto;
+  return (
+    c?.randomUUID?.() ?? `${Date.now()}_${Math.random().toString(16).slice(2)}`
+  );
+}
+
+async function compressImage(file: File): Promise<File> {
+  if (!file.type.startsWith("image/")) return file;
+
+  try {
+    const compressed = await imageCompression(file, {
+      maxSizeMB: 4.8,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+      initialQuality: 0.8,
+    });
+
+    const safeName =
+      file.name && file.name.trim() ? file.name : `photo-${Date.now()}.jpg`;
+
+    return new File([compressed], safeName, {
+      type: compressed.type || file.type || "image/jpeg",
+      lastModified: Date.now(),
+    });
+  } catch (error) {
+    console.error("Error compressing image:", error);
+    return file;
+  }
+}
+
+export function PropertyApplicationForm() {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const [step, setStep] = useState<number>(1);
+
+  const [startToken, setStartToken] = useState<string | null>(null);
+  const [verifiedToken, setVerifiedToken] = useState<string | null>(null);
+
+  // page 1
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
+
+  // phone with country code
+  const [countryCode, setCountryCode] = useState<string>("+57");
+  const [otherCountryCode, setOtherCountryCode] = useState<string>("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+
+  // otp
+  const [otp, setOtp] = useState("");
+
+  // page 2
+  const [city, setCity] = useState<City | "">("");
+  // TODO (multi-ciudad): descomentar cuando se active Bogotá
+  // const [bogotaLocalidad, setBogotaLocalidad] = useState("");
+  const [smSectorGroup, setSmSectorGroup] = useState("");
+  const [smSectorSub, setSmSectorSub] = useState("");
+  const [smSectorFreeText, setSmSectorFreeText] = useState("");
+
+  const [propertyType, setPropertyType] = useState<
+    "" | "Studio o único espacio" | "Apartamento" | "Casa" | "Otro"
+  >("");
+  const [rooms, setRooms] = useState<number | "">("");
+  const [baths, setBaths] = useState<number | "">("");
+  const [otherTypeText, setOtherTypeText] = useState("");
+
+  const [furnished, setFurnished] = useState<"" | "Sí" | "Parcialmente" | "No">(
+    "",
+  );
+  const [isHOA, setIsHOA] = useState<"" | "Sí" | "No">("");
+  const [hoaAllowsSTR, setHoaAllowsSTR] = useState<
+    "" | "Sí" | "No" | "No estoy seguro"
+  >("");
+
+  // page 3
+  const [currentStatus, setCurrentStatus] = useState<
+    "" | "Desocupada" | "Arrendada a largo plazo" | "Ya en Airbnb / Booking"
+  >("");
+  const [startWhen, setStartWhen] = useState<
+    "" | "Inmediato" | "En 1–3 meses" | "Más adelante"
+  >("");
+
+  // page 4
+  const [goal, setGoal] = useState<
+    | ""
+    | "Ingreso fijo mensual"
+    | "Ingreso optimizado por noche"
+    | "Mezcla de ambos"
+    | "Aún no lo tengo claro"
+  >("");
+
+  // page 5 photos
+  const [photos, setPhotos] = useState<PhotoItem[]>([]);
+  const MIN_PHOTOS = 3;
+  const MAX_PHOTOS = 5;
+  const minPhotosOk = photos.length >= MIN_PHOTOS;
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitPhase, setSubmitPhase] = useState<
+    "idle" | "compressing" | "sending"
+  >("idle");
+  const submissionIdRef = useRef<string | null>(null);
+
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const smGroupObj = useMemo(
+    () => SM_SECTORES.find((s) => s.group === smSectorGroup),
+    [smSectorGroup],
+  );
+
+  function goHomeStage0() {
+    const fire = () => window.dispatchEvent(new Event("arka:hero:stage0"));
+
+    if (pathname !== "/") {
+      router.push("/");
+      window.setTimeout(fire, 80);
+    } else {
+      fire();
+    }
+  }
+
+  function closeSuccessAndGoHome() {
+    setShowSuccess(false);
+    goHomeStage0();
+  }
+
+  function back() {
+    if (step === 1.5) setStep(1);
+    else setStep((s) => Math.max(1, s - 1));
+  }
+
+  function validateStepOrAlert(current: number): boolean {
+    if (current === 2) {
+      if (!city) return (alert("Selecciona la ciudad."), false);
+
+      // TODO (multi-ciudad): descomentar cuando se active Bogotá
+      // if (city === "Bogotá" && !bogotaLocalidad)
+      //   return (alert("Selecciona la localidad."), false);
+
+      if (city === "Santa Marta") {
+        if (!smSectorGroup) return (alert("Selecciona el sector."), false);
+        if (smGroupObj?.subs?.length && !smSectorSub)
+          return (alert("Selecciona el sub-sector."), false);
+        if (smGroupObj?.freeText && !smSectorFreeText.trim())
+          return (
+            alert("Describe la ubicación general (máx. 50 palabras)."),
+            false
+          );
+      }
+
+      if (!propertyType)
+        return (alert("Selecciona el tipo de propiedad."), false);
+
+      const needsRoomsBaths =
+        propertyType === "Apartamento" || propertyType === "Casa";
+      if (needsRoomsBaths && (rooms === "" || baths === ""))
+        return (alert("Indica habitaciones y baños."), false);
+
+      if (propertyType === "Otro" && !otherTypeText.trim())
+        return (alert("Describe el tipo (máx. 50 palabras)."), false);
+
+      if (!furnished) return (alert("Indica si está amoblada."), false);
+      if (!isHOA)
+        return (alert("Indica si hace parte de propiedad horizontal."), false);
+      if (isHOA === "Sí" && !hoaAllowsSTR)
+        return (alert("Indica si permite rentas cortas."), false);
+
+      return true;
+    }
+
+    if (current === 3) {
+      if (!currentStatus) return (alert("Indica el estado actual."), false);
+      if (!startWhen)
+        return (alert("Indica desde cuándo estaría disponible."), false);
+      return true;
+    }
+
+    if (current === 4) {
+      if (!goal) return (alert("Indica tu expectativa."), false);
+      return true;
+    }
+
+    if (current === 5) {
+      if (!minPhotosOk)
+        return (
+          alert(
+            `Sube al menos ${MIN_PHOTOS} fotos (habitación principal y baño).`,
+          ),
+          false
+        );
+      return true;
+    }
+
+    return true;
+  }
+
+  function next() {
+    if (!validateStepOrAlert(step)) return;
+    setStep((s) => Math.min(5, s + 1));
+  }
+
+  function getFinalCountryCodeOrEmpty() {
+    if (countryCode === "OTHER") return normalizeCountryCode(otherCountryCode);
+    return countryCode;
+  }
+
+  async function startEmailVerification() {
+    const phoneDigits = onlyDigits(phoneNumber);
+
+    if (!fullName.trim()) return alert("Ingresa tu nombre completo.");
+    if (!isEmail(email)) return alert("Ingresa un correo válido.");
+
+    const cc = getFinalCountryCodeOrEmpty();
+    if (!cc) return alert("Selecciona el indicativo del país.");
+    if (countryCode === "OTHER" && !cc)
+      return alert("Escribe el indicativo (ej: +49).");
+
+    if (!phoneDigits) return alert("Ingresa tu número de celular o WhatsApp.");
+    if (phoneDigits.length < 7)
+      return alert("El número parece demasiado corto.");
+
+    const phoneE164 = `${cc}${phoneDigits}`;
+
+    if (!privacyAccepted) {
+      return alert("Debes aceptar la Política de Privacidad para continuar.");
+    }
+
+    const res = await fetch("/api/postula/start", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fullName, email, phone: phoneE164 }),
+    });
+
+    const data = await res.json();
+    if (!res.ok)
+      return alert(
+        data?.message || "No se pudo enviar el correo de validación.",
+      );
+
+    setStartToken(data.token);
+    setStep(1.5);
+  }
+
+  async function verifyCode() {
+    if (!startToken) return alert("No hay verificación iniciada.");
+    if (!otp.trim()) return alert("Ingresa el código.");
+
+    const res = await fetch("/api/postula/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: startToken, code: otp.trim() }),
+    });
+
+    const data = await res.json();
+    if (!res.ok) return alert(data?.message || "Código inválido o expirado.");
+
+    setVerifiedToken(data.verifiedToken);
+    setStep(2);
+  }
+
+  // [FIX #2 + #3] Validar tipo MIME y tamaño máximo ANTES de agregar al estado
+  function addPhotos(files: File[]) {
+    const availableSlots = Math.max(0, MAX_PHOTOS - photos.length);
+    const rejected: string[] = [];
+
+    const validated = files.filter((f) => {
+      if (!ALLOWED_PHOTO_TYPES.includes(f.type)) {
+        rejected.push(
+          `"${f.name}" tiene un formato no soportado (${f.type || "desconocido"}).`,
+        );
+        return false;
+      }
+      const sizeMb = f.size / (1024 * 1024);
+      if (sizeMb > MAX_INPUT_MB) {
+        rejected.push(
+          `"${f.name}" es demasiado grande (${sizeMb.toFixed(0)}MB, máximo ${MAX_INPUT_MB}MB).`,
+        );
+        return false;
+      }
+      return true;
+    });
+
+    if (rejected.length > 0) {
+      alert(
+        `Las siguientes fotos no se pudieron agregar:\n\n${rejected.join("\n")}\n\nUsa archivos JPG, PNG o WebP de menos de ${MAX_INPUT_MB}MB.`,
+      );
+    }
+
+    const toAdd = validated.slice(0, availableSlots).map((file) => {
+      const id = makeClientId();
+      const url = URL.createObjectURL(file);
+      return { id, file, url };
+    });
+
+    setPhotos((prev) => [...prev, ...toAdd]);
+  }
+
+  function removePhoto(id: string) {
+    setPhotos((prev) => {
+      const target = prev.find((p) => p.id === id);
+      if (target) URL.revokeObjectURL(target.url);
+      return prev.filter((p) => p.id !== id);
+    });
+  }
+
+  async function submitAll() {
+    if (isSubmitting) return;
+
+    const verified = verifiedToken;
+    if (!verified) return alert("Debes validar tu correo para continuar.");
+
+    if (
+      !validateStepOrAlert(2) ||
+      !validateStepOrAlert(3) ||
+      !validateStepOrAlert(4) ||
+      !validateStepOrAlert(5)
+    ) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    if (!submissionIdRef.current) {
+      submissionIdRef.current = makeClientId();
+    }
+    const submissionId = submissionIdRef.current;
+    if (!submissionId) {
+      setIsSubmitting(false);
+      setSubmitPhase("idle");
+      return alert("No se pudo generar el ID de envío. Intenta de nuevo.");
+    }
+
+    const needsRoomsBaths =
+      propertyType === "Apartamento" || propertyType === "Casa";
+
+    const cc = getFinalCountryCodeOrEmpty();
+    if (!cc) {
+      setIsSubmitting(false);
+      setSubmitPhase("idle");
+      return alert("Falta el indicativo del país.");
+    }
+    const phoneE164 = `${cc}${onlyDigits(phoneNumber)}`;
+
+    const payload = {
+      submissionId,
+      owner: { fullName, email, phone: phoneE164 },
+      property: {
+        city,
+        // TODO (multi-ciudad): descomentar cuando se active Bogotá
+        // bogotaLocalidad: city === "Bogotá" ? bogotaLocalidad : null,
+        sectorGroup: smSectorGroup || null,
+        sectorSub: smSectorSub || null,
+        sectorFreeText: smSectorFreeText || null,
+        type: propertyType,
+        rooms: needsRoomsBaths ? rooms : null,
+        baths: needsRoomsBaths ? baths : null,
+        otherTypeText: propertyType === "Otro" ? otherTypeText : null,
+        furnished,
+        isHOA,
+        hoaAllowsSTR: isHOA === "Sí" ? hoaAllowsSTR : null,
+      },
+      ops: { currentStatus, startWhen },
+      expectation: { goal },
+    };
+
+    try {
+      // [FIX #1] setSubmitPhase("compressing") va INMEDIATAMENTE antes del Promise.all
+      setSubmitPhase("compressing");
+      const compressedFiles = await Promise.all(
+        photos.map(async (p) => compressImage(p.file)),
+      );
+
+      setSubmitPhase("sending");
+
+      const fd = new FormData();
+      fd.append("verifiedToken", verified);
+      fd.append("payload", JSON.stringify(payload));
+      fd.append("submissionId", submissionId);
+
+      compressedFiles.forEach((file) => fd.append("photos", file));
+
+      // [FIX #4] Timeout global de 2 minutos para el fetch de submit
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 120_000);
+
+      let res: Response;
+      try {
+        res = await fetch("/api/postula/submit", {
+          method: "POST",
+          body: fd,
+          signal: controller.signal,
+        });
+      } catch (fetchErr: any) {
+        clearTimeout(timeoutId);
+        setIsSubmitting(false);
+        setSubmitPhase("idle");
+        if (fetchErr?.name === "AbortError") {
+          return alert(
+            "El envío tardó demasiado y fue cancelado. Verifica tu conexión e intenta de nuevo.",
+          );
+        }
+        throw fetchErr;
+      }
+      clearTimeout(timeoutId);
+
+      const raw = await res.text();
+      let data: { message?: string } | null = null;
+
+      try {
+        data = raw ? JSON.parse(raw) : null;
+      } catch {
+        data = { message: raw || "Respuesta inválida del servidor." };
+      }
+
+      if (!res.ok) {
+        setIsSubmitting(false);
+        setSubmitPhase("idle");
+
+        if (res.status === 413) {
+          return alert(
+            "Las fotos pesan demasiado incluso después de optimizarlas. Intenta con imágenes más livianas.",
+          );
+        }
+
+        return alert(
+          data?.message ||
+            `No se pudo enviar el formulario. Error ${res.status}.`,
+        );
+      }
+
+      setIsSubmitting(false);
+      setSubmitPhase("idle");
+      setShowSuccess(true);
+    } catch (e) {
+      console.error(e);
+      setIsSubmitting(false);
+      setSubmitPhase("idle");
+      alert(
+        "Ocurrió un error enviando la postulación. Verifica tu conexión e intenta de nuevo.",
+      );
+    }
+  }
+
+  function getSubmitLabel() {
+    if (!isSubmitting) return "Enviar postulación";
+    if (submitPhase === "compressing") return "Optimizando imágenes…";
+    if (submitPhase === "sending") return "Enviando…";
+    return "Enviando…";
+  }
+
+  return (
+    <section
+      className={styles.arkaFormPage}
+      style={{ padding: "calc(var(--header-h) + 24px) var(--edge-space) 56px" }}
+    >
+      <div className={styles.arkaForm}>
+        <div className={styles.arkaFormInner}>
+          <div className={styles.formIntro}>
+            <h1 className={styles.formTitle}>Postula tu propiedad</h1>
+            <p className={styles.formSubtitle}>
+              Completa la información y te contactaremos en un plazo máximo de
+              48 horas.
+            </p>
+          </div>
+
+          {step === 1 && (
+            <div>
+              <h3 className={styles.formSectionTitle}>Datos del propietario</h3>
+
+              <label className={styles.label}>Nombre completo</label>
+              <input
+                className={styles.input}
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+              />
+
+              <label className={styles.label}>Correo electrónico</label>
+              <input
+                className={styles.input}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+
+              <label className={styles.label}>
+                Número de celular o WhatsApp
+              </label>
+              <div className={styles.phoneRow}>
+                <select
+                  className={styles.select}
+                  value={countryCode}
+                  onChange={(e) => setCountryCode(e.target.value)}
+                >
+                  {COUNTRY_CODES.map((c) => (
+                    <option key={`${c.label}_${c.code}`} value={c.code}>
+                      {c.label}
+                    </option>
+                  ))}
+                </select>
+
+                <input
+                  className={styles.input}
+                  value={phoneNumber}
+                  inputMode="tel"
+                  placeholder="Ej: 3158254384"
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                />
+              </div>
+
+              {countryCode === "OTHER" && (
+                <>
+                  <label className={styles.label}>Indicativo (ej: +49)</label>
+                  <input
+                    className={styles.input}
+                    value={otherCountryCode}
+                    onChange={(e) => setOtherCountryCode(e.target.value)}
+                    placeholder="Ej: +49"
+                    inputMode="tel"
+                  />
+                </>
+              )}
+
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: 10,
+                  margin: "18px 0 4px",
+                }}
+              >
+                <input
+                  type="checkbox"
+                  id="privacy-accept"
+                  checked={privacyAccepted}
+                  onChange={(e) => setPrivacyAccepted(e.target.checked)}
+                  style={{
+                    marginTop: 3,
+                    accentColor: "var(--arka-brown-mid)",
+                    flexShrink: 0,
+                    width: 16,
+                    height: 16,
+                  }}
+                />
+                <label
+                  htmlFor="privacy-accept"
+                  style={{
+                    fontWeight: 400,
+                    fontSize: 14,
+                    lineHeight: 1.5,
+                    color: "var(--arka-text-soft)",
+                    margin: 0,
+                    cursor: "pointer",
+                  }}
+                >
+                  Acepto la{" "}
+                  <a
+                    href="/politica-de-privacidad"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      color: "var(--arka-brown-mid)",
+                      textDecoration: "underline",
+                    }}
+                  >
+                    Política de Privacidad
+                  </a>{" "}
+                  y el tratamiento de mis datos personales.
+                </label>
+              </div>
+
+              <button className={styles.btn} onClick={startEmailVerification}>
+                Continuar
+              </button>
+            </div>
+          )}
+
+          {step === 1.5 && (
+            <div>
+              <h3 className={styles.formSectionTitle}>Validación de correo</h3>
+              <p>
+                <strong>
+                  Para continuar, revisa tu correo electrónico y valida tu
+                  cuenta.
+                </strong>
+              </p>
+              <p style={{ color: "var(--arka-text-soft)" }}>
+                Te enviamos un código de verificación. Escríbelo aquí:
+              </p>
+
+              <input
+                className={styles.input}
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                placeholder="Código"
+              />
+
+              <div className={styles.arkaFormActions}>
+                <button className={styles.btn} onClick={back}>
+                  Atrás
+                </button>
+                <button className={styles.btn} onClick={verifyCode}>
+                  Validar y continuar
+                </button>
+              </div>
+            </div>
+          )}
+
+          {step === 2 && (
+            <div>
+              <h3 className={styles.formSectionTitle}>Datos de la propiedad</h3>
+
+              <label className={styles.label}>Ciudad</label>
+              <select
+                className={styles.select}
+                value={city}
+                onChange={(e) => setCity(e.target.value as City)}
+              >
+                <option value="">Selecciona</option>
+                <option value="Santa Marta">Santa Marta</option>
+              </select>
+
+              {city === "Santa Marta" && (
+                <>
+                  <label className={styles.label}>Sector</label>
+                  <select
+                    className={styles.select}
+                    value={smSectorGroup}
+                    onChange={(e) => {
+                      setSmSectorGroup(e.target.value);
+                      setSmSectorSub("");
+                      setSmSectorFreeText("");
+                    }}
+                  >
+                    <option value="">Selecciona</option>
+                    {SM_SECTORES.map((s) => (
+                      <option key={s.group} value={s.group}>
+                        {s.group}
+                      </option>
+                    ))}
+                  </select>
+
+                  {!!smGroupObj?.subs?.length && (
+                    <>
+                      <label className={styles.label}>Sub-sector</label>
+                      <select
+                        className={styles.select}
+                        value={smSectorSub}
+                        onChange={(e) => setSmSectorSub(e.target.value)}
+                      >
+                        <option value="">Selecciona</option>
+                        {smGroupObj.subs!.map((sub) => (
+                          <option key={sub} value={sub}>
+                            {sub}
+                          </option>
+                        ))}
+                      </select>
+                    </>
+                  )}
+
+                  {smGroupObj?.freeText && (
+                    <>
+                      <label className={styles.label}>
+                        Describe en máximo 50 palabras la ubicación general
+                      </label>
+                      <textarea
+                        className={styles.textarea}
+                        value={smSectorFreeText}
+                        onChange={(e) => setSmSectorFreeText(e.target.value)}
+                      />
+                    </>
+                  )}
+                </>
+              )}
+
+              <label className={styles.label}>Tipo de propiedad</label>
+              <select
+                className={styles.select}
+                value={propertyType}
+                onChange={(e) => setPropertyType(e.target.value as any)}
+              >
+                <option value="">Selecciona</option>
+                <option value="Studio o único espacio">
+                  Studio o único espacio
+                </option>
+                <option value="Apartamento">
+                  Apartamento de 1 o más habitaciones
+                </option>
+                <option value="Casa">Casa</option>
+                <option value="Otro">Otro</option>
+              </select>
+
+              {(propertyType === "Apartamento" || propertyType === "Casa") && (
+                <>
+                  <label className={styles.label}>
+                    ¿Cuántas habitaciones tiene?
+                  </label>
+                  <input
+                    className={styles.input}
+                    type="number"
+                    value={rooms}
+                    onChange={(e) =>
+                      setRooms(e.target.value ? Number(e.target.value) : "")
+                    }
+                    min={0}
+                  />
+
+                  <label className={styles.label}>¿Cuántos baños tiene?</label>
+                  <input
+                    className={styles.input}
+                    type="number"
+                    value={baths}
+                    onChange={(e) =>
+                      setBaths(e.target.value ? Number(e.target.value) : "")
+                    }
+                    min={0}
+                  />
+                </>
+              )}
+
+              {propertyType === "Otro" && (
+                <>
+                  <label className={styles.label}>
+                    Descríbelo en máximo 50 palabras
+                  </label>
+                  <textarea
+                    className={styles.textarea}
+                    value={otherTypeText}
+                    onChange={(e) => setOtherTypeText(e.target.value)}
+                  />
+                </>
+              )}
+
+              <label className={styles.label}>
+                ¿La propiedad está actualmente amoblada?
+              </label>
+              <select
+                className={styles.select}
+                value={furnished}
+                onChange={(e) => setFurnished(e.target.value as any)}
+              >
+                <option value="">Selecciona</option>
+                <option value="Sí">Sí</option>
+                <option value="Parcialmente">Parcialmente</option>
+                <option value="No">No</option>
+              </select>
+
+              <label className={styles.label}>
+                ¿Hace parte de una propiedad horizontal?
+              </label>
+              <select
+                className={styles.select}
+                value={isHOA}
+                onChange={(e) => setIsHOA(e.target.value as any)}
+              >
+                <option value="">Selecciona</option>
+                <option value="Sí">Sí</option>
+                <option value="No">No</option>
+              </select>
+
+              {isHOA === "Sí" && (
+                <>
+                  <label className={styles.label}>
+                    ¿El manual de propiedad horizontal permite rentas cortas?
+                  </label>
+                  <select
+                    className={styles.select}
+                    value={hoaAllowsSTR}
+                    onChange={(e) => setHoaAllowsSTR(e.target.value as any)}
+                  >
+                    <option value="">Selecciona</option>
+                    <option value="Sí">Sí</option>
+                    <option value="No">No</option>
+                    <option value="No estoy seguro">No estoy seguro</option>
+                  </select>
+                </>
+              )}
+
+              <div className={styles.arkaFormActions}>
+                <button className={styles.btn} onClick={back}>
+                  Atrás
+                </button>
+                <button className={styles.btn} onClick={next}>
+                  Continuar
+                </button>
+              </div>
+            </div>
+          )}
+
+          {step === 3 && (
+            <div>
+              <h3 className={styles.formSectionTitle}>
+                Información operativa básica
+              </h3>
+
+              <label className={styles.label}>
+                ¿Actualmente la propiedad está?
+              </label>
+              <select
+                className={styles.select}
+                value={currentStatus}
+                onChange={(e) => setCurrentStatus(e.target.value as any)}
+              >
+                <option value="">Selecciona</option>
+                <option value="Desocupada">Desocupada</option>
+                <option value="Arrendada a largo plazo">
+                  Arrendada a largo plazo
+                </option>
+                <option value="Ya en Airbnb / Booking">
+                  Ya en Airbnb / Booking
+                </option>
+              </select>
+
+              <label className={styles.label}>
+                ¿Desde cuándo estaría disponible para iniciar operación?
+              </label>
+              <select
+                className={styles.select}
+                value={startWhen}
+                onChange={(e) => setStartWhen(e.target.value as any)}
+              >
+                <option value="">Selecciona</option>
+                <option value="Inmediato">Inmediato</option>
+                <option value="En 1–3 meses">En 1–3 meses</option>
+                <option value="Más adelante">Más adelante</option>
+              </select>
+
+              <div className={styles.arkaFormActions}>
+                <button className={styles.btn} onClick={back}>
+                  Atrás
+                </button>
+                <button className={styles.btn} onClick={next}>
+                  Continuar
+                </button>
+              </div>
+            </div>
+          )}
+
+          {step === 4 && (
+            <div>
+              <h3 className={styles.formSectionTitle}>
+                Expectativa del propietario
+              </h3>
+
+              <label className={styles.label}>¿Qué busca principalmente?</label>
+              <select
+                className={styles.select}
+                value={goal}
+                onChange={(e) => setGoal(e.target.value as any)}
+              >
+                <option value="">Selecciona</option>
+                <option value="Ingreso fijo mensual">
+                  Ingreso fijo mensual
+                </option>
+                <option value="Ingreso optimizado por noche">
+                  Ingreso optimizado por noche
+                </option>
+                <option value="Mezcla de ambos">Mezcla de ambos</option>
+                <option value="Aún no lo tengo claro">
+                  Aún no lo tengo claro
+                </option>
+              </select>
+
+              <div className={styles.arkaFormActions}>
+                <button className={styles.btn} onClick={back}>
+                  Atrás
+                </button>
+                <button className={styles.btn} onClick={next}>
+                  Continuar
+                </button>
+              </div>
+            </div>
+          )}
+
+          {step === 5 && (
+            <div>
+              <h3 className={styles.formSectionTitle}>Fotos</h3>
+
+              <p className={styles.photoHelp}>
+                Sube al menos 3 fotos de la habitación principal, baño y una
+                vista adicional de la propiedad. Opcionalmente, sube otras que
+                consideres importantes. Máximo: 5 fotos en total.
+              </p>
+
+              <input
+                className={styles.input}
+                type="file"
+                accept="image/jpeg,image/jpg,image/png,image/webp,image/heic,image/heif"
+                multiple
+                onChange={(e) => {
+                  const list = Array.from(e.target.files || []);
+                  addPhotos(list);
+                  e.currentTarget.value = "";
+                }}
+              />
+
+              <p style={{ color: minPhotosOk ? "inherit" : "crimson" }}>
+                {minPhotosOk
+                  ? `OK: ${photos.length} archivos`
+                  : `Faltan fotos: tienes ${photos.length}/${MIN_PHOTOS}`}
+              </p>
+
+              {photos.length > 0 && (
+                <div className={styles.photoGrid}>
+                  {photos.map((p) => (
+                    <div className={styles.photoCard} key={p.id}>
+                      <img
+                        className={styles.photoImg}
+                        src={p.url}
+                        alt="Foto subida"
+                      />
+                      <button
+                        type="button"
+                        className={styles.photoRemove}
+                        aria-label="Borrar foto"
+                        onClick={() => removePhoto(p.id)}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className={styles.arkaFormActions}>
+                <button
+                  className={styles.btn}
+                  onClick={back}
+                  disabled={isSubmitting}
+                >
+                  Atrás
+                </button>
+                <button
+                  className={styles.btn}
+                  onClick={submitAll}
+                  disabled={isSubmitting}
+                >
+                  {getSubmitLabel()}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {showSuccess && (
+        <div
+          className={styles.modalOverlay}
+          role="dialog"
+          aria-modal="true"
+          onClick={closeSuccessAndGoHome}
+        >
+          <div
+            className={styles.modalCard}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className={styles.modalClose}
+              aria-label="Cerrar"
+              onClick={closeSuccessAndGoHome}
+            >
+              ×
+            </button>
+
+            <h3 className={styles.modalTitle}>
+              ¡Gracias por postular tu propiedad!
+            </h3>
+            <p className={styles.modalText}>
+              Revisaremos tu información y te contactaremos en un plazo máximo
+              de 48 horas.
+            </p>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+</file>
+
 <file path="components/Header.module.css">
 /*.header {
   position: sticky;
@@ -7534,53 +7846,6 @@ export function Header() {
 }
 </file>
 
-<file path="app/(site)/layout.tsx">
-import "../globals.css";
-import type { Metadata } from "next";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
-import { Playfair_Display, Inter } from "next/font/google";
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["400", "600", "700"],
-  variable: "--font-display",
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-body",
-});
-
-export const metadata = {
-  title: "ARKA Living",
-  description: "Gestión inteligente de rentas cortas",
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
-
-export default function SiteLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <html lang="es" className={`${playfair.variable} ${inter.variable}`}>
-      <body>
-        <div id="app-root">
-          <Header />
-          <main>{children}</main>
-          <Footer />
-        </div>
-      </body>
-    </html>
-  );
-}
-</file>
-
 <file path="app/(site)/page.tsx">
 import { Hero } from "../../components/home/Hero";
 import { FloatingCTA } from "../../components/home/FloatingCTA";
@@ -7599,6 +7864,55 @@ export default function Page() {
       <SectionCasoExito />
       <FloatingCTA />
     </>
+  );
+}
+</file>
+
+<file path="app/(site)/layout.tsx">
+import "../globals.css";
+import type { Metadata } from "next";
+import { OrientationLock } from "@/components/OrientationLock";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { Playfair_Display, Inter } from "next/font/google";
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  variable: "--font-display",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-body",
+});
+
+export const metadata: Metadata = {
+  title: "ARKA Living",
+  description: "Gestión inteligente de rentas cortas",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
+export default function SiteLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="es" className={`${playfair.variable} ${inter.variable}`}>
+      <body>
+        <div id="app-root">
+          <OrientationLock />
+          <Header />
+          <main>{children}</main>
+          <Footer />
+        </div>
+      </body>
+    </html>
   );
 }
 </file>

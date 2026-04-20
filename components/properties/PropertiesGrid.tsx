@@ -1,11 +1,28 @@
-import { getActiveProperties } from "../../lib/properties";
+// components/properties/PropertiesGrid.tsx
+// Server Component async — obtiene propiedades via fetch a /api/properties.
+
+import { fetchProperties } from "../../lib/api/fetchProperties";
 import { PropertyCard } from "./PropertyCard";
 
-// Server Component — sin "use client", se puede pre-renderizar
-// Cuando haya fetch a MongoDB: hacer este componente async y await los datos
+export async function PropertiesGrid() {
+  let properties;
 
-export function PropertiesGrid() {
-  const properties = getActiveProperties();
+  try {
+    properties = await fetchProperties();
+  } catch (error) {
+    return (
+      <p
+        style={{
+          textAlign: "center",
+          color: "var(--arka-text-soft)",
+          padding: "60px 0",
+          fontSize: "17px",
+        }}
+      >
+        No se pudieron cargar las propiedades. Intenta de nuevo más tarde.
+      </p>
+    );
+  }
 
   if (properties.length === 0) {
     return (
