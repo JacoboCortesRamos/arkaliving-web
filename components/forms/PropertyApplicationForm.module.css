@@ -1,4 +1,4 @@
-/* PropertyApplicationForm.css */
+/* PropertyApplicationForm.module.css */
 /* =====================================================
    FULL HEIGHT FORM (evita que el Footer aparezca sin scroll)
 ===================================================== */
@@ -12,19 +12,14 @@
 
 .arkaForm {
   flex: 1;
-}
-
-/* ✅ FIX MOVIL (overflow-x) se movió a globals.css */
-
-/* 2) Box sizing global local al form */
-.arkaForm,
-.arkaForm * {
+  width: 100%;
+  overflow-x: hidden;
   box-sizing: border-box;
 }
 
-.arkaForm {
-  width: 100%;
-  overflow-x: hidden;
+/* Box sizing para todos los hijos del form */
+.arkaForm * {
+  box-sizing: border-box;
 }
 
 .arkaFormInner {
@@ -32,7 +27,8 @@
   margin: 0 auto;
 }
 
-/* ✅ Intro spacing (req #1) */
+/* ── Intro ─────────────────────────────────────────── */
+
 .formIntro {
   margin-bottom: 22px;
 }
@@ -54,16 +50,18 @@
   color: var(--arka-brown-dark);
 }
 
-.arkaForm label {
+/* ── Campos ────────────────────────────────────────── */
+
+.label {
   display: block;
   margin: 14px 0 6px;
   color: var(--arka-brown-dark);
   font-weight: 600;
 }
 
-.arkaForm input,
-.arkaForm select,
-.arkaForm textarea {
+.input,
+.select,
+.textarea {
   width: 100%;
   max-width: 100%;
   padding: 12px 12px;
@@ -72,12 +70,16 @@
   background: var(--arka-white);
   color: var(--arka-brown-dark);
   outline: none;
+  font-family: inherit;
+  font-size: inherit;
 }
 
-.arkaForm textarea {
+.textarea {
   min-height: 96px;
   resize: vertical;
 }
+
+/* ── Botones ───────────────────────────────────────── */
 
 .arkaFormActions {
   display: flex;
@@ -85,7 +87,7 @@
   flex-wrap: wrap;
 }
 
-.arkaForm button {
+.btn {
   margin-top: 16px;
   padding: 12px 14px;
   border-radius: 12px;
@@ -94,22 +96,25 @@
   color: var(--arka-brown-dark);
   cursor: pointer;
   font-weight: 700;
+  font-family: inherit;
+  font-size: inherit;
   transition:
     transform 120ms ease,
     opacity 120ms ease;
 }
 
-.arkaForm button:hover {
+.btn:hover {
   transform: translateY(-1px);
 }
 
-.arkaForm button:disabled {
+.btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
 }
 
-/* Teléfono: select + input en grid */
+/* ── Teléfono ──────────────────────────────────────── */
+
 .phoneRow {
   display: grid;
   grid-template-columns: 1fr 2fr;
@@ -122,7 +127,8 @@
   }
 }
 
-/* Fotos: previews */
+/* ── Fotos ─────────────────────────────────────────── */
+
 .photoHelp {
   color: var(--arka-text-soft);
 }
@@ -168,14 +174,13 @@
   background: rgba(253, 252, 249, 0.95);
   cursor: pointer;
 
-  /* no dependemos del glifo */
   padding: 0;
   margin: 0;
 
   display: grid;
   place-items: center;
 
-  /* ocultar el “×” del HTML sin romper accesibilidad */
+  /* ocultar el "×" del HTML sin romper accesibilidad */
   color: transparent;
   font-size: 0;
   line-height: 0;
@@ -202,7 +207,8 @@
   transform: translate(-50%, -50%) rotate(-45deg);
 }
 
-/* Success modal */
+/* ── Modal de éxito ────────────────────────────────── */
+
 .modalOverlay {
   position: fixed;
   inset: 0;
@@ -279,6 +285,8 @@
 .modalClose::after {
   transform: translate(-50%, -50%) rotate(-45deg);
 }
+
+/* ── Utilidades ────────────────────────────────────── */
 
 .errorText {
   margin-top: 8px;

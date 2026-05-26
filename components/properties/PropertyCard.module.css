@@ -1,0 +1,217 @@
+/* ============================================================
+   PropertyCard.module.css
+   ============================================================ */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  background: var(--arka-white);
+  border: 1px solid rgba(167, 126, 77, 0.18);
+  border-radius: 20px;
+  overflow: hidden;
+  transition:
+    transform 340ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 340ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 48px rgba(74, 52, 36, 0.12);
+}
+
+/* ── Imagen ───────────────────────────────────────────────── */
+
+.imageWrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: rgba(167, 126, 77, 0.08);
+  overflow: hidden;
+}
+
+.image {
+  object-fit: cover;
+  transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.card:hover .image {
+  transform: scale(1.04);
+}
+
+.imageWrapClickable {
+  cursor: zoom-in;
+}
+
+.galleryBadge {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: rgba(30, 20, 12, 0.55);
+  backdrop-filter: blur(6px);
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.03em;
+  pointer-events: none;
+}
+
+.imagePlaceholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    rgba(167, 126, 77, 0.1) 0%,
+    rgba(200, 166, 122, 0.15) 100%
+  );
+}
+
+.placeholderIcon {
+  width: 48px;
+  height: 48px;
+  color: var(--arka-brown-light);
+  opacity: 0.6;
+}
+
+.badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  padding: 4px 12px;
+  background: rgba(253, 252, 249, 0.92);
+  backdrop-filter: blur(8px);
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--arka-brown-mid);
+}
+
+/* ── Cuerpo ───────────────────────────────────────────────── */
+
+.body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 24px 24px 28px;
+  gap: 16px;
+}
+
+.sector {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--arka-brown-mid);
+}
+
+/* Nombre de propiedad → Inter (dato funcional) */
+.name {
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: clamp(20px, 2.4vw, 26px);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--arka-brown-dark);
+  margin: 0;
+}
+
+.description {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--arka-text-soft);
+  margin: 0;
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.metaRow {
+  display: flex;
+  gap: 20px;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--arka-text-soft);
+}
+
+.metaIcon {
+  width: 15px;
+  height: 15px;
+  color: var(--arka-brown-mid);
+  flex-shrink: 0;
+}
+
+.features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.feature {
+  padding: 4px 12px;
+  background: rgba(167, 126, 77, 0.07);
+  border: 1px solid rgba(167, 126, 77, 0.15);
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--arka-brown-dark);
+}
+
+.divider {
+  height: 1px;
+  background: rgba(167, 126, 77, 0.15);
+  margin: 0;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  background: var(--arka-brown-dark);
+  color: var(--arka-white);
+  border-radius: 100px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  align-self: flex-start;
+  transition:
+    background 260ms ease,
+    transform 260ms ease;
+}
+
+.cta:hover {
+  background: var(--arka-brown-mid);
+  transform: translateX(3px);
+}
+
+.ctaIcon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  transition: transform 260ms ease;
+}
+
+.cta:hover .ctaIcon {
+  transform: translateX(3px);
+}

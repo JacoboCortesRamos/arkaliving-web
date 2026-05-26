@@ -27,15 +27,15 @@ async function fileToBase64DataUri(file: File) {
 }
 
 function formatPhoneFolder(phoneE164: string) {
-  // Esperado: +573158254384 -> 57-3158254384  (sin +)
   const s = String(phoneE164 || "").trim();
   const m = s.match(/^(\+?)(\d{1,4})(\d+)$/);
   if (!m) return "unknown-phone";
-  const cc = m[2]; // sin +
+  const cc = m[2];
   const rest = m[3];
   return `${cc}-${rest}`;
 }
 
+// [FIX #4] uploadToCloudinary con AbortController y timeout de 30s por foto
 async function uploadToCloudinary(
   file: File,
   opts: { folder: string; publicId: string; overwrite: boolean },
@@ -45,7 +45,6 @@ async function uploadToCloudinary(
   const apiSecret = requireEnv("CLOUDINARY_API_SECRET");
   const timestamp = Math.floor(Date.now() / 1000);
 
-  // params firmables (orden alfabético)
   const paramsToSign = [
     `folder=${opts.folder}`,
     `overwrite=${opts.overwrite ? "true" : "false"}`,
@@ -54,7 +53,6 @@ async function uploadToCloudinary(
   ];
 
   const signature = sha1(paramsToSign.join("&") + apiSecret);
-
   const fileData = await fileToBase64DataUri(file);
 
   const body = new URLSearchParams();
@@ -66,10 +64,23 @@ async function uploadToCloudinary(
   body.set("public_id", opts.publicId);
   body.set("overwrite", opts.overwrite ? "true" : "false");
 
-  const res = await fetch(
-    `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-    { method: "POST", body },
-  );
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 30_000); // 30s por foto
+
+  let res: Response;
+  try {
+    res = await fetch(
+      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+      { method: "POST", body, signal: controller.signal },
+    );
+  } catch (err: any) {
+    clearTimeout(timeoutId);
+    if (err?.name === "AbortError") {
+      throw new Error(`Cloudinary upload timeout para ${opts.publicId}`);
+    }
+    throw err;
+  }
+  clearTimeout(timeoutId);
 
   const out = await res.json();
   if (!res.ok)
@@ -82,116 +93,116 @@ async function uploadToCloudinary(
 }
 
 export async function POST(req: Request) {
-  const secret = process.env.FORM_TOKEN_SECRET;
-  if (!secret) return json("Falta FORM_TOKEN_SECRET en env.", 500);
-
-  const form = await req.formData();
-  const verifiedToken = String(form.get("verifiedToken") || "");
-  const payloadStr = String(form.get("payload") || "");
-  const submissionId = String(form.get("submissionId") || "");
-
-  if (!verifiedToken) return json("Falta verifiedToken.");
-  if (!payloadStr) return json("Falta payload.");
-  if (!submissionId) return json("Falta submissionId.");
-
-  // 1) verify token
-  const [b64, sig] = verifiedToken.split(".");
-  if (!b64 || !sig) return json("verifiedToken inválido.");
-
-  const tokenPayloadStr = Buffer.from(b64, "base64url").toString("utf8");
-  if (signHmac(tokenPayloadStr, secret) !== sig)
-    return json("verifiedToken inválido.");
-
-  const tokenPayload = JSON.parse(tokenPayloadStr);
-  if (!tokenPayload.verified) return json("Correo no verificado.");
-  if (Date.now() > tokenPayload.exp)
-    return json("Sesión expirada, valida tu correo de nuevo.");
-
-  const payload = JSON.parse(payloadStr);
-
-  // 2) photos validation (✅ min 2 / max 5)
-  const photos = form.getAll("photos") as File[];
-  const MIN_FILES = 2;
-  const MAX_FILES = 5;
-  const MAX_MB = 10;
-
-  if (!photos?.length || photos.length < MIN_FILES) {
-    return json(`Debes subir al menos ${MIN_FILES} fotos.`);
-  }
-  if (photos.length > MAX_FILES) {
-    return json(`Máximo ${MAX_FILES} fotos.`);
-  }
-
-  for (const f of photos) {
-    if (!f.type?.startsWith("image/"))
-      return json("Solo se permiten imágenes.");
-    const sizeMb = f.size / (1024 * 1024);
-    if (sizeMb > MAX_MB)
-      return json(`Cada foto debe pesar máximo ${MAX_MB}MB.`);
-  }
-
-  // DEV toggle (solo se respeta en dev)
-  const disableIdempotency =
-    process.env.NODE_ENV !== "production" &&
-    process.env.POSTULA_DISABLE_IDEMPOTENCY === "1";
-
-  // 3) upload cloudinary (✅ folder YYYY/MM/+57-315...)
-  let photoUrls: string[] = [];
   try {
-    requireEnv("CLOUDINARY_CLOUD_NAME");
-    requireEnv("CLOUDINARY_API_KEY");
-    requireEnv("CLOUDINARY_API_SECRET");
+    const secret = process.env.FORM_TOKEN_SECRET;
+    if (!secret) return json("Falta FORM_TOKEN_SECRET en env.", 500);
 
-    const baseFolder = process.env.CLOUDINARY_FOLDER || "arka/postula";
-    const phoneE164 = String(payload?.owner?.phone || "");
-    const phoneFolder = formatPhoneFolder(phoneE164);
+    const form = await req.formData();
+    const verifiedToken = String(form.get("verifiedToken") || "");
+    const payloadStr = String(form.get("payload") || "");
+    const submissionId = String(form.get("submissionId") || "");
 
-    const now = new Date();
-    const yyyy = String(now.getFullYear());
-    const mm = String(now.getMonth() + 1).padStart(2, "0");
+    if (!verifiedToken) return json("Falta verifiedToken.");
+    if (!payloadStr) return json("Falta payload.");
+    if (!submissionId) return json("Falta submissionId.");
 
-    const folder = `${baseFolder}/${yyyy}/${mm}/${phoneFolder}`;
+    const [b64, sig] = verifiedToken.split(".");
+    if (!b64 || !sig) return json("verifiedToken inválido.");
 
-    const requestId = disableIdempotency
-      ? crypto.randomBytes(6).toString("hex")
-      : "";
+    const tokenPayloadStr = Buffer.from(b64, "base64url").toString("utf8");
+    if (signHmac(tokenPayloadStr, secret) !== sig)
+      return json("verifiedToken inválido.");
 
-    const uploads = await Promise.all(
-      photos.map((f, idx) =>
-        uploadToCloudinary(f, {
-          folder,
-          publicId: disableIdempotency
-            ? `${submissionId}_${requestId}_photo_${idx + 1}`
-            : `${submissionId}_photo_${idx + 1}`,
-          overwrite: disableIdempotency ? true : false,
-        }),
-      ),
-    );
+    const tokenPayload = JSON.parse(tokenPayloadStr);
+    if (!tokenPayload.verified) return json("Correo no verificado.");
+    if (Date.now() > tokenPayload.exp)
+      return json("Sesión expirada, valida tu correo de nuevo.");
 
-    photoUrls = uploads.map((u) => u.secure_url);
-  } catch (e: any) {
-    const msg = String(e?.message || e);
-    console.error("Cloudinary error:", msg);
+    const payload = JSON.parse(payloadStr);
 
-    if (process.env.NODE_ENV !== "production") {
-      return json(`Cloudinary: ${msg}`, 500);
+    const photos = form.getAll("photos") as File[];
+    const MIN_FILES = 3;
+    const MAX_FILES = 5;
+    const MAX_MB = 5;
+
+    if (!photos?.length || photos.length < MIN_FILES) {
+      return json(`Debes subir al menos ${MIN_FILES} fotos.`);
+    }
+    if (photos.length > MAX_FILES) {
+      return json(`Máximo ${MAX_FILES} fotos.`);
     }
 
-    return json(
-      "No se pudieron subir las fotos. Intenta de nuevo en unos minutos.",
-      500,
-    );
-  }
+    for (const f of photos) {
+      if (!f.type?.startsWith("image/")) {
+        return json("Solo se permiten imágenes.");
+      }
 
-  // 4) Resend emails
-  const resendKey = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM;
-  const internalTo = process.env.POSTULA_INTERNAL_TO;
-  const ownerTo = payload?.owner?.email;
+      const sizeMb = f.size / (1024 * 1024);
+      if (sizeMb > MAX_MB) {
+        return json(`Cada foto debe pesar máximo ${MAX_MB}MB.`);
+      }
+    }
 
-  const p = payload.property;
+    const disableIdempotency =
+      process.env.NODE_ENV !== "production" &&
+      process.env.POSTULA_DISABLE_IDEMPOTENCY === "1";
 
-  const summary = `
+    let photoUrls: string[] = [];
+
+    try {
+      requireEnv("CLOUDINARY_CLOUD_NAME");
+      requireEnv("CLOUDINARY_API_KEY");
+      requireEnv("CLOUDINARY_API_SECRET");
+
+      const baseFolder = process.env.CLOUDINARY_FOLDER || "arka/postula";
+      const phoneE164 = String(payload?.owner?.phone || "");
+      const phoneFolder = formatPhoneFolder(phoneE164);
+
+      const now = new Date();
+      const yyyy = String(now.getFullYear());
+      const mm = String(now.getMonth() + 1).padStart(2, "0");
+
+      const folder = `${baseFolder}/${yyyy}/${mm}/${phoneFolder}`;
+
+      const requestId = disableIdempotency
+        ? crypto.randomBytes(6).toString("hex")
+        : "";
+
+      const uploads = await Promise.all(
+        photos.map((f, idx) =>
+          uploadToCloudinary(f, {
+            folder,
+            publicId: disableIdempotency
+              ? `${submissionId}_${requestId}_photo_${idx + 1}`
+              : `${submissionId}_photo_${idx + 1}`,
+            overwrite: disableIdempotency,
+          }),
+        ),
+      );
+
+      photoUrls = uploads.map((u) => u.secure_url);
+    } catch (e: any) {
+      const msg = String(e?.message || e);
+      console.error("Cloudinary error:", msg);
+
+      if (process.env.NODE_ENV !== "production") {
+        return json(`Cloudinary: ${msg}`, 500);
+      }
+
+      return json(
+        "No se pudieron subir las fotos. Intenta de nuevo en unos minutos.",
+        500,
+      );
+    }
+
+    const resendKey = process.env.RESEND_API_KEY;
+    const from = process.env.RESEND_FROM;
+    const internalTo = process.env.POSTULA_INTERNAL_TO;
+    const ownerTo = payload?.owner?.email;
+
+    const p = payload.property;
+
+    const summary = `
 ARKA - Nueva postulación recibida
 ID de postulación: ${submissionId}
 
@@ -202,7 +213,7 @@ Celular: ${payload.owner.phone}
 
 UBICACIÓN
 Ciudad: ${p.city}
-Localidad Bogotá: ${p.bogotaLocalidad || "N/A"}
+// TODO (multi-ciudad): Localidad Bogotá: ${p.bogotaLocalidad || "N/A"}
 Sector SM: ${p.sectorGroup || "N/A"}
 Subsector SM: ${p.sectorSub || "N/A"}
 Descripción libre: ${p.sectorFreeText || "N/A"}
@@ -229,41 +240,46 @@ FOTOS (Cloudinary)
 ${photoUrls.map((u, i) => `${i + 1}) ${u}`).join("\n")}
 `;
 
-  if (resendKey && from && internalTo) {
-    await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${resendKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from,
-        to: internalTo,
-        subject: "Nueva postulación de propiedad - ARKA",
-        text: summary,
-      }),
-    });
-  } else {
-    console.log("[DEV] Nueva postulación:", summary);
-  }
+    if (resendKey && from && internalTo) {
+      await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${resendKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from,
+          to: internalTo,
+          subject: "Nueva postulación de propiedad - ARKA",
+          text: summary,
+        }),
+      });
+    } else {
+      console.log("[DEV] Nueva postulación:", summary);
+    }
 
-  if (resendKey && from && ownerTo) {
-    await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${resendKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from,
-        to: ownerTo,
-        subject: "Recibimos tu postulación - ARKA Living",
-        html: `<p>¡Gracias por postular tu propiedad!</p>
-               <p>Revisaremos tu información y te contactaremos en un plazo máximo de <strong>48 horas</strong>.</p>
-               <p>ARKA Living</p>`,
-      }),
-    });
-  }
+    if (resendKey && from && ownerTo) {
+      await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${resendKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from,
+          to: ownerTo,
+          subject: "Recibimos tu postulación - ARKA Living",
+          html: `<p>¡Gracias por postular tu propiedad!</p>
+                 <p>Revisaremos tu información y te contactaremos en un plazo máximo de <strong>48 horas</strong>.</p>
+                 <p>ARKA Living</p>`,
+        }),
+      });
+    }
 
-  return NextResponse.json({ ok: true, submissionId, photoUrls });
+    return NextResponse.json({ ok: true, submissionId, photoUrls });
+  } catch (e: any) {
+    const msg = String(e?.message || e);
+    console.error("POST /api/postula/submit fatal:", msg);
+    return json("Error interno procesando la postulación.", 500);
+  }
 }

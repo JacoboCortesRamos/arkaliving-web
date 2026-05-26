@@ -1,0 +1,182 @@
+/* ============================================================
+   SectionBeneficios — Bloque 1
+   Fondo: arka-brown-mid | Texto: arka-white
+   ============================================================ */
+
+.section {
+  background: var(--arka-brown-mid);
+  padding: clamp(64px, 10vw, 120px) 0;
+}
+
+.inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 6vw, 80px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(40px, 6vw, 72px);
+}
+
+/* Título principal → Inter */
+.titulo {
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: clamp(22px, 3.5vw, 44px);
+  font-weight: 600;
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  color: var(--arka-white);
+  margin: 0;
+  max-width: 680px;
+  text-transform: uppercase;
+}
+
+/* Grid de cards */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .cards {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding-top: calc(var(--header-h) + clamp(40px, 8vw, 64px));
+  }
+}
+
+/* Card base */
+.card {
+  background: var(--arka-white);
+  border-radius: 12px;
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 220ms ease;
+}
+
+.card:hover {
+  box-shadow: 0 8px 32px rgba(74, 52, 36, 0.18);
+}
+
+.cardOpen {
+  box-shadow: 0 8px 32px rgba(74, 52, 36, 0.22);
+}
+
+/* Cara visible: texto arriba, icono+botón anclados al fondo */
+.cardFace {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+  min-height: 220px;
+}
+
+/* Título de card → Inter, empuja icono+botón al fondo */
+.cardTitulo {
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: clamp(15px, 1.4vw, 17px);
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--arka-brown-dark);
+  margin: 0 0 auto;
+  padding-bottom: 24px;
+  width: 100%;
+}
+
+/* Icono grande centrado */
+.cardIcon {
+  color: var(--arka-brown-mid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.85;
+  margin-bottom: 16px;
+}
+
+/* Botón + / − centrado */
+.cardToggle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid var(--arka-brown-mid);
+  background: transparent;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  color: var(--arka-brown-mid);
+  transition:
+    background 180ms ease,
+    color 180ms ease;
+  flex-shrink: 0;
+}
+
+.cardToggle:hover {
+  background: var(--arka-brown-mid);
+  color: var(--arka-white);
+}
+
+/* Panel expandible */
+.cardDetalle {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 300ms ease;
+  overflow: hidden;
+}
+
+.cardOpen .cardDetalle {
+  grid-template-rows: 1fr;
+}
+
+@supports not (grid-template-rows: 0fr) {
+  .cardDetalle {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 300ms ease;
+  }
+  .cardOpen .cardDetalle {
+    max-height: 300px;
+  }
+}
+
+.detalleList {
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  padding-top: 18px;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.detalleItem {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--arka-text-soft);
+  padding-left: 16px;
+  position: relative;
+  text-align: left;
+}
+
+.detalleItem::before {
+  content: "—";
+  position: absolute;
+  left: 0;
+  color: var(--arka-brown-light);
+  font-size: 12px;
+  top: 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cardDetalle {
+    transition: none;
+  }
+}

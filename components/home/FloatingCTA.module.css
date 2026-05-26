@@ -102,7 +102,7 @@
 }
 
 /* Ocultar CTA flotante en stage 9 */
-html[data-hero-stage="9"] .wrap {
+html[data-hero-stage="7"] .wrap {
   opacity: 0;
   pointer-events: none;
 }

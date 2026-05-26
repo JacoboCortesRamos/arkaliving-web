@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Instagram, MessageCircleMore } from "lucide-react";
+import { Instagram, MessageCircleMore, Mail } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 import styles from "./MenuOverlay.module.css";
@@ -53,7 +53,6 @@ export function MenuOverlay({
           return;
         }
 
-        // timeout defensivo (1s)
         if (Date.now() - start > 1000) {
           window.dispatchEvent(new Event("arka:hero:stage0"));
           return;
@@ -90,17 +89,9 @@ export function MenuOverlay({
             HOME
           </button>
 
-          <Link className={styles.link} href="/nosotros" onClick={onClose}>
-            NOSOTROS
-          </Link>
-
           <Link className={styles.link} href="/propiedades" onClick={onClose}>
             PROPIEDADES ARKA
           </Link>
-
-          <button className={styles.linkBtn} onClick={onOwnerClick}>
-            SOY PROPIETARIO
-          </button>
 
           <Link
             className={styles.link}
@@ -109,6 +100,14 @@ export function MenuOverlay({
           >
             POSTULA TU PROPIEDAD
           </Link>
+
+          <Link className={styles.link} href="/nosotros" onClick={onClose}>
+            NOSOTROS
+          </Link>
+
+          <button className={styles.linkBtn} onClick={onOwnerClick}>
+            SOY PROPIETARIO
+          </button>
 
           <Link className={styles.link} href="/contacto" onClick={onClose}>
             CONTACTO
@@ -134,6 +133,14 @@ export function MenuOverlay({
             aria-label="WhatsApp"
           >
             <MessageCircleMore className={styles.socialIcon} />
+          </a>
+
+          <a
+            href="mailto:jacobocortes90@hotmail.com"
+            className={styles.socialLink}
+            aria-label="Email"
+          >
+            <Mail className={styles.socialIcon} />
           </a>
         </div>
       </div>
